@@ -1,5 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
-Copyright (C) 2003-2015 by Dmitry Tsarkov
+Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
+Copyright (C) 2015-2016 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -46,13 +47,12 @@ public:		// interface
 	bool initLogger ( Configuration& Config );
 
 		/// @return true if LEVEL will be allowed
-	bool isWritable ( unsigned int level ATTR_UNUSED ) const
+	bool isWritable ( unsigned int level ) const
 	{
-#	ifdef _USE_LOGGING
-		return level <= allowedLevel;
-#	else
-		return false;
-#	endif
+		if ( USE_LOGGING )
+			return level <= allowedLevel;
+		else
+			return false;
 	}
 }; // LeveLogger
 

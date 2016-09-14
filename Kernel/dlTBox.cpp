@@ -1,5 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
-Copyright (C) 2003-2015 by Dmitry Tsarkov
+Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
+Copyright (C) 2015-2016 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -442,13 +443,14 @@ void TBox :: readConfig ( const ifOptionSet* Options )
 
 	PriorityMatrix.initPriorities ( Options->getText("IAOEFLG"), "IAOEFLG" );
 
-#ifdef RKG_USE_FAIRNESS
-	nSkipBeforeBlock = Options->getInt("skipBeforeBlock");
-	if ( LLM.isWritable(llAlways) )
-		LL << "Init nSkipBeforeBlock = " << nSkipBeforeBlock << "\n";
-#else
-	nSkipBeforeBlock = 0;
-#endif
+	if ( RKG_USE_FAIRNESS )
+	{
+		nSkipBeforeBlock = Options->getInt("skipBeforeBlock");
+		if ( LLM.isWritable(llAlways) )
+			LL << "Init nSkipBeforeBlock = " << nSkipBeforeBlock << "\n";
+	}
+	else
+		nSkipBeforeBlock = 0;
 
 	verboseOutput = false;
 #undef addBoolOption

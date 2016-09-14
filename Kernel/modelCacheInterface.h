@@ -1,5 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
-Copyright (C) 2003-2016 by Dmitry Tsarkov
+Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
+Copyright (C) 2015-2016 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -19,9 +20,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef MODELCACHEINTERFACE_H
 #define MODELCACHEINTERFACE_H
 
-#ifdef _USE_LOGGING
-#	include "logging.h"
-#endif
+#include "globaldef.h"
+#include "logging.h"
 
 /// status of model cache or merge operation
 enum modelCacheState
@@ -55,6 +55,10 @@ protected:	// members
 		/// flag to show that model contains nominals
 	bool hasNominalNode;
 
+protected:	// methods
+		/// log a particular implementation of a cache entry
+	virtual void logCacheEntryImpl ( void ) const = 0;
+
 public:		// interface
 		/// Create cache model with given presence of nominals
 	modelCacheInterface ( bool flagNominals ) : hasNominalNode{flagNominals} {}
@@ -76,10 +80,12 @@ public:		// interface
 
 		/// get type of cache (deep or shallow)
 	virtual bool shallowCache ( void ) const { return true; }
-#ifdef _USE_LOGGING
 		/// log this cache entry (with given level)
-	virtual void logCacheEntry ( unsigned int ) const {}
-#endif
+	void logCacheEntry ( unsigned int level ) const
+	{
+		if ( LLM.isWritable(level) )
+			logCacheEntryImpl();
+	}
 }; // modelCacheInterface
 
 #endif

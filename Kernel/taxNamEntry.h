@@ -1,5 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
-Copyright (C) 2003-2016 by Dmitry Tsarkov
+Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
+Copyright (C) 2015-2016 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -139,7 +140,7 @@ resolveSynonym ( T* p )
 	return !p ? nullptr : p->isSynonym() ? resolveSynonym(static_cast<T*>(p->getSynonym())) : p;
 }
 
-/// general RW resolving synonym operator
+/// general RO resolving synonym operator
 template<class T>
 inline const T*
 resolveSynonym ( const T* p )

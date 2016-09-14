@@ -1,5 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
-Copyright (C) 2003-2015 by Dmitry Tsarkov
+Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
+Copyright (C) 2015-2016 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -38,16 +39,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 // uncomment this to have sorted ontology reasoning
 #define RKG_USE_SORTED_REASONING
 
-//#define _USE_LOGGING
+// set the default value of USE_LOGGING
+
+#ifndef USE_LOGGING
+#	define USE_LOGGING 0
+#endif
 
 //#define ENABLE_CHECKING
 
-// uncomment this to allow dynamic backjumping
-//#define RKG_USE_DYNAMIC_BACKJUMPING
-
-#ifdef RKG_USE_DYNAMIC_BACKJUMPING
-// uncomment this to use improves S/R with better quality
-#	define RKG_IMPROVE_SAVE_RESTORE_DEPSET
+// set to 1 to allow dynamic backjumping
+#ifndef RKG_USE_DYNAMIC_BACKJUMPING
+#	define RKG_USE_DYNAMIC_BACKJUMPING 0
 #endif
 
 // set to 1 to update role's R&D from super-roles
@@ -58,8 +60,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 // uncomment this to allow simple rules processing
 //#define RKG_USE_SIMPLE_RULES
 
-// uncomment this to support fairness constraints
-//#define RKG_USE_FAIRNESS
+// set to 1 to support fairness constraints
+#ifndef RKG_USE_FAIRNESS
+#	define RKG_USE_FAIRNESS 0
+#endif
 
 // uncomment the following line if IR is defined as a list of elements in node label
 #define RKG_IR_IN_NODE_LABEL

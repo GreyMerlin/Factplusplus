@@ -1,5 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
-Copyright (C) 2003-2015 by Dmitry Tsarkov
+Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
+Copyright (C) 2015-2016 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -72,6 +73,27 @@ protected:	// classes
 			/// start pointer; points to the 1st element in the queue
 		size_t sPointer = 0;
 
+	protected:	// types
+			/// type for restore the whole queue
+		class QueueRestorer: public TRestorer
+		{
+		protected:	// members
+				/// copy of a queue
+			std::vector<ToDoEntry> Wait;
+				/// pointer to a queue to restore
+			arrayQueue* queue;
+				/// start pointer
+			size_t sp;
+
+		public:		// interface
+				/// init c'tor
+			QueueRestorer ( arrayQueue* q ) : Wait(q->Wait), queue(q), sp(q->sPointer) {}
+				/// empty d'tor
+			virtual ~QueueRestorer () {}
+				/// restore: copy the queue back, adjust pointers
+			virtual void restore () { std::swap(queue->Wait, Wait); queue->sPointer = sp; }
+		};
+
 	public:		// interface
 			/// c'tor: init queue with proper size and reset it
 		arrayQueue()
@@ -109,27 +131,6 @@ protected:	// classes
 		/// class to represent single priority queue
 	class queueQueue: public arrayQueue
 	{
-	protected:	// types
-			/// type for restore the whole queue
-		class QueueRestorer: public TRestorer
-		{
-		protected:	// members
-				/// copy of a queue
-			std::vector<ToDoEntry> Wait;
-				/// pointer to a queue to restore
-			queueQueue* queue;
-				/// start pointer
-			size_t sp;
-
-		public:		// interface
-				/// init c'tor
-			QueueRestorer ( queueQueue* q ) : Wait(q->Wait), queue(q), sp(q->sPointer) {}
-				/// empty d'tor
-			virtual ~QueueRestorer ( void ) {}
-				/// restore: copy the queue back, adjust pointers
-			virtual void restore ( void ) { std::swap(queue->Wait,Wait); queue->sPointer = sp; }
-		};
-
 	protected:	// members
 			/// stack to save states for the overwritten queue
 		TRareSaveStack* stack;

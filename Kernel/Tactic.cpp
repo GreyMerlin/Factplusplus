@@ -1,5 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
-Copyright (C) 2003-2016 by Dmitry Tsarkov
+Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
+Copyright (C) 2015-2016 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -373,13 +374,11 @@ bool DlSatTester :: processOrEntry ( void )
 			if ( addToDoEntry ( curNode, ConceptWDep(inverse(*p),dep), "sb" ) )
 				fpp_unreachable();	// Both Exists and Clash are errors
 
-	// add new entry to current node; we know the result would be DONE
-	return
-#	ifdef RKG_USE_DYNAMIC_BACKJUMPING
-		addToDoEntry ( curNode, ConceptWDep(C,dep), reason );
-#	else
-		insertToDoEntry ( curNode, ConceptWDep(C,dep), DLHeap[C].Type(), reason );
-#	endif
+	// add new entry to current node
+	if ( RKG_USE_DYNAMIC_BACKJUMPING )
+		return addToDoEntry ( curNode, ConceptWDep(C,dep), reason );
+	else // we know the result would be DONE
+		return insertToDoEntry ( curNode, ConceptWDep(C,dep), DLHeap[C].Type(), reason );
 }
 
 //-------------------------------------------------------------------------------
@@ -406,8 +405,10 @@ bool DlSatTester :: commonTacticBodyAllComplex ( const DLVertex& cur )
 	// apply all top-role transitions
 	if ( unlikely(RST.hasTopTransition()) )
 		for ( const auto& trans: RST )
+		{
 			if ( trans.isTop() )
 				switchResult ( addSessionGCI ( C+BipolarPointer(trans.final()), dep ) );
+		}
 
 	// apply final-state rule
 	if ( state == 1 )
@@ -418,8 +419,10 @@ bool DlSatTester :: commonTacticBodyAllComplex ( const DLVertex& cur )
 
 	// check all neighbours
 	for ( const auto& neighbour: *curNode )
+	{
 		if ( RST.recognise(neighbour->getRole()) )
 			switchResult ( applyTransitions ( neighbour, RST, C, dep+neighbour->getDep() ) );
+	}
 
 	return false;
 }
@@ -435,8 +438,10 @@ bool DlSatTester :: commonTacticBodyAllSimple ( const DLVertex& cur )
 
 	// check all neighbours; as the role is simple then recognise() == applicable()
 	for ( const auto& neighbour: *curNode )
+	{
 		if ( RST.recognise(neighbour->getRole()) )
 			switchResult ( addToDoEntry ( neighbour->getArcEnd(), C, dep+neighbour->getDep() ) );
+	}
 
 	return false;
 }
@@ -1012,8 +1017,7 @@ bool DlSatTester :: commonTacticBodyLE ( const DLVertex& cur )	// for <=nR.C con
 				// both clash-sets are now in common clash-set
 			}
 
-			updateBranchDep();
-			bContext->nextOption();
+			nextBranchingOption();
 			fpp_assert(!isFirstBranchCall());
 			continue;
 		}
@@ -1189,8 +1193,7 @@ DlSatTester :: processTopRoleLE ( const DLVertex& cur )	// for <=nR.C concepts
 				// both clash-sets are now in common clash-set
 			}
 
-			updateBranchDep();
-			bContext->nextOption();
+			nextBranchingOption();
 			fpp_assert(!isFirstBranchCall());
 			continue;
 		}
@@ -1489,8 +1492,10 @@ bool DlSatTester :: commonTacticBodyChoose ( const TRole* R, BipolarPointer C )
 {
 	// apply choose-rule for every R-neighbour
 	for ( auto& edge: *curNode )
+	{
 		if ( edge->isNeighbour(R) )
 			switchResult ( applyChooseRule ( edge->getArcEnd(), C ) );
+	}
 
 	return false;
 }
@@ -1500,8 +1505,10 @@ bool
 DlSatTester :: applyChooseRuleGlobally ( BipolarPointer C )
 {
 	for ( auto& node: CGraph )
+	{
 		if ( isObjectNodeUnblocked(node) )	// FIXME!! think about d-blocked nodes
 			switchResult ( applyChooseRule ( node, C ) );
+	}
 
 	return false;
 }
@@ -1654,7 +1661,7 @@ bool DlSatTester :: commonTacticBodyProj ( const TRole* R, BipolarPointer C, con
 	// checkProjection() might change curNode's edge vector and thusly invalidate iterators
 	DlCompletionTree::const_edge_iterator p = curNode->begin(), p_end = curNode->end();
 
-	for ( long i = 0, n = p_end - p; i < n; ++i )
+	for ( ptrdiff_t i = 0, n = p_end - p; i < n; ++i )
 	{
 		p = curNode->begin() + i;
 		if ( (*p)->isNeighbour(R) )

@@ -1,5 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
-Copyright (C) 2003-2016 by Dmitry Tsarkov
+Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
+Copyright (C) 2015-2016 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -406,7 +407,7 @@ void TRole :: completeAutomaton ( TRoleSet& RInProcess )
 	if ( likely(!isBottom()) )	// FIXME!! for now; need better Top/Bot synonyms processing
 	for ( auto& p: told() )
 	{
-		TRole* R = static_cast<TRole*>(resolveSynonym(p));
+		TRole* R = resolveSynonym(static_cast<TRole*>(p));
 		if ( R->isTop() )	// do not propagate anything to a top-role
 			continue;
 		R->addSubRoleAutomaton(this);

@@ -1,5 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
-Copyright (C) 2005-2016 by Dmitry Tsarkov
+Copyright (C) 2005-2015 Dmitry Tsarkov and The University of Manchester
+Copyright (C) 2015-2016 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -128,7 +129,7 @@ void TBox :: gatherRelevanceInfo ( void )
 
 	for ( c_iterator pc = c_begin(); pc != c_end(); ++pc )
 		setConceptRelevant(*pc);
-	long cSize = ( c_end() - c_begin() ) + ( i_end() - i_begin() );
+	auto cSize = ( c_end() - c_begin() ) + ( i_end() - i_begin() );
 	size_t bSize = DLHeap.size()-2;
 
 	curFeature = nullptr;

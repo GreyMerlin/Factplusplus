@@ -1,5 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
-Copyright (C) 2003-2016 by Dmitry Tsarkov
+Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
+Copyright (C) 2015-2016 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -407,11 +408,9 @@ void DlCompletionGraph :: findDAncestorBlocker ( DlCompletionTree* node )
 {
 	const DlCompletionTree* p = node;
 
-#ifdef RKG_USE_FAIRNESS
-	if ( nSkipBeforeBlock )
+	if ( RKG_USE_FAIRNESS && nSkipBeforeBlock )
 		for ( int n = nSkipBeforeBlock-1; n >= 0 && p->hasParent() && p->isBlockableNode(); --n )
 			p = p->getParentNode();
-#endif
 
 	while ( p->hasParent() )
 	{

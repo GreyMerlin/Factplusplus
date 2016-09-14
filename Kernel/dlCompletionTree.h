@@ -1,5 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
-Copyright (C) 2003-2016 by Dmitry Tsarkov
+Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
+Copyright (C) 2015-2016 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -34,7 +35,7 @@ class DlCompletionGraph;
 // use the following to control logging information about saving/restoring nodes
 #define RKG_CHECK_BACKJUMPING
 
-#ifdef _USE_LOGGING	// don't gather statistics w/o logging
+#if USE_LOGGING	// don't gather statistics w/o logging
 #	define USE_BLOCKING_STATISTICS
 #endif
 

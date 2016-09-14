@@ -1,5 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
-Copyright (C) 2008-2016 by Dmitry Tsarkov
+Copyright (C) 2008-2015 Dmitry Tsarkov and The University of Manchester
+Copyright (C) 2015-2016 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -489,7 +490,7 @@ LoadSingleCache ( SaveLoadManager& m )
 		return new modelCacheSingleton(m.loadSInt());
 	case ModelCacheType::mctIan:
 	{
-		bool hasNominals = bool(m.loadUInt());
+		bool hasNominals = m.loadUInt() > 0;
 		unsigned int nC = m.loadUInt();
 		unsigned int nR = m.loadUInt();
 		modelCacheIan* cache = new modelCacheIan ( hasNominals, nC, nR );

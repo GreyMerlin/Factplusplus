@@ -1,5 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
-Copyright (C) 2003-2016 by Dmitry Tsarkov
+Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
+Copyright (C) 2015-2016 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -31,7 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ToDoList.h"
 #include "tFastSet.h"
 
-#ifdef _USE_LOGGING	// don't gather statistics w/o logging
+#if USE_LOGGING	// don't gather statistics w/o logging
 #	define USE_REASONING_STATISTICS
 #endif
 
@@ -833,14 +834,13 @@ protected:	// methods
 		/// @return true if no branching ops were applied during reasoners; FIXME!! doesn't work properly with a nominal cloud
 	bool noBranchingOps ( void ) const { return tryLevel == InitBranchingLevelValue + nonDetShift; }
 		/// Get save/restore level based on either current- or DS level
-	unsigned int getSaveRestoreLevel ( const DepSet& ds ATTR_UNUSED ) const
+	unsigned int getSaveRestoreLevel ( const DepSet& ds ) const
 	{
-		return	// FIXME!!! see more precise it later
-#		ifdef RKG_IMPROVE_SAVE_RESTORE_DEPSET
-			ds.level()+1;
-#		else
-			getCurLevel();
-#		endif
+		// FIXME!!! see more precise it later
+		if ( RKG_USE_DYNAMIC_BACKJUMPING )
+			return ds.level()+1;
+		else
+			return getCurLevel();
 	}
 		/// save current reasoning state
 	void save ( void );
@@ -872,8 +872,6 @@ protected:	// methods
 	DepSet& getBranchDep ( void ) { return bContext->branchDep; }
 		/// get RO access to current branching dep-set
 	const DepSet& getBranchDep ( void ) const { return bContext->branchDep; }
-		/// update cumulative branch-dep with current clash-set
-	void updateBranchDep ( void ) { getBranchDep().add(getClashSet()); }
 		/// prepare cumulative dep-set to usage
 	void prepareBranchDep ( void ) { getBranchDep().restrict(getCurLevel()); }
 		/// prepare cumulative dep-set and copy itto general clash-set
