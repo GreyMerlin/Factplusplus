@@ -44,7 +44,9 @@ fact_concept_expression *fact_concept(fact_reasoning_kernel *k,const char *name)
 fact_o_role_expression *fact_object_role (fact_reasoning_kernel *k, const char *name);
 fact_concept_expression *fact_o_exists (fact_reasoning_kernel *k, fact_o_role_expression *r, fact_concept_expression *c);
 fact_concept_expression *fact_top(fact_reasoning_kernel *k);
-fact_axiom *fact_implies_concepts (fact_reasoning_kernel *, fact_concept_expression *c, fact_concept_expression *d);
+
+fact_axiom *fact_implies_concepts(fact_reasoning_kernel *, fact_concept_expression *c, fact_concept_expression *d);
+fact_axiom *fact_set_symmetric(fact_reasoning_kernel*, fact_o_role_expression *r);
 int fact_is_subsumed_by (fact_reasoning_kernel *, fact_concept_expression *c, fact_concept_expression *d);
 
 fact_actor *fact_concept_actor_new();
