@@ -63,6 +63,23 @@ void fact_get_sub_roles (fact_reasoning_kernel *, fact_role_expression *r, int d
 fact_o_role_expression *fact_object_role_top(fact_reasoning_kernel *k);
 
 const char*** fact_get_elements_2d(fact_actor *);
+
+fact_axiom *fact_set_transitive(fact_reasoning_kernel *k, fact_o_role_expression *r);
+fact_axiom *fact_set_asymmetric(fact_reasoning_kernel*, fact_o_role_expression *r);
+void fact_kb_set_tracing(fact_reasoning_kernel *k);
+void fact_kb_set_dump(fact_reasoning_kernel *k);
+fact_axiom* fact_related_to(fact_reasoning_kernel*, fact_individual_expression*, fact_o_role_expression*, fact_individual_expression*);
+fact_individual_expression* fact_individual( fact_reasoning_kernel *k,const char* name );
+void fact_realise_kb(fact_reasoning_kernel *);
+void fact_preprocess_kb(fact_reasoning_kernel *);
+int fact_is_kb_classified(fact_reasoning_kernel *);
+int fact_is_kb_preprocessed(fact_reasoning_kernel *);
+int fact_is_kb_realised(fact_reasoning_kernel *);
+int fact_is_kb_consistent(fact_reasoning_kernel *);
+void fact_get_sub_concepts(fact_reasoning_kernel *k, fact_concept_expression *c, int direct, fact_actor **actor);
+void fact_set_verbose_output(fact_reasoning_kernel *k, int value);
+void fact_set_progress_monitor(fact_reasoning_kernel *k, fact_progress_monitor *m);
+int fact_is_related(fact_reasoning_kernel *k, fact_individual_expression *i, fact_o_role_expression *r, fact_individual_expression *j);
 """)
 
 ffi.set_source('_factpp', """
