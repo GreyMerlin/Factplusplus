@@ -80,6 +80,18 @@ void fact_get_sub_concepts(fact_reasoning_kernel *k, fact_concept_expression *c,
 void fact_set_verbose_output(fact_reasoning_kernel *k, int value);
 void fact_set_progress_monitor(fact_reasoning_kernel *k, fact_progress_monitor *m);
 int fact_is_related(fact_reasoning_kernel *k, fact_individual_expression *i, fact_o_role_expression *r, fact_individual_expression *j);
+fact_axiom *fact_instance_of (fact_reasoning_kernel *k, fact_individual_expression *i, fact_concept_expression *c);
+fact_concept_expression* fact_o_cardinality ( fact_reasoning_kernel *k,unsigned int n, fact_o_role_expression* r, fact_concept_expression* c );
+fact_axiom* fact_set_o_domain (fact_reasoning_kernel *k, fact_o_role_expression *r, fact_concept_expression *c);
+fact_axiom *fact_set_d_domain (fact_reasoning_kernel *k, fact_d_role_expression *r, fact_concept_expression *c);
+fact_axiom *fact_set_o_range (fact_reasoning_kernel *k, fact_o_role_expression *r, fact_concept_expression *c);
+fact_axiom *fact_set_d_range (fact_reasoning_kernel *k, fact_d_role_expression *r, fact_data_expression *e);
+int fact_is_satisfiable (fact_reasoning_kernel *k, fact_concept_expression *c);
+int fact_is_instance (fact_reasoning_kernel *k, fact_individual_expression *i, fact_concept_expression *c);
+fact_axiom *fact_disjoint_union(fact_reasoning_kernel *k, fact_concept_expression *C);
+void fact_new_arg_list ( fact_reasoning_kernel *k );
+void fact_add_arg ( fact_reasoning_kernel *k,fact_expression* e );
+fact_axiom *fact_disjoint_concepts (fact_reasoning_kernel *k);
 """)
 
 ffi.set_source('_factpp', """
