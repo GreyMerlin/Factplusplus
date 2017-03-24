@@ -398,6 +398,9 @@ fact_facet_expression* fact_facet_max_inclusive ( fact_reasoning_kernel *k,fact_
 /* get max_exclusive facet with a given _v */
 fact_facet_expression* fact_facet_max_exclusive ( fact_reasoning_kernel *k,fact_data_value_expression* v );
 
+void fact_kb_set_tracing(fact_reasoning_kernel *k);
+void fact_kb_set_dump(fact_reasoning_kernel *k);
+
 #ifdef __cplusplus
 }
 #endif

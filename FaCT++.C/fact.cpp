@@ -875,3 +875,12 @@ fact_facet_expression* fact_facet_max_exclusive ( fact_reasoning_kernel *k,fact_
 {
 	return new fact_facet_expression(k->p->getExpressionManager()->FacetMaxExclusive(v->p));
 }
+void fact_kb_set_tracing(fact_reasoning_kernel *k)
+{
+    k->p->needTracing();
+}
+
+void fact_kb_set_dump(fact_reasoning_kernel *k)
+{
+    k->p->setDumpOntology(true);
+}
