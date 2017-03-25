@@ -42,6 +42,7 @@ void fact_reasoning_kernel_free(fact_reasoning_kernel *);
 
 fact_concept_expression *fact_concept(fact_reasoning_kernel *k,const char *name);
 fact_o_role_expression *fact_object_role (fact_reasoning_kernel *k, const char *name);
+fact_d_role_expression* fact_data_role ( fact_reasoning_kernel *k,const char* name );
 fact_concept_expression *fact_o_exists (fact_reasoning_kernel *k, fact_o_role_expression *r, fact_concept_expression *c);
 fact_concept_expression *fact_top(fact_reasoning_kernel *k);
 
@@ -82,6 +83,8 @@ void fact_set_progress_monitor(fact_reasoning_kernel *k, fact_progress_monitor *
 int fact_is_related(fact_reasoning_kernel *k, fact_individual_expression *i, fact_o_role_expression *r, fact_individual_expression *j);
 fact_axiom *fact_instance_of (fact_reasoning_kernel *k, fact_individual_expression *i, fact_concept_expression *c);
 fact_concept_expression* fact_o_cardinality ( fact_reasoning_kernel *k,unsigned int n, fact_o_role_expression* r, fact_concept_expression* c );
+fact_concept_expression* fact_o_min_cardinality ( fact_reasoning_kernel *k,unsigned int n, fact_o_role_expression* r, fact_concept_expression* c );
+fact_concept_expression* fact_o_max_cardinality ( fact_reasoning_kernel *k,unsigned int n, fact_o_role_expression* r, fact_concept_expression* c );
 fact_axiom* fact_set_o_domain (fact_reasoning_kernel *k, fact_o_role_expression *r, fact_concept_expression *c);
 fact_axiom *fact_set_d_domain (fact_reasoning_kernel *k, fact_d_role_expression *r, fact_concept_expression *c);
 fact_axiom *fact_set_o_range (fact_reasoning_kernel *k, fact_o_role_expression *r, fact_concept_expression *c);
@@ -92,6 +95,14 @@ fact_axiom *fact_disjoint_union(fact_reasoning_kernel *k, fact_concept_expressio
 void fact_new_arg_list ( fact_reasoning_kernel *k );
 void fact_add_arg ( fact_reasoning_kernel *k,fact_expression* e );
 fact_axiom *fact_disjoint_concepts (fact_reasoning_kernel *k);
+int fact_is_same_individuals (fact_reasoning_kernel *k, fact_individual_expression *i, fact_individual_expression *j);
+fact_axiom *fact_process_different (fact_reasoning_kernel *k);
+fact_data_expression* fact_data_top ( fact_reasoning_kernel *k );
+fact_concept_expression* fact_d_max_cardinality ( fact_reasoning_kernel *k,unsigned int n, fact_d_role_expression* r, fact_data_expression* e );
+fact_axiom *fact_value_of (fact_reasoning_kernel *k, fact_individual_expression *i, fact_d_role_expression *a, fact_data_value_expression *v);
+fact_data_type_expression* fact_data_type ( fact_reasoning_kernel *k,const char* name );
+fact_data_value_expression* fact_data_value ( fact_reasoning_kernel *k,const char* value, fact_data_type_expression* type );
+fact_data_type_expression* fact_get_int_data_type ( fact_reasoning_kernel *k );
 """)
 
 ffi.set_source('_factpp', """
