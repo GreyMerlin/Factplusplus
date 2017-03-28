@@ -18,19 +18,6 @@
 #
 from _factpp import ffi, lib
 
-def print_array(data):
-    i = 0
-    print('[')
-    while True:
-        v = data[i]
-        if v == ffi.NULL:
-            break
-
-        s = ffi.string(data[i][0]).decode()
-        print('[' + s + ']')
-        i += 1
-    print(']')
-
 k = lib.fact_reasoning_kernel_new()
 lib.fact_set_verbose_output(k, 1)
 lib.fact_kb_set_tracing(k)
@@ -46,22 +33,12 @@ lib.fact_set_transitive(k, r)
 lib.fact_related_to(k, c, r, d)
 lib.fact_related_to(k, d, r, e)
 
-print('start realise')
-lib.fact_realise_kb(k)
-print('end realise')
-
-print('related', lib.fact_is_related(k, c, r, d))
-print('related', lib.fact_is_related(k, d, r, c))
-print('related', lib.fact_is_related(k, c, r, e))
-print('related', lib.fact_is_related(k, e, r, c))
-
-o_top = lib.fact_top(k)
-actor = lib.fact_individual_actor_new()
-p_actor = ffi.new('fact_actor **', actor)
-lib.fact_get_sub_concepts(k, o_top, 0, p_actor)
-names = lib.fact_get_elements_2d(actor)
-print_array(names)
-lib.fact_actor_free(actor)
+values = lib.fact_get_role_fillers(k, d, r)
+i = 0
+while values[i] != ffi.NULL:
+    s = ffi.string(values[i]).decode()
+    print(s)
+    i += 1
 
 lib.fact_reasoning_kernel_free(k)
 

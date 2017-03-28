@@ -103,6 +103,7 @@ fact_axiom *fact_value_of (fact_reasoning_kernel *k, fact_individual_expression 
 fact_data_type_expression* fact_data_type ( fact_reasoning_kernel *k,const char* name );
 fact_data_value_expression* fact_data_value ( fact_reasoning_kernel *k,const char* value, fact_data_type_expression* type );
 fact_data_type_expression* fact_get_int_data_type ( fact_reasoning_kernel *k );
+const char **fact_get_role_fillers (fact_reasoning_kernel *, fact_individual_expression *i, fact_o_role_expression *r);
 """)
 
 ffi.set_source('_factpp', """
