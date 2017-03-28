@@ -884,3 +884,13 @@ void fact_kb_set_dump(fact_reasoning_kernel *k)
 {
     k->p->setDumpOntology(true);
 }
+const char **fact_get_role_fillers(fact_reasoning_kernel *k, fact_individual_expression *i, fact_o_role_expression *r) {
+    ReasoningKernel::IndividualSet s = ReasoningKernel::IndividualSet();
+    k->p->getRoleFillers(i->p, r->p, s);
+
+    const char** result = new const char*[s.size() + 1];
+    for (size_t i = 0; i < s.size(); ++i)
+        result[i] = s[i]->getName();
+    result[s.size()] = NULL;
+    return result;
+}

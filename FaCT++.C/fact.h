@@ -248,11 +248,10 @@ void fact_get_related_roles (fact_reasoning_kernel *,
 			     fact_individual_expression *i,
 			     int data, int needI,
 			     fact_names_vector **result);
-void fact_get_role_fillers (fact_reasoning_kernel *,
-			    fact_individual_expression *i,
-			    fact_o_role_expression *r,
-			    fact_individual_set **result);
  */
+const char **fact_get_role_fillers (fact_reasoning_kernel *,
+			    fact_individual_expression *i,
+			    fact_o_role_expression *r);
 int fact_is_related (fact_reasoning_kernel *,
 		 fact_individual_expression *i,
 		 fact_o_role_expression *r,
