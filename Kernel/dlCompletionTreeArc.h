@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -67,7 +67,7 @@ protected:	// classes
 	public:
 		TCTEdgeRestorer ( DlCompletionTreeArc* q ) : p(q), r(q->Role) {}
 		virtual ~TCTEdgeRestorer ( void ) {}
-		void restore ( void ) { p->Role = r; p->Reverse->Role = r->inverse(); }
+		virtual void restore ( void ) override { p->Role = r; p->Reverse->Role = r->inverse(); }
 	}; // TCTEdgeRestorer
 
 		/// class for restoring dep-set
@@ -79,7 +79,7 @@ protected:	// classes
 	public:
 		TCTEdgeDepRestorer ( DlCompletionTreeArc* q ) : p(q), dep(q->getDep()) {}
 		virtual ~TCTEdgeDepRestorer ( void ) {}
-		void restore ( void ) { p->depSet = dep; }
+		virtual void restore ( void ) override { p->depSet = dep; }
 	}; // TCTEdgeDepRestorer
 
 protected:	// methods

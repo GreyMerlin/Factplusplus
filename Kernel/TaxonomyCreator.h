@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -79,13 +79,13 @@ protected:	// internal typedefs
 		// iterators
 
 			/// begin of the Sure subsumers interval
-		virtual ss_iterator s_begin ( void ) { return beg; }
+		virtual ss_iterator s_begin ( void ) override { return beg; }
 			/// end of the Sure subsumers interval
-		virtual ss_iterator s_end ( void ) { return end; }
+		virtual ss_iterator s_end ( void ) override { return end; }
 			/// begin of the Possible subsumers interval
-		virtual ss_iterator p_begin ( void ) { return end; }
+		virtual ss_iterator p_begin ( void ) override { return end; }
 			/// end of the Possible subsumers interval
-		virtual ss_iterator p_end ( void ) { return end; }
+		virtual ss_iterator p_end ( void ) override { return end; }
 	}; // ToldSubsumers
 
 protected:	// members

@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -126,19 +126,7 @@ private:	// constants
 protected:	// types
 		/// enumeration for the cache
 	enum cacheStatus { csEmpty, csSat, csClassified };
-		/// set of TreeNE
-/*	class TreeNESet: public TNameSet<TTreeNamedEntry>
-	{
-	public:
-			/// dirty hack for the LISP ontology printing
-		template<class T>
-		void fill ( T& x ) const
-		{
-			for ( const_iterator p = Base.begin(); p != Base.end(); ++p )
-				x.recordDataRole(p->second->getName());
-		}
-	}; // TreeNESet
-*/
+
 protected:	// members
 		/// local TBox (to be created)
 	TBox* pTBox;

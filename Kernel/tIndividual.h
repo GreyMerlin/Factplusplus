@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -104,7 +104,7 @@ public:		// interface
 	virtual ~TIndividual ( void ) { delete pRelatedMap; }
 
 		/// init told subsumers of the individual by it's description
-	virtual void initToldSubsumers ( void )
+	virtual void initToldSubsumers ( void ) override
 	{
 		toldSubsumers.clear();
 		clearHasSP();
@@ -154,9 +154,9 @@ public:		// interface
 	// save/load interface; implementation is in SaveLoad.cpp
 
 		/// save entry
-	virtual void Save ( SaveLoadManager& ) const;
+	virtual void Save ( SaveLoadManager& ) const override;
 		/// load entry
-	virtual void Load ( SaveLoadManager& );
+	virtual void Load ( SaveLoadManager& ) override;
 }; // TIndividual
 
 #endif

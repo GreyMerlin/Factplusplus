@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -19,10 +19,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <iostream>
 
-#include "globaldef.h"
 #include "dumpInterface.h"
 #include "dlTBox.h"
-#include "RoleMaster.h"
 
 //-------------------------------------------------------------------------------
 // General dumping methods -- dumping relevant parts of ontology

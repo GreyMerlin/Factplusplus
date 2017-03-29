@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2006-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -56,14 +56,14 @@ public:
 	virtual ~JNIProgressMonitor ( void ) { env->DeleteGlobalRef(javaMonitor); }
 
 		/// informs about beginning of classification with number of concepts to be classified
-	virtual void setClassificationStarted ( unsigned int nConcepts )
+	virtual void setClassificationStarted ( unsigned int nConcepts ) override
 		{ env->CallVoidMethod ( javaMonitor, sCS, nConcepts ); }
 		/// informs about beginning of classification of a given CONCEPT
-	virtual void nextClass ( void ) { env->CallVoidMethod ( javaMonitor, nC ); }
+	virtual void nextClass ( void ) override { env->CallVoidMethod ( javaMonitor, nC ); }
 		/// informs that the reasoning is done
-	virtual void setFinished ( void ) { env->CallVoidMethod ( javaMonitor, sF ); }
+	virtual void setFinished ( void ) override { env->CallVoidMethod ( javaMonitor, sF ); }
 		/// @return true iff reasoner have to be stopped
-	virtual bool isCancelled ( void ) { return env->CallBooleanMethod ( javaMonitor, iC ); }
+	virtual bool isCancelled ( void ) override { return env->CallBooleanMethod ( javaMonitor, iC ); }
 }; // JNIProgressMonitor
 
 #endif

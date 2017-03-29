@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -83,9 +83,9 @@ public:		// interface
 		/// empty d'tor
 	virtual ~BCOr ( void ) {}
 		/// init branch index
-	virtual void init ( void ) { branchIndex = 0; }
+	virtual void init ( void ) override { branchIndex = 0; }
 		/// give the next branching alternative
-	virtual void nextOption ( void ) { ++branchIndex; }
+	virtual void nextOption ( void ) override { ++branchIndex; }
 
 	// access to the fields
 
@@ -120,9 +120,9 @@ public:		// interface
 		/// empty d'tor
 	virtual ~BCNN ( void ) {}
 		/// init value
-	virtual void init ( void ) { value = 1; }
+	virtual void init ( void ) override { value = 1; }
 		/// give the next branching alternative
-	virtual void nextOption ( void ) { ++value; }
+	virtual void nextOption ( void ) override { ++value; }
 
 	// access to the fields
 
@@ -155,7 +155,7 @@ public:		// interface
 		/// empty d'tor
 	virtual ~BCLE ( void ) {}
 		/// init indices
-	virtual void init ( void )
+	virtual void init ( void ) override
 	{
 		toIndex = 0;
 		fromIndex = 0;
@@ -163,7 +163,7 @@ public:		// interface
 		/// correct fromIndex after changing
 	void resetMCI ( void ) { fromIndex = (CRIndex)ItemsToMerge.size()-1; }
 		/// give the next branching alternative
-	virtual void nextOption ( void )
+	virtual void nextOption ( void ) override
 	{
 		--fromIndex;	// get new merge candidate
 		if ( fromIndex == toIndex )	// nothing more can be mergeable to BI node

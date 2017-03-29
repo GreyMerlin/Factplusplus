@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@ namespace {
 	std::ofstream LLprivate;
 }
 // define LL as a reference to the real ofstream
-std::ostream& LL { LLprivate };
+std::ostream& LL = LLprivate;
 
 bool LeveLogger :: initLogger ( unsigned int l, const char* filename )
 {

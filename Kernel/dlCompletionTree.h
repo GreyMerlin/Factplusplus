@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -95,7 +95,7 @@ protected:	// internal classes
 	public:
 		UnBlock ( DlCompletionTree* q ) : p(q), Blocker(q->Blocker), dep(q->pDep), pBlocked(q->pBlocked), dBlocked(q->dBlocked) {}
 		virtual ~UnBlock ( void ) {}
-		void restore ( void ) { p->Blocker = Blocker; p->pDep = dep; p->pBlocked = pBlocked; p->dBlocked = dBlocked; }
+		virtual void restore ( void ) override { p->Blocker = Blocker; p->pDep = dep; p->pBlocked = pBlocked; p->dBlocked = dBlocked; }
 	}; // UnBlock
 
 		/// restore (un)cached node
@@ -107,7 +107,7 @@ protected:	// internal classes
 	public:
 		CacheRestorer ( DlCompletionTree* q ) : p(q), cached(q->cached) {}
 		virtual ~CacheRestorer ( void ) {}
-		void restore ( void ) { p->cached = cached; }
+		virtual void restore ( void ) override { p->cached = cached; }
 	}; // CacheRestorer
 
 #ifdef RKG_IR_IN_NODE_LABEL
@@ -120,7 +120,7 @@ protected:	// internal classes
 	public:
 		IRRestorer ( DlCompletionTree* q ) : p(q), n(q->IR.size()) {}
 		virtual ~IRRestorer ( void ) {}
-		void restore ( void ) { p->IR.resize(n); }
+		virtual void restore ( void ) override { p->IR.resize(n); }
 	}; // IRRestorer
 #endif
 

@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2013-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -22,8 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "uk_ac_manchester_cs_factplusplus_FaCTPlusPlus.h"
 #include "Kernel.h"
 #include "tJNICache.h"
-#include "JNIActor.h"
-#include "eFPPTimeout.h"
 
 #ifdef __cplusplus
 extern "C" {

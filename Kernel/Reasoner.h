@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -158,7 +158,7 @@ protected:	// classes
 
 	protected:	// methods
 			/// specialise new method as the one doing nothing
-		virtual BranchingContext* createNew ( void ) { return nullptr; }
+		virtual BranchingContext* createNew ( void ) override { return nullptr; }
 			/// push method to use
 		BranchingContext* push ( BranchingContext* p )
 		{
@@ -205,7 +205,7 @@ protected:	// classes
 			PoolCh.clear();
 		}
 			/// clear the stack and pools
-		virtual void clear ( void )
+		virtual void clear ( void ) override
 		{
 			clearPools();
 			TSaveStack<BranchingContext>::clear();

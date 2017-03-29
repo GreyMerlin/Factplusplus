@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2006-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,7 @@ protected:	// members
 
 protected:	// methods
 		/// check whether actor is applicable to the ENTRY
-	virtual bool applicable ( const EntryType* entry ) const;
+	virtual bool applicable ( const EntryType* entry ) const override;
 		/// fills an array with all suitable data from the vertex
 	void fillArray ( const TaxonomyVertex& v, Array1D& array ) const
 	{

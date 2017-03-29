@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -228,7 +228,7 @@ protected:
 public:
 	AddRoleActor ( TRole::TRoleVec& v ) : rset(v) {}
 	virtual ~AddRoleActor ( void ) {}
-	virtual bool apply ( const TaxonomyVertex& v )
+	virtual bool apply ( const TaxonomyVertex& v ) override
 	{
 		if ( v.getPrimer()->getId() == 0 )
 			return false;

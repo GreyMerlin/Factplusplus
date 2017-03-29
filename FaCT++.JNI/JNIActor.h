@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2006-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -80,7 +80,7 @@ public:		// interface
 		/// taxonomy walking method.
 		/// @return true if node was processed, and there is no need to go further
 		/// @return false if node can not be processed in current settings
-	virtual bool apply ( const TaxonomyVertex& v )
+	virtual bool apply ( const TaxonomyVertex& v ) override
 	{
 		syn.clear();
 		tryEntry(v.getPrimer());

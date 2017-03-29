@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -272,6 +272,9 @@ int main ( int argc, char *argv[] )
 
 	// init undefined names
 	Kernel.setUseUndefinedNames(false);
+
+	// dump ontology if requested
+	Kernel.setDumpOntology(Kernel.getOptions()->getBool("dumpOntology"));
 
 	// Load the ontology
 	DLLispParser TBoxParser ( &iTBox, &Kernel );

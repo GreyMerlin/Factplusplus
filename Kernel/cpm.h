@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2006-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -39,9 +39,9 @@ public:
 	// interface
 
 		/// informs about beginning of classification with number of concepts to be classified
-	virtual void setClassificationStarted ( unsigned int nConcepts ) { ind.setLimit(nConcepts); }
+	virtual void setClassificationStarted ( unsigned int nConcepts ) override { ind.setLimit(nConcepts); }
 		/// informs about beginning of classification of a given CONCEPT
-	virtual void nextClass ( void ) { ind.incIndicator(); }
+	virtual void nextClass ( void ) override { ind.incIndicator(); }
 }; // ConsoleProgressMonitor
 
 #endif

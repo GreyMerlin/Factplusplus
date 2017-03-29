@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2013-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "Kernel.h"
 #include "OntologyBasedModularizer.h"
-#include "Actor.h"
 #include "tOntologyPrinterLISP.h"
 #include "procTimer.h"
 #include "SaveLoadManager.h"	// for saving/restoring ontology
@@ -156,17 +155,18 @@ ReasoningKernel :: doIncremental ( void )
 	TsProcTimer t;
 	t.Start();
 	LocalityChecker* lc = getModExtractor(SYN_LOC_STD)->getModularizer()->getLocalityChecker();
-	TOntology::iterator p, nb = Ontology.beginUnprocessed(), ne = Ontology.end(), rb = Ontology.beginRetracted(), re = Ontology.endRetracted();
+	TOntology::iterator nb = Ontology.beginUnprocessed(), ne = Ontology.end(), rb = Ontology.beginRetracted(), re = Ontology.endRetracted();
 //	TLISPOntologyPrinter pr(std::cout);
-//	for ( p = nb; p != ne; ++p )
+//	TOntology::iterator q;
+//	for ( q = nb; q != ne; ++q )
 //	{
 //		std::cout << "Add:";
-//		(*p)->accept(pr);
+//		(*q)->accept(pr);
 //	}
-//	for ( p = rb; p != re; ++p )
+//	for ( q = rb; q != re; ++q )
 //	{
 //		std::cout << "Del:";
-//		(*p)->accept(pr);
+//		(*q)->accept(pr);
 //	}
 	for ( NameSigMap::iterator p = Name2Sig.begin(), p_end = Name2Sig.end(); p != p_end; ++p )
 	{

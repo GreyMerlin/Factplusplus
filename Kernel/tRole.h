@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -484,14 +484,14 @@ public:		// interface
 	// output
 
 		/// print role to given stream
-	void Print ( std::ostream& o ) const;
+	void Print ( std::ostream& o ) const override;
 
 	// save/load interface; implementation is in SaveLoad.cpp
 
 		/// save entry
-	virtual void Save ( SaveLoadManager& m ) const;
+	virtual void Save ( SaveLoadManager& m ) const override;
 		/// load entry
-	virtual void Load ( SaveLoadManager& m );
+	virtual void Load ( SaveLoadManager& m ) override;
 }; // TRole
 
 /// @return R or -R for T in the form (inv ... (inv R)...)

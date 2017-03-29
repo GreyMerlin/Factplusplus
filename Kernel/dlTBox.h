@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -71,7 +71,7 @@ public:		// type interface
 		/// vector of SINGLETON-like elements
 	typedef std::vector<TIndividual*> SingletonVector;
 		/// map between names and corresponding module signatures
-	typedef std::map<const TNamedEntity*, TSignature*> NameSigMap;
+	typedef std::map<const TNamedEntity*, const TSignature*> NameSigMap;
 
 protected:	// types
 		/// type for DISJOINT-like statements

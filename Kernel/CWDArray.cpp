@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,7 @@ public:
 		, dep(p->getDep())
 	{}
 	virtual ~UnMerge ( void ) {}
-	void restore ( void )
+	virtual void restore ( void ) override
 	{
 		CWDArray::iterator p = label.Base.begin() + offset;
 		*p = ConceptWDep(p->bp(),dep);

@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -25,11 +25,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "eFPPSaveLoad.h"
 #include "SaveLoadManager.h"
 
-const char* ReasoningKernel :: Version = "1.6.4";
+const char* ReasoningKernel :: Version = "1.7.0-SNAPSHOT";
 const char* ReasoningKernel :: SupportedDL = "SROIQ(D)";
 const char* ReasoningKernel :: Copyright =
-	"Copyright (C) Dmitry Tsarkov, 2002-2015";
-const char* ReasoningKernel :: ReleaseDate = "23 August 2015";
+	"Copyright (C) Dmitry Tsarkov, 2002-2017";
+const char* ReasoningKernel :: ReleaseDate = "01 January 2017";
 
 // print the FaCT++ information only once
 static bool KernelFirstRun = true;
@@ -141,7 +141,11 @@ ReasoningKernel :: forceReload ( void )
 	if ( dumpOntology )
 	{
 		TLISPOntologyPrinter OntologyPrinter(std::cout);
-		//DRoles.fill(OntologyPrinter);
+		// First print all the declaration (as datarole declarations should be before usages)
+		OntologyPrinter.setPrintFlags(/*declarations=*/true, /*axioms=*/false);
+		Ontology.visitOntology(OntologyPrinter);
+		// Then print logical axioms
+		OntologyPrinter.setPrintFlags(/*declarations=*/false, /*axioms=*/true);
 		Ontology.visitOntology(OntologyPrinter);
 	}
 
@@ -344,7 +348,7 @@ protected:
 	void entry ( const ClassifiableEntry* q ) { if ( pe == q ) throw std::exception(); }
 public:
 	SupConceptActor ( ClassifiableEntry* q ) :pe(q) {}
-	virtual bool apply ( const TaxonomyVertex& v )
+	virtual bool apply ( const TaxonomyVertex& v ) override
 	{
 		entry(v.getPrimer());
 		for ( const auto& synonym: v.synonyms() )
@@ -467,7 +471,7 @@ public:
 	RIActor ( void ) {}
 	virtual ~RIActor ( void ) {}
 
-	virtual bool apply ( const TaxonomyVertex& v )
+	virtual bool apply ( const TaxonomyVertex& v ) override
 	{
 		bool ret = tryEntry(v.getPrimer());
 

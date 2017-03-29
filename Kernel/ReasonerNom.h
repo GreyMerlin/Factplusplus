@@ -1,6 +1,6 @@
 /* This file is part of the FaCT++ DL reasoner
 Copyright (C) 2003-2015 Dmitry Tsarkov and The University of Manchester
-Copyright (C) 2015-2016 Dmitry Tsarkov
+Copyright (C) 2015-2017 Dmitry Tsarkov
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -34,9 +34,9 @@ protected:	// members
 
 protected:	// methods
 		/// prepare reasoning
-	virtual void prepareReasoner ( void );
+	virtual void prepareReasoner ( void ) override;
 		/// there are nominals
-	virtual bool hasNominals ( void ) const { return true; }
+	virtual bool hasNominals ( void ) const override { return true; }
 
 //-----------------------------------------------------------------------------
 //--		internal nominal reasoning interface
