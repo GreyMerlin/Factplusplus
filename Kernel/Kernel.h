@@ -1290,6 +1290,7 @@ public:
 	void getRelatedRoles ( const TIndividualExpr* I, NamesVector& Rs, bool data, bool needI );
 		/// set RESULT into set of J's such that R(I,J)
 	void getRoleFillers ( const TIndividualExpr* I, const TORoleExpr* R, IndividualSet& Result );
+    const CIVec& getRoleFillers ( const TIndividualExpr* I, const TORoleExpr* R);
 		/// set RESULT into set of J's such that R(I,J)
 	bool isRelated ( const TIndividualExpr* I, const TORoleExpr* R, const TIndividualExpr* J );
 

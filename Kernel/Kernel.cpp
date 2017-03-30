@@ -532,12 +532,18 @@ ReasoningKernel :: getRelatedRoles ( const TIndividualExpr* I, NamesVector& Rs, 
 void
 ReasoningKernel :: getRoleFillers ( const TIndividualExpr* I, const TORoleExpr* R, IndividualSet& Result )
 {
-	realiseKB();	// ensure KB is ready to answer the query
-	CIVec vec = getRelated ( getIndividual ( I, "Individual name expected in the getRoleFillers()" ),
-							 getRole ( R, "Role expression expected in the getRoleFillers()" ) );
+	CIVec vec = getRoleFillers( I, R );
 	for ( CIVec::iterator p = vec.begin(), p_end = vec.end(); p < p_end; ++p )
 		Result.push_back(const_cast<TIndividual*>(*p));
 }
+const ReasoningKernel::CIVec&
+ReasoningKernel :: getRoleFillers ( const TIndividualExpr* I, const TORoleExpr* R)
+{
+	realiseKB();    // ensure KB is ready to answer the query
+	return getRelated ( getIndividual ( I, "Individual name expected in the getRoleFillers()" ),
+						getRole ( R, "Role expression expected in the getRoleFillers()" ) );
+}
+
 
 /// set RESULT into set of J's such that R(I,J)
 bool
