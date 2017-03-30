@@ -55,10 +55,26 @@ cdef extern from 'tDLExpression.h':
     cdef cppclass TDLObjectRoleExpression: # (TDLObjectRoleComplexExpression):
         pass
 
+    cdef cppclass TDLDataExpression:
+        pass
+
+    cdef cppclass TDLDataTypeName:
+        pass
+
+    cdef cppclass TDLConceptExpression:
+        pass
+
+    cdef cppclass TDLDataRoleExpression:
+        pass
+
 cdef extern from 'tExpressionManager.h':
     cdef cppclass TExpressionManager:
         TDLIndividualExpression* Individual(string)
         TDLObjectRoleExpression* ObjectRole(string)
+        TDLDataExpression* DataTop()
+        TDLDataTypeName* DataType(string)
+        TDLConceptExpression* Concept(string)
+        TDLDataRoleExpression* DataRole(string)
 
 #cdef extern from 'Kernel.h' namespace 'ReasoningKernel':
 #    ctypedef vector[TNamedEntry*] IndividualSet
@@ -70,6 +86,7 @@ cdef extern from 'Kernel.h':
         TDLAxiom* setSymmetric(TDLObjectRoleExpression*)
         TDLAxiom* setTransitive(TDLObjectRoleExpression*)
         TDLAxiom* relatedTo(TDLIndividualExpression*, TDLObjectRoleExpression*, TDLIndividualExpression*)
+        TDLAxiom* instanceOf(TDLIndividualExpression*, TDLConceptExpression* C)
         #TIndividual* getIndividual(TDLIndividualExpression*, char*)
         #TRole* getRole(TDLObjectRoleExpression*, char*)
         #CIVec& getRelated(TIndividual*, TRole*)
@@ -87,8 +104,20 @@ cdef class Individual:
 cdef class IndividualExpr:
     cdef const TDLIndividualExpression *c_obj
 
+cdef class ConceptExpr:
+    cdef const TDLConceptExpression *c_obj
+
 cdef class ObjectRoleExpr:
     cdef const TDLObjectRoleExpression *c_obj
+
+cdef class DataRoleExpr:
+    cdef const TDLDataRoleExpression *c_obj
+
+cdef class DataExpr:
+    cdef const TDLDataExpression *c_obj
+
+cdef class DataType:
+    cdef const TDLDataTypeName *c_obj
 
 cdef class Reasoner:
     cdef ReasoningKernel *c_kernel
@@ -99,14 +128,27 @@ cdef class Reasoner:
     def __dealloc__(self):
         del self.c_kernel
 
+    def create_concept(self, name):
+        cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
+        result.c_obj = self.c_kernel.getExpressionManager().Concept(name)
+        return result
+
     def create_individual(self, name):
         cdef IndividualExpr result = IndividualExpr.__new__(IndividualExpr)
         result.c_obj = self.c_kernel.getExpressionManager().Individual(name)
         return result
 
+    def instance_of(self, IndividualExpr i, ConceptExpr c):
+        self.c_kernel.instanceOf(i.c_obj, c.c_obj)
+
     def create_object_role(self, string name):
         cdef ObjectRoleExpr result = ObjectRoleExpr.__new__(ObjectRoleExpr)
         result.c_obj = self.c_kernel.getExpressionManager().ObjectRole(name)
+        return result
+
+    def create_data_role(self, name):
+        cdef DataRoleExpr result = DataRoleExpr.__new__(DataRoleExpr)
+        result.c_obj = self.c_kernel.getExpressionManager().DataRole(name)
         return result
 
     def set_symmetric(self, ObjectRoleExpr role):
@@ -126,5 +168,15 @@ cdef class Reasoner:
             result = Individual.__new__(Individual)
             result.c_obj = data[k]
             yield result
+
+    def data_top(self):
+        cdef DataExpr result = DataExpr.__new__(DataExpr)
+        result.c_obj = self.c_kernel.getExpressionManager().DataTop()
+        return result
+
+    def data_type(self, name):
+        cdef DataType result = DataType.__new__(DataType)
+        result.c_obj = self.c_kernel.getExpressionManager().DataType(name)
+        return result
 
 # vim: sw=4:et:ai
