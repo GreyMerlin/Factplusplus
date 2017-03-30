@@ -3,3 +3,8 @@ Python binding for FaCT++ library.
 How to add more bindings? See the following commit
 
     https://bitbucket.org/wrobell/factplusplus/commits/a3aed0e6f9e9d9c784e29defee366b223b808481?at=factpp
+
+Todo:
+
+- convert all current examples to use cython based API
+- start working on rdflib store
