@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # factpp - Python interface to FaCT++ reasoner
 #
@@ -18,16 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from distutils.core import setup, Extension
-from Cython.Build import cythonize
-
-setup(
-    name='factpp',
-    packages=['factpp'],
-    ext_modules=cythonize([
-        Extension('factpp/_factpp', ['factpp/_factpp.pyx'], libraries=['Kernel'])
-    ]),
-    license='GPLv3+',
-)
+from ._factpp import Reasoner
 
 # vim: sw=4:et:ai

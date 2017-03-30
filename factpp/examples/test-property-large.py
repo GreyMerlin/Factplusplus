@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # factpp - Python interface to FaCT++ reasoner
 #
@@ -18,16 +17,34 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from distutils.core import setup, Extension
-from Cython.Build import cythonize
+import factpp
+import time
 
-setup(
-    name='factpp',
-    packages=['factpp'],
-    ext_modules=cythonize([
-        Extension('factpp/_factpp', ['factpp/_factpp.pyx'], libraries=['Kernel'])
-    ]),
-    license='GPLv3+',
-)
+kernel = factpp.Reasoner()
+
+start = time.time()
+individuals = [
+    kernel.create_individual('i-{}'.format(i).encode())
+    for i in range(10 ** 4)
+]
+role = kernel.create_object_role(b'R')
+
+kernel.set_symmetric(role)
+kernel.set_transitive(role)
+
+items = [iter(individuals)] * 4
+for i1, i2, i3, i4 in zip(*items):
+    kernel.related_to(i1, role, i2)
+    kernel.related_to(i2, role, i3)
+    kernel.related_to(i3, role, i4)
+
+print('setup done after', time.time() - start)
+
+values = kernel.get_role_fillers(individuals[-1], role)
+
+for v in values:
+    print(v.name)
+
+print('total exec time', time.time() - start)
 
 # vim: sw=4:et:ai

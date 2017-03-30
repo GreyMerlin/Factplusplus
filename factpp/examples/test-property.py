@@ -17,30 +17,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from _factpp import ffi, lib
+import factpp
 
-k = lib.fact_reasoning_kernel_new()
-lib.fact_set_verbose_output(k, 1)
-lib.fact_kb_set_tracing(k)
-lib.fact_kb_set_dump(k)
+kernel = factpp.Reasoner()
 
-c = lib.fact_individual(k, b'C')
-d = lib.fact_individual(k, b'D')
-e = lib.fact_individual(k, b'E')
-r = lib.fact_object_role(k, b'R')
+c = kernel.create_individual(b'C')
+d = kernel.create_individual(b'D')
+e = kernel.create_individual(b'E')
+r = kernel.create_object_role(b'R')
 
-lib.fact_set_symmetric(k, r)
-lib.fact_set_transitive(k, r)
-lib.fact_related_to(k, c, r, d)
-lib.fact_related_to(k, d, r, e)
+kernel.set_symmetric(r)
+kernel.set_transitive(r)
+kernel.related_to(c, r, d)
+kernel.related_to(d, r, e)
 
-values = lib.fact_get_role_fillers(k, d, r)
-i = 0
-while values[i] != ffi.NULL:
-    s = ffi.string(values[i]).decode()
-    print(s)
-    i += 1
-
-lib.fact_reasoning_kernel_free(k)
+values = kernel.get_role_fillers(d, r)
+for v in values:
+    print(v.name)
 
 # vim: sw=4:et:ai
