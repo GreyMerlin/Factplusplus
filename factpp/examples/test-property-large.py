@@ -20,27 +20,27 @@
 import factpp
 import time
 
-kernel = factpp.Reasoner()
+reasoner = factpp.Reasoner()
 
 start = time.time()
 individuals = [
-    kernel.create_individual('i-{}'.format(i).encode())
+    reasoner.create_individual('i-{}'.format(i).encode())
     for i in range(10 ** 4)
 ]
-role = kernel.create_object_role(b'R')
+role = reasoner.create_object_role(b'R')
 
-kernel.set_symmetric(role)
-kernel.set_transitive(role)
+reasoner.set_symmetric(role)
+reasoner.set_transitive(role)
 
 items = [iter(individuals)] * 4
 for i1, i2, i3, i4 in zip(*items):
-    kernel.related_to(i1, role, i2)
-    kernel.related_to(i2, role, i3)
-    kernel.related_to(i3, role, i4)
+    reasoner.related_to(i1, role, i2)
+    reasoner.related_to(i2, role, i3)
+    reasoner.related_to(i3, role, i4)
 
 print('setup done after', time.time() - start)
 
-values = kernel.get_role_fillers(individuals[-1], role)
+values = reasoner.get_role_fillers(individuals[-1], role)
 
 for v in values:
     print(v.name)

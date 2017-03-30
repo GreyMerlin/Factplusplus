@@ -19,19 +19,19 @@
 
 import factpp
 
-kernel = factpp.Reasoner()
+reasoner = factpp.Reasoner()
 
-c = kernel.create_individual(b'C')
-d = kernel.create_individual(b'D')
-e = kernel.create_individual(b'E')
-r = kernel.create_object_role(b'R')
+c = reasoner.create_individual(b'C')
+d = reasoner.create_individual(b'D')
+e = reasoner.create_individual(b'E')
+r = reasoner.create_object_role(b'R')
 
-kernel.set_symmetric(r)
-kernel.set_transitive(r)
-kernel.related_to(c, r, d)
-kernel.related_to(d, r, e)
+reasoner.set_symmetric(r)
+reasoner.set_transitive(r)
+reasoner.related_to(c, r, d)
+reasoner.related_to(d, r, e)
 
-values = kernel.get_role_fillers(d, r)
+values = reasoner.get_role_fillers(d, r)
 for v in values:
     print(v.name)
 
