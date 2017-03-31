@@ -178,21 +178,49 @@ cdef class Reasoner:
     def __dealloc__(self):
         del self.c_kernel
 
+    #
+    # concepts
+    #
+
     def create_concept(self, name):
         cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
         result.c_obj = self.c_kernel.getExpressionManager().Concept(name)
         return result
+
+    def implies_concepts(self, ConceptExpr c1, ConceptExpr c2):
+        self.c_kernel.impliesConcepts(c1.c_obj, c2.c_obj)
+
+    def disjoint_concepts(self, classes):
+        self.c_kernel.getExpressionManager().newArgList()
+        for c in classes:
+            self.c_kernel.getExpressionManager().addArg(
+                <TDLConceptExpression*?>(<ConceptExpr>c).c_obj
+            )
+        self.c_kernel.disjointConcepts()
+
+    #
+    # individuals
+    #
 
     def create_individual(self, name):
         cdef IndividualExpr result = IndividualExpr.__new__(IndividualExpr)
         result.c_obj = self.c_kernel.getExpressionManager().Individual(name)
         return result
 
-    def implies_concepts(self, ConceptExpr c1, ConceptExpr c2):
-        self.c_kernel.impliesConcepts(c1.c_obj, c2.c_obj)
-
     def instance_of(self, IndividualExpr i, ConceptExpr c):
         self.c_kernel.instanceOf(i.c_obj, c.c_obj)
+
+    def different_individuals(self, instances):
+        self.c_kernel.getExpressionManager().newArgList()
+        for i in instances:
+            self.c_kernel.getExpressionManager().addArg(
+                <TDLIndividualExpression*?>(<IndividualExpr>i).c_obj
+            )
+        self.c_kernel.processDifferent()
+
+    #
+    # object roles
+    #
 
     def create_object_role(self, string name):
         cdef ObjectRoleExpr result = ObjectRoleExpr.__new__(ObjectRoleExpr)
@@ -219,22 +247,6 @@ cdef class Reasoner:
     def related_to(self, IndividualExpr i1, ObjectRoleExpr r, IndividualExpr i2):
         self.c_kernel.relatedTo(i1.c_obj, r.c_obj, i2.c_obj)
 
-    def disjoint_concepts(self, classes):
-        self.c_kernel.getExpressionManager().newArgList()
-        for c in classes:
-            self.c_kernel.getExpressionManager().addArg(
-                <TDLConceptExpression*?>(<ConceptExpr>c).c_obj
-            )
-        self.c_kernel.disjointConcepts()
-
-    def different_individuals(self, instances):
-        self.c_kernel.getExpressionManager().newArgList()
-        for i in instances:
-            self.c_kernel.getExpressionManager().addArg(
-                <TDLIndividualExpression*?>(<IndividualExpr>i).c_obj
-            )
-        self.c_kernel.processDifferent()
-
     def get_role_fillers(self, IndividualExpr i, ObjectRoleExpr r):
         cdef CIVec data = self.c_kernel.getRoleFillers(i.c_obj, r.c_obj)
         cdef Individual result
@@ -243,6 +255,10 @@ cdef class Reasoner:
             result = Individual.__new__(Individual)
             result.c_obj = data[k]
             yield result
+
+    #
+    # data roles
+    #
 
     def create_data_role(self, name):
         cdef DataRoleExpr result = DataRoleExpr.__new__(DataRoleExpr)
@@ -279,6 +295,10 @@ cdef class Reasoner:
         t = self.c_kernel.getExpressionManager().DataType(b'http://www.w3.org/2001/XMLSchema#integer')
         value = self.c_kernel.getExpressionManager().DataValue(str(v).encode(), t)
         self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
+
+    #
+    # general
+    #
 
     def realise(self):
         self.c_kernel.realiseKB()
