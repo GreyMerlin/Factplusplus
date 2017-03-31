@@ -16,41 +16,30 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from _factpp import ffi, lib
 
-k = lib.fact_reasoning_kernel_new()
-lib.fact_set_verbose_output(k, 1)
-lib.fact_kb_set_tracing(k)
-lib.fact_kb_set_dump(k)
+import factpp
+
+reasoner = factpp.Reasoner()
 
 classes = [
-    lib.fact_concept(k, b'A'),
-    lib.fact_concept(k, b'B'),
-    lib.fact_concept(k, b'C'),
+    reasoner.create_concept(b'A'),
+    reasoner.create_concept(b'B'),
+    reasoner.create_concept(b'C'),
 ]
-p_classes = [ffi.cast('fact_expression*', c) for c in classes]
 
-lib.fact_new_arg_list(k)
-for c in p_classes:
-    lib.fact_add_arg(k, c)
-lib.fact_disjoint_concepts(k)
+reasoner.disjoint_concepts(classes)
 
-a = lib.fact_individual(k, b'a')
-b = lib.fact_individual(k, b'b')
-c = lib.fact_individual(k, b'c')
-lib.fact_instance_of(k, a, classes[0])
+a = reasoner.create_individual(b'a')
+b = reasoner.create_individual(b'b')
+c = reasoner.create_individual(b'c')
+reasoner.instance_of(a, classes[0])
+
+print('a is A, consistency:', reasoner.is_consistent())
 
 # inconsistent, b is both instance of class B and C, but B and C are
 # disjoint
-lib.fact_instance_of(k, b, classes[1])
-lib.fact_instance_of(k, b, classes[2])
-
-print('start realise')
-lib.fact_realise_kb(k)
-print('end realise')
-
-print('consistent', lib.fact_is_kb_consistent(k))
-
-lib.fact_reasoning_kernel_free(k)
+reasoner.instance_of(b, classes[1])
+reasoner.instance_of(b, classes[2])
+print('b is B and b is C, consistency:', reasoner.is_consistent())
 
 # vim: sw=4:et:ai
