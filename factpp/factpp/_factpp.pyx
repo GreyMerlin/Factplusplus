@@ -226,7 +226,7 @@ cdef class Reasoner:
             )
         self.c_kernel.disjointConcepts()
 
-    def different_instances(self, instances):
+    def different_individuals(self, instances):
         self.c_kernel.getExpressionManager().newArgList()
         for i in instances:
             self.c_kernel.getExpressionManager().addArg(
