@@ -166,14 +166,22 @@ cdef class DataExpr:
 cdef class DataType:
     cdef TDLDataTypeName *c_obj
 
-#cdef class DataValue:
-#    cdef TDLDataValue *c_obj
-
 cdef class Reasoner:
     cdef ReasoningKernel *c_kernel
+    cdef TDLDataTypeName *type_int
+    cdef TDLDataTypeName *type_str
+    cdef TDLDataTypeName *type_float
+    cdef TDLDataTypeName *type_bool
+    cdef TDLDataTypeName *type_datetime_long
 
     def __cinit__(self):
         self.c_kernel = new ReasoningKernel()
+        mgr = self.c_kernel.getExpressionManager()
+        self.type_int = mgr.DataType(b'http://www.w3.org/2001/XMLSchema#integer')
+        self.type_str = mgr.DataType('http://www.w3.org/2001/XMLSchema#string')
+        self.type_float = mgr.DataType('http://www.w3.org/2001/XMLSchema#float')
+        self.type_bool = mgr.DataType('http://www.w3.org/2001/XMLSchema#boolean')
+        self.type_datetime_long = mgr.DataType('http://www.w3.org/2001/XMLSchema#dateTimeAsLong')
 
     def __dealloc__(self):
         del self.c_kernel
@@ -291,9 +299,28 @@ cdef class Reasoner:
 #       result.c_obj = self.c_kernel.getExpressionManager().DataValue(v, t.c_obj)
 #       return result
 
-    def value_of(self, IndividualExpr i, DataRoleExpr r, int v):
-        t = self.c_kernel.getExpressionManager().DataType(b'http://www.w3.org/2001/XMLSchema#integer')
-        value = self.c_kernel.getExpressionManager().DataValue(str(v).encode(), t)
+    def value_of_int(self, IndividualExpr i, DataRoleExpr r, int v):
+        value = self.c_kernel.getExpressionManager().DataValue(
+            str(v).encode(), self.type_int
+        )
+        self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
+
+    def value_of_str(self, IndividualExpr i, DataRoleExpr r, str v):
+        value = self.c_kernel.getExpressionManager().DataValue(
+            v.encode(), self.type_str
+        )
+        self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
+
+    def value_of_float(self, IndividualExpr i, DataRoleExpr r, float v):
+        value = self.c_kernel.getExpressionManager().DataValue(
+            str(v).encode(), self.type_float
+        )
+        self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
+
+    def value_of_bool(self, IndividualExpr i, DataRoleExpr r, bool v):
+        value = self.c_kernel.getExpressionManager().DataValue(
+            str(v).encode(), self.type_bool
+        )
         self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
 
     #

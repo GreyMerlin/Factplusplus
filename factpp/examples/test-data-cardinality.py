@@ -21,7 +21,7 @@ import factpp
 
 reasoner = factpp.Reasoner()
 top_data = reasoner.data_top()
-type_integer = reasoner.data_type(b'http://www.w3.org/2001/XMLSchema#integer')
+type_int = reasoner.data_type(b'http://www.w3.org/2001/XMLSchema#integer')
 
 cls_a = reasoner.create_concept(b'CLS-A')
 c = reasoner.create_individual(b'C')
@@ -29,15 +29,15 @@ reasoner.instance_of(c, cls_a)
 
 r = reasoner.create_data_role(b'R')
 reasoner.set_d_domain(r, cls_a)
-reasoner.set_d_range(r, type_integer)
+reasoner.set_d_range(r, type_int)
 
 restriction_max_one = reasoner.max_d_cardinality(1, r, top_data)
 reasoner.implies_concepts(cls_a, restriction_max_one)
 
-reasoner.value_of(c, r, 1)
+reasoner.value_of_int(c, r, 1)
 print('consistent after first value:', reasoner.is_consistent())
 
-reasoner.value_of(c, r, 2)
+reasoner.value_of_int(c, r, 2)
 print('consistent after 2nd value:', reasoner.is_consistent())
 
 # vim: sw=4:et:ai
