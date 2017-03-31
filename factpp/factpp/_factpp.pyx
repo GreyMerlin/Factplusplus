@@ -135,9 +135,10 @@ cdef extern from 'Kernel.h':
         #TIndividual* getIndividual(TDLIndividualExpression*, char*)
         #TRole* getRole(TDLObjectRoleExpression*, char*)
         #CIVec& getRelated(TIndividual*, TRole*)
-        #void realiseKB()
         #void getRoleFillers(TDLIndividualExpression*, TDLObjectRoleExpression*, IndividualSet&)
         CIVec& getRoleFillers(TDLIndividualExpression*, TDLObjectRoleExpression*)
+
+        void realiseKB()
         bool isKBConsistent()
 
 cdef class Individual:
@@ -278,6 +279,9 @@ cdef class Reasoner:
         t = self.c_kernel.getExpressionManager().DataType(b'http://www.w3.org/2001/XMLSchema#integer')
         value = self.c_kernel.getExpressionManager().DataValue(str(v).encode(), t)
         self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
+
+    def realise(self):
+        self.c_kernel.realiseKB()
 
     def is_consistent(self):
         return self.c_kernel.isKBConsistent()

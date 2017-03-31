@@ -38,13 +38,15 @@ for i1, i2, i3, i4 in zip(*items):
     reasoner.related_to(i2, role, i3)
     reasoner.related_to(i3, role, i4)
 
-print('setup done after', time.time() - start)
+print('setup done within {:.4f}s'.format(time.time() - start))
+
+reasoner.realise()
+print('realised after {:.4f}s'.format(time.time() - start))
 
 values = reasoner.get_role_fillers(individuals[-1], role)
-
 for v in values:
     print(v.name)
 
-print('total exec time', time.time() - start)
+print('total exec time {:.4f}s'.format(time.time() - start))
 
 # vim: sw=4:et:ai
