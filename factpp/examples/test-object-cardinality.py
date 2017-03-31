@@ -16,54 +16,35 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from _factpp import ffi, lib
 
-k = lib.fact_reasoning_kernel_new()
-lib.fact_set_verbose_output(k, 1)
-lib.fact_kb_set_tracing(k)
-lib.fact_kb_set_dump(k)
+import factpp
 
-cls_a = lib.fact_concept(k, b'CLS-A')
-cls_b = lib.fact_concept(k, b'CLS-B')
+reasoner = factpp.Reasoner()
 
-lib.fact_new_arg_list(k)
-p_cls_a = ffi.cast('fact_expression*', cls_a)
-p_cls_b = ffi.cast('fact_expression*', cls_b)
-lib.fact_add_arg(k, p_cls_a)
-lib.fact_add_arg(k, p_cls_b)
-lib.fact_disjoint_concepts(k)
+cls_a = reasoner.create_concept(b'CLS-A')
+cls_b = reasoner.create_concept(b'CLS-B')
+reasoner.disjoint_concepts([cls_a, cls_b])
 
-c = lib.fact_individual(k, b'C')
-lib.fact_instance_of(k, c, cls_a)
+r = reasoner.create_object_role(b'R')
+reasoner.set_o_domain(r, cls_a)
+reasoner.set_o_range(r, cls_b)
 
-r = lib.fact_object_role(k, b'R')
-lib.fact_set_o_domain(k, r, cls_a)
-lib.fact_set_o_range(k, r, cls_b)
+c = reasoner.create_individual(b'C')
+reasoner.instance_of(c, cls_a)
 
-restriction_max_one_cls_b = lib.fact_o_max_cardinality(k, 1, r, cls_b)
-lib.fact_implies_concepts(k, cls_a, restriction_max_one_cls_b)
+restriction_max_one_cls_b = reasoner.max_o_cardinality(1, r, cls_b)
+reasoner.implies_concepts(cls_a, restriction_max_one_cls_b)
 
-d = lib.fact_individual(k, b'D')
-lib.fact_instance_of(k, d, cls_b)
-lib.fact_related_to(k, c, r, d)
-
-print('consistent', lib.fact_is_kb_consistent(k))
-print()
+d = reasoner.create_individual( b'D')
+reasoner.instance_of(d, cls_b)
+reasoner.related_to(c, r, d)
+print('consistent after 1st instance:', reasoner.is_consistent())
 
 # add another individual to class C, making ontology inconsistent
-x = lib.fact_individual(k, b'X')
-lib.fact_instance_of(k, x, cls_b)
-lib.fact_related_to(k, c, r, x)
-
-lib.fact_new_arg_list(k)
-p_d = ffi.cast('fact_expression*', d)
-p_x = ffi.cast('fact_expression*', x)
-lib.fact_add_arg(k, p_d)
-lib.fact_add_arg(k, p_x)
-lib.fact_process_different(k)
-
-print('consistent', lib.fact_is_kb_consistent(k))
-
-lib.fact_reasoning_kernel_free(k)
+x = reasoner.create_individual(b'X')
+reasoner.instance_of(x, cls_b)
+reasoner.related_to(c, r, x)
+reasoner.different_instances([d, x])
+print('consistent after 2nd instance:', reasoner.is_consistent())
 
 # vim: sw=4:et:ai

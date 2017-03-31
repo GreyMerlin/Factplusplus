@@ -25,7 +25,7 @@ setup(
     name='factpp',
     packages=['factpp'],
     ext_modules=cythonize([
-        Extension('factpp/_factpp', ['factpp/_factpp.pyx'], libraries=['Kernel'])
+        Extension('factpp._factpp', ['factpp/_factpp.pyx'], libraries=['Kernel'])
     ]),
     license='GPLv3+',
 )

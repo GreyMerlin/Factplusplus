@@ -20,6 +20,7 @@
 # distutils: language = c++
 # cython: c_string_type=unicode, c_string_encoding=utf8
 
+from libcpp cimport bool
 from libcpp.string cimport string
 from cython.operator cimport dereference, preincrement
 
@@ -58,29 +59,38 @@ cdef extern from 'tDLExpression.h':
         TDLIndividualName(string) except +
         string getName()
 
-    cdef cppclass TDLIndividualExpression:
-        pass
-
     cdef cppclass TDLObjectRoleName:
         TDLObjectRoleName(string) except +
         string getName()
 
-#   cdef cppclass TDLRoleExpression:
-#       pass
-#
-#   cdef cppclass TDLObjectRoleComplexExpression(TDLRoleExpression):
-#       pass
-#
-    cdef cppclass TDLObjectRoleExpression: # (TDLObjectRoleComplexExpression):
+    cdef cppclass TDLExpression:
+        pass
+
+    cdef cppclass TDLRoleExpression:
+        pass
+
+    cdef cppclass TDLObjectRoleComplexExpression(TDLRoleExpression):
+        pass
+
+    cdef cppclass TDLObjectRoleExpression(TDLObjectRoleComplexExpression):
         pass
 
     cdef cppclass TDLDataExpression:
         pass
 
-    cdef cppclass TDLDataTypeName:
+    cdef cppclass TDLDataValue(TDLDataExpression):
         pass
 
-    cdef cppclass TDLConceptExpression:
+    cdef cppclass TDLDataTypeExpression(TDLDataExpression):
+        pass
+
+    cdef cppclass TDLDataTypeName(TDLDataTypeExpression):
+        pass
+
+    cdef cppclass TDLConceptExpression(TDLExpression):
+        pass
+
+    cdef cppclass TDLIndividualExpression(TDLExpression):
         pass
 
     cdef cppclass TDLDataRoleExpression:
@@ -94,6 +104,13 @@ cdef extern from 'tExpressionManager.h':
         TDLDataTypeName* DataType(string)
         TDLConceptExpression* Concept(string)
         TDLDataRoleExpression* DataRole(string)
+        TDLConceptExpression* MaxCardinality(unsigned int, const TDLDataRoleExpression*, const TDLDataExpression*)
+        TDLConceptExpression* MaxCardinality(unsigned int, const TDLObjectRoleExpression*, const TDLConceptExpression*)
+        const TDLDataValue* DataValue(string, const TDLDataTypeExpression*);
+
+        void newArgList()
+        void addArg(const TDLExpression*)
+
 
 #cdef extern from 'Kernel.h' namespace 'ReasoningKernel':
 #    ctypedef vector[TNamedEntry*] IndividualSet
@@ -106,12 +123,22 @@ cdef extern from 'Kernel.h':
         TDLAxiom* setTransitive(TDLObjectRoleExpression*)
         TDLAxiom* relatedTo(TDLIndividualExpression*, TDLObjectRoleExpression*, TDLIndividualExpression*)
         TDLAxiom* instanceOf(TDLIndividualExpression*, TDLConceptExpression* C)
+        TDLAxiom* valueOf(TDLIndividualExpression*, TDLDataRoleExpression*, TDLDataValue*)
+        TDLAxiom* setODomain(TDLObjectRoleExpression*, TDLConceptExpression*)
+        TDLAxiom* setORange(TDLObjectRoleExpression*, TDLConceptExpression*)
+        TDLAxiom* setDDomain(TDLDataRoleExpression*, TDLConceptExpression*)
+        TDLAxiom* setDRange(TDLDataRoleExpression*, TDLDataExpression*)
+
+        TDLAxiom* disjointConcepts()
+        TDLAxiom* processDifferent()
+        TDLAxiom* impliesConcepts(TDLConceptExpression*, TDLConceptExpression*)
         #TIndividual* getIndividual(TDLIndividualExpression*, char*)
         #TRole* getRole(TDLObjectRoleExpression*, char*)
         #CIVec& getRelated(TIndividual*, TRole*)
         #void realiseKB()
         #void getRoleFillers(TDLIndividualExpression*, TDLObjectRoleExpression*, IndividualSet&)
         CIVec& getRoleFillers(TDLIndividualExpression*, TDLObjectRoleExpression*)
+        bool isKBConsistent()
 
 cdef class Individual:
     cdef const TIndividual *c_obj
@@ -136,7 +163,10 @@ cdef class DataExpr:
     cdef const TDLDataExpression *c_obj
 
 cdef class DataType:
-    cdef const TDLDataTypeName *c_obj
+    cdef TDLDataTypeName *c_obj
+
+#cdef class DataValue:
+#    cdef TDLDataValue *c_obj
 
 cdef class Reasoner:
     cdef ReasoningKernel *c_kernel
@@ -157,6 +187,9 @@ cdef class Reasoner:
         result.c_obj = self.c_kernel.getExpressionManager().Individual(name)
         return result
 
+    def implies_concepts(self, ConceptExpr c1, ConceptExpr c2):
+        self.c_kernel.impliesConcepts(c1.c_obj, c2.c_obj)
+
     def instance_of(self, IndividualExpr i, ConceptExpr c):
         self.c_kernel.instanceOf(i.c_obj, c.c_obj)
 
@@ -165,9 +198,15 @@ cdef class Reasoner:
         result.c_obj = self.c_kernel.getExpressionManager().ObjectRole(name)
         return result
 
-    def create_data_role(self, name):
-        cdef DataRoleExpr result = DataRoleExpr.__new__(DataRoleExpr)
-        result.c_obj = self.c_kernel.getExpressionManager().DataRole(name)
+    def set_o_domain(self, ObjectRoleExpr r, ConceptExpr c):
+        self.c_kernel.setODomain(r.c_obj, c.c_obj)
+
+    def set_o_range(self, ObjectRoleExpr r, ConceptExpr c):
+        self.c_kernel.setORange(r.c_obj, c.c_obj)
+
+    def max_o_cardinality(self, unsigned int n, ObjectRoleExpr r, ConceptExpr c):
+        cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
+        result.c_obj = self.c_kernel.getExpressionManager().MaxCardinality(n, r.c_obj, c.c_obj)
         return result
 
     def set_symmetric(self, ObjectRoleExpr role):
@@ -179,6 +218,22 @@ cdef class Reasoner:
     def related_to(self, IndividualExpr i1, ObjectRoleExpr r, IndividualExpr i2):
         self.c_kernel.relatedTo(i1.c_obj, r.c_obj, i2.c_obj)
 
+    def disjoint_concepts(self, classes):
+        self.c_kernel.getExpressionManager().newArgList()
+        for c in classes:
+            self.c_kernel.getExpressionManager().addArg(
+                <TDLConceptExpression*?>(<ConceptExpr>c).c_obj
+            )
+        self.c_kernel.disjointConcepts()
+
+    def different_instances(self, instances):
+        self.c_kernel.getExpressionManager().newArgList()
+        for i in instances:
+            self.c_kernel.getExpressionManager().addArg(
+                <TDLIndividualExpression*?>(<IndividualExpr>i).c_obj
+            )
+        self.c_kernel.processDifferent()
+
     def get_role_fillers(self, IndividualExpr i, ObjectRoleExpr r):
         cdef CIVec data = self.c_kernel.getRoleFillers(i.c_obj, r.c_obj)
         cdef Individual result
@@ -187,6 +242,11 @@ cdef class Reasoner:
             result = Individual.__new__(Individual)
             result.c_obj = data[k]
             yield result
+
+    def create_data_role(self, name):
+        cdef DataRoleExpr result = DataRoleExpr.__new__(DataRoleExpr)
+        result.c_obj = self.c_kernel.getExpressionManager().DataRole(name)
+        return result
 
     def data_top(self):
         cdef DataExpr result = DataExpr.__new__(DataExpr)
@@ -197,5 +257,29 @@ cdef class Reasoner:
         cdef DataType result = DataType.__new__(DataType)
         result.c_obj = self.c_kernel.getExpressionManager().DataType(name)
         return result
+
+    def set_d_domain(self, DataRoleExpr r, ConceptExpr c):
+        self.c_kernel.setDDomain(r.c_obj, c.c_obj)
+
+    def set_d_range(self, DataRoleExpr r, DataType t):
+        self.c_kernel.setDRange(r.c_obj, t.c_obj)
+
+    def max_d_cardinality(self, unsigned int n, DataRoleExpr r, DataExpr d):
+        cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
+        result.c_obj = self.c_kernel.getExpressionManager().MaxCardinality(n, r.c_obj, d.c_obj)
+        return result
+
+#   def data_value(self, string v, DataType t):
+#       cdef DataExpr result = DataExpr.__new__(DataExpr)
+#       result.c_obj = self.c_kernel.getExpressionManager().DataValue(v, t.c_obj)
+#       return result
+
+    def value_of(self, IndividualExpr i, DataRoleExpr r, int v):
+        t = self.c_kernel.getExpressionManager().DataType(b'http://www.w3.org/2001/XMLSchema#integer')
+        value = self.c_kernel.getExpressionManager().DataValue(str(v).encode(), t)
+        self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
+
+    def is_consistent(self):
+        return self.c_kernel.isKBConsistent()
 
 # vim: sw=4:et:ai
