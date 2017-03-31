@@ -1,5 +1,10 @@
 Python binding for FaCT++ library.
 
+Goals
+
+- create RDFLib store with inference capabilities
+- demonstrate use of FaCT++ API
+
 How to add more bindings? See the following commit
 
     https://bitbucket.org/wrobell/factplusplus/commits/a3aed0e6f9e9d9c784e29defee366b223b808481?at=factpp
