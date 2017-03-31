@@ -22,16 +22,16 @@ import factpp
 reasoner = factpp.Reasoner()
 
 classes = [
-    reasoner.create_concept(b'A'),
-    reasoner.create_concept(b'B'),
-    reasoner.create_concept(b'C'),
+    reasoner.create_concept('A'),
+    reasoner.create_concept('B'),
+    reasoner.create_concept('C'),
 ]
 
 reasoner.disjoint_concepts(classes)
 
-a = reasoner.create_individual(b'a')
-b = reasoner.create_individual(b'b')
-c = reasoner.create_individual(b'c')
+a = reasoner.create_individual('a')
+b = reasoner.create_individual('b')
+c = reasoner.create_individual('c')
 reasoner.instance_of(a, classes[0])
 
 print('a is A, consistency:', reasoner.is_consistent())

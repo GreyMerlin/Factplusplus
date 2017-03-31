@@ -24,10 +24,10 @@ reasoner = factpp.Reasoner()
 
 start = time.time()
 individuals = [
-    reasoner.create_individual('i-{}'.format(i).encode())
+    reasoner.create_individual('i-{}'.format(i))
     for i in range(10 ** 4)
 ]
-role = reasoner.create_object_role(b'R')
+role = reasoner.create_object_role('R')
 
 reasoner.set_symmetric(role)
 reasoner.set_transitive(role)

@@ -168,6 +168,7 @@ cdef class DataType:
 
 cdef class Reasoner:
     cdef ReasoningKernel *c_kernel
+    cdef TExpressionManager *c_mgr
     cdef TDLDataTypeName *type_int
     cdef TDLDataTypeName *type_str
     cdef TDLDataTypeName *type_float
@@ -176,12 +177,13 @@ cdef class Reasoner:
 
     def __cinit__(self):
         self.c_kernel = new ReasoningKernel()
-        mgr = self.c_kernel.getExpressionManager()
-        self.type_int = mgr.DataType(b'http://www.w3.org/2001/XMLSchema#integer')
-        self.type_str = mgr.DataType('http://www.w3.org/2001/XMLSchema#string')
-        self.type_float = mgr.DataType('http://www.w3.org/2001/XMLSchema#float')
-        self.type_bool = mgr.DataType('http://www.w3.org/2001/XMLSchema#boolean')
-        self.type_datetime_long = mgr.DataType('http://www.w3.org/2001/XMLSchema#dateTimeAsLong')
+        self.c_mgr = self.c_kernel.getExpressionManager()
+
+        self.type_int = self.c_mgr.DataType(b'http://www.w3.org/2001/XMLSchema#integer')
+        self.type_str = self.c_mgr.DataType('http://www.w3.org/2001/XMLSchema#string')
+        self.type_float = self.c_mgr.DataType('http://www.w3.org/2001/XMLSchema#float')
+        self.type_bool = self.c_mgr.DataType('http://www.w3.org/2001/XMLSchema#boolean')
+        self.type_datetime_long = self.c_mgr.DataType('http://www.w3.org/2001/XMLSchema#dateTimeAsLong')
 
     def __dealloc__(self):
         del self.c_kernel
@@ -190,18 +192,18 @@ cdef class Reasoner:
     # concepts
     #
 
-    def create_concept(self, name):
+    def create_concept(self, str name):
         cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
-        result.c_obj = self.c_kernel.getExpressionManager().Concept(name)
+        result.c_obj = self.c_mgr.Concept(name.encode())
         return result
 
     def implies_concepts(self, ConceptExpr c1, ConceptExpr c2):
         self.c_kernel.impliesConcepts(c1.c_obj, c2.c_obj)
 
     def disjoint_concepts(self, classes):
-        self.c_kernel.getExpressionManager().newArgList()
+        self.c_mgr.newArgList()
         for c in classes:
-            self.c_kernel.getExpressionManager().addArg(
+            self.c_mgr.addArg(
                 <TDLConceptExpression*?>(<ConceptExpr>c).c_obj
             )
         self.c_kernel.disjointConcepts()
@@ -210,18 +212,18 @@ cdef class Reasoner:
     # individuals
     #
 
-    def create_individual(self, name):
+    def create_individual(self, str name):
         cdef IndividualExpr result = IndividualExpr.__new__(IndividualExpr)
-        result.c_obj = self.c_kernel.getExpressionManager().Individual(name)
+        result.c_obj = self.c_mgr.Individual(name.encode())
         return result
 
     def instance_of(self, IndividualExpr i, ConceptExpr c):
         self.c_kernel.instanceOf(i.c_obj, c.c_obj)
 
     def different_individuals(self, instances):
-        self.c_kernel.getExpressionManager().newArgList()
+        self.c_mgr.newArgList()
         for i in instances:
-            self.c_kernel.getExpressionManager().addArg(
+            self.c_mgr.addArg(
                 <TDLIndividualExpression*?>(<IndividualExpr>i).c_obj
             )
         self.c_kernel.processDifferent()
@@ -230,9 +232,9 @@ cdef class Reasoner:
     # object roles
     #
 
-    def create_object_role(self, string name):
+    def create_object_role(self, str name):
         cdef ObjectRoleExpr result = ObjectRoleExpr.__new__(ObjectRoleExpr)
-        result.c_obj = self.c_kernel.getExpressionManager().ObjectRole(name)
+        result.c_obj = self.c_mgr.ObjectRole(name.encode())
         return result
 
     def set_o_domain(self, ObjectRoleExpr r, ConceptExpr c):
@@ -243,7 +245,7 @@ cdef class Reasoner:
 
     def max_o_cardinality(self, unsigned int n, ObjectRoleExpr r, ConceptExpr c):
         cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
-        result.c_obj = self.c_kernel.getExpressionManager().MaxCardinality(n, r.c_obj, c.c_obj)
+        result.c_obj = self.c_mgr.MaxCardinality(n, r.c_obj, c.c_obj)
         return result
 
     def set_symmetric(self, ObjectRoleExpr role):
@@ -268,19 +270,19 @@ cdef class Reasoner:
     # data roles
     #
 
-    def create_data_role(self, name):
+    def create_data_role(self, str name):
         cdef DataRoleExpr result = DataRoleExpr.__new__(DataRoleExpr)
-        result.c_obj = self.c_kernel.getExpressionManager().DataRole(name)
+        result.c_obj = self.c_mgr.DataRole(name.encode())
         return result
 
     def data_top(self):
         cdef DataExpr result = DataExpr.__new__(DataExpr)
-        result.c_obj = self.c_kernel.getExpressionManager().DataTop()
+        result.c_obj = self.c_mgr.DataTop()
         return result
 
     def data_type(self, name):
         cdef DataType result = DataType.__new__(DataType)
-        result.c_obj = self.c_kernel.getExpressionManager().DataType(name)
+        result.c_obj = self.c_mgr.DataType(name)
         return result
 
     def set_d_domain(self, DataRoleExpr r, ConceptExpr c):
@@ -291,36 +293,28 @@ cdef class Reasoner:
 
     def max_d_cardinality(self, unsigned int n, DataRoleExpr r, DataExpr d):
         cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
-        result.c_obj = self.c_kernel.getExpressionManager().MaxCardinality(n, r.c_obj, d.c_obj)
+        result.c_obj = self.c_mgr.MaxCardinality(n, r.c_obj, d.c_obj)
         return result
 
 #   def data_value(self, string v, DataType t):
 #       cdef DataExpr result = DataExpr.__new__(DataExpr)
-#       result.c_obj = self.c_kernel.getExpressionManager().DataValue(v, t.c_obj)
+#       result.c_obj = self.c_mgr.DataValue(v, t.c_obj)
 #       return result
 
     def value_of_int(self, IndividualExpr i, DataRoleExpr r, int v):
-        value = self.c_kernel.getExpressionManager().DataValue(
-            str(v).encode(), self.type_int
-        )
+        value = self.c_mgr.DataValue(str(v).encode(), self.type_int)
         self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
 
     def value_of_str(self, IndividualExpr i, DataRoleExpr r, str v):
-        value = self.c_kernel.getExpressionManager().DataValue(
-            v.encode(), self.type_str
-        )
+        value = self.c_mgr.DataValue(v.encode(), self.type_str)
         self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
 
     def value_of_float(self, IndividualExpr i, DataRoleExpr r, float v):
-        value = self.c_kernel.getExpressionManager().DataValue(
-            str(v).encode(), self.type_float
-        )
+        value = self.c_mgr.DataValue(str(v).encode(), self.type_float)
         self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
 
     def value_of_bool(self, IndividualExpr i, DataRoleExpr r, bool v):
-        value = self.c_kernel.getExpressionManager().DataValue(
-            str(v).encode(), self.type_bool
-        )
+        value = self.c_mgr.DataValue(str(v).encode(), self.type_bool)
         self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
 
     #

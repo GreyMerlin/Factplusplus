@@ -21,10 +21,10 @@ import factpp
 
 reasoner = factpp.Reasoner()
 
-c = reasoner.create_individual(b'C')
-d = reasoner.create_individual(b'D')
-e = reasoner.create_individual(b'E')
-r = reasoner.create_object_role(b'R')
+c = reasoner.create_individual('C')
+d = reasoner.create_individual('D')
+e = reasoner.create_individual('E')
+r = reasoner.create_object_role('R')
 
 reasoner.set_symmetric(r)
 reasoner.set_transitive(r)

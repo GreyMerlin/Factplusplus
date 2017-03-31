@@ -23,11 +23,11 @@ reasoner = factpp.Reasoner()
 top_data = reasoner.data_top()
 type_int = reasoner.data_type(b'http://www.w3.org/2001/XMLSchema#integer')
 
-cls_a = reasoner.create_concept(b'CLS-A')
-c = reasoner.create_individual(b'C')
+cls_a = reasoner.create_concept('CLS-A')
+c = reasoner.create_individual('C')
 reasoner.instance_of(c, cls_a)
 
-r = reasoner.create_data_role(b'R')
+r = reasoner.create_data_role('R')
 reasoner.set_d_domain(r, cls_a)
 reasoner.set_d_range(r, type_int)
 
