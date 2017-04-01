@@ -104,8 +104,9 @@ cdef extern from 'tExpressionManager.h':
         TDLDataTypeName* DataType(string)
         TDLConceptExpression* Concept(string)
         TDLDataRoleExpression* DataRole(string)
-        TDLConceptExpression* MaxCardinality(unsigned int, const TDLDataRoleExpression*, const TDLDataExpression*)
+        TDLConceptExpression* Cardinality(unsigned int, const TDLDataRoleExpression*, const TDLDataExpression*)
         TDLConceptExpression* MaxCardinality(unsigned int, const TDLObjectRoleExpression*, const TDLConceptExpression*)
+        TDLConceptExpression* MaxCardinality(unsigned int, const TDLDataRoleExpression*, const TDLDataExpression*)
         const TDLDataValue* DataValue(string, const TDLDataTypeExpression*);
 
         void newArgList()
@@ -123,6 +124,7 @@ cdef extern from 'Kernel.h':
         TDLAxiom* setTransitive(TDLObjectRoleExpression*)
         TDLAxiom* relatedTo(TDLIndividualExpression*, TDLObjectRoleExpression*, TDLIndividualExpression*)
         TDLAxiom* instanceOf(TDLIndividualExpression*, TDLConceptExpression* C)
+        bool isInstance(TDLIndividualExpression*, TDLConceptExpression* C)
         TDLAxiom* valueOf(TDLIndividualExpression*, TDLDataRoleExpression*, TDLDataValue*)
         TDLAxiom* setODomain(TDLObjectRoleExpression*, TDLConceptExpression*)
         TDLAxiom* setORange(TDLObjectRoleExpression*, TDLConceptExpression*)
@@ -228,6 +230,9 @@ cdef class Reasoner:
             )
         self.c_kernel.processDifferent()
 
+    def is_instance(self, IndividualExpr i, ConceptExpr c):
+        return self.c_kernel.isInstance(i.c_obj, c.c_obj)
+
     #
     # object roles
     #
@@ -290,6 +295,11 @@ cdef class Reasoner:
 
     def set_d_range(self, DataRoleExpr r, DataType t):
         self.c_kernel.setDRange(r.c_obj, t.c_obj)
+
+    def d_cardinality(self, unsigned int n, DataRoleExpr r, DataExpr d):
+        cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
+        result.c_obj = self.c_mgr.Cardinality(n, r.c_obj, d.c_obj)
+        return result
 
     def max_d_cardinality(self, unsigned int n, DataRoleExpr r, DataExpr d):
         cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
