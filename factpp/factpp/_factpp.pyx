@@ -171,21 +171,23 @@ cdef class DataType:
 cdef class Reasoner:
     cdef ReasoningKernel *c_kernel
     cdef TExpressionManager *c_mgr
-    cdef TDLDataTypeName *type_int
-    cdef TDLDataTypeName *type_str
-    cdef TDLDataTypeName *type_float
-    cdef TDLDataTypeName *type_bool
-    cdef TDLDataTypeName *type_datetime_long
+
+    cdef readonly DataType type_int
+    cdef readonly DataType type_float
+    cdef readonly DataType type_str
+    cdef readonly DataType type_bool
+    cdef readonly DataType type_datetime_long
 
     def __cinit__(self):
         self.c_kernel = new ReasoningKernel()
         self.c_mgr = self.c_kernel.getExpressionManager()
 
-        self.type_int = self.c_mgr.DataType(b'http://www.w3.org/2001/XMLSchema#integer')
-        self.type_str = self.c_mgr.DataType('http://www.w3.org/2001/XMLSchema#string')
-        self.type_float = self.c_mgr.DataType('http://www.w3.org/2001/XMLSchema#float')
-        self.type_bool = self.c_mgr.DataType('http://www.w3.org/2001/XMLSchema#boolean')
-        self.type_datetime_long = self.c_mgr.DataType('http://www.w3.org/2001/XMLSchema#dateTimeAsLong')
+    def __init__(self):
+        self.type_int = self.data_type('http://www.w3.org/2001/XMLSchema#integer')
+        self.type_float = self.data_type('http://www.w3.org/2001/XMLSchema#float')
+        self.type_str = self.data_type('http://www.w3.org/2001/XMLSchema#string')
+        self.type_bool = self.data_type('http://www.w3.org/2001/XMLSchema#boolean')
+        self.type_datetime_long = self.data_type('http://www.w3.org/2001/XMLSchema#dateTimeAsLong')
 
     def __dealloc__(self):
         del self.c_kernel
@@ -285,9 +287,9 @@ cdef class Reasoner:
         result.c_obj = self.c_mgr.DataTop()
         return result
 
-    def data_type(self, name):
+    def data_type(self, str name):
         cdef DataType result = DataType.__new__(DataType)
-        result.c_obj = self.c_mgr.DataType(name)
+        result.c_obj = self.c_mgr.DataType(name.encode())
         return result
 
     def set_d_domain(self, DataRoleExpr r, ConceptExpr c):
@@ -312,19 +314,19 @@ cdef class Reasoner:
 #       return result
 
     def value_of_int(self, IndividualExpr i, DataRoleExpr r, int v):
-        value = self.c_mgr.DataValue(str(v).encode(), self.type_int)
+        value = self.c_mgr.DataValue(str(v).encode(), self.type_int.c_obj)
         self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
 
     def value_of_str(self, IndividualExpr i, DataRoleExpr r, str v):
-        value = self.c_mgr.DataValue(v.encode(), self.type_str)
+        value = self.c_mgr.DataValue(v.encode(), self.type_str.c_obj)
         self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
 
     def value_of_float(self, IndividualExpr i, DataRoleExpr r, float v):
-        value = self.c_mgr.DataValue(str(v).encode(), self.type_float)
+        value = self.c_mgr.DataValue(str(v).encode(), self.type_float.c_obj)
         self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
 
     def value_of_bool(self, IndividualExpr i, DataRoleExpr r, bool v):
-        value = self.c_mgr.DataValue(str(v).encode(), self.type_bool)
+        value = self.c_mgr.DataValue(str(v).encode(), self.type_bool.c_obj)
         self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
 
     #

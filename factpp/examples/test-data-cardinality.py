@@ -21,7 +21,6 @@ import factpp
 
 reasoner = factpp.Reasoner()
 top_data = reasoner.data_top()
-type_int = reasoner.data_type(b'http://www.w3.org/2001/XMLSchema#integer')
 
 cls_a = reasoner.create_concept('CLS-A')
 c = reasoner.create_individual('C')
@@ -29,7 +28,7 @@ reasoner.instance_of(c, cls_a)
 
 r = reasoner.create_data_role('R')
 reasoner.set_d_domain(r, cls_a)
-reasoner.set_d_range(r, type_int)
+reasoner.set_d_range(r, reasoner.type_int)
 
 restriction_max_one = reasoner.max_d_cardinality(1, r, top_data)
 reasoner.implies_concepts(cls_a, restriction_max_one)

@@ -22,7 +22,6 @@ import factpp
 reasoner = factpp.Reasoner()
 
 top_data = reasoner.data_top()
-type_float = reasoner.data_type(b'http://www.w3.org/2001/XMLSchema#float')
 
 cls = reasoner.create_concept('A')
 cls_b = reasoner.create_concept('B')
@@ -30,7 +29,7 @@ reasoner.disjoint_concepts([cls, cls_b])
 
 role = reasoner.create_data_role('R')
 reasoner.set_d_domain(role, cls)
-reasoner.set_d_range(role, type_float)
+reasoner.set_d_range(role, reasoner.type_float)
 
 rt = reasoner.d_cardinality(1, role, top_data)
 reasoner.implies_concepts(cls, rt)
