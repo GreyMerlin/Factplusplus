@@ -23,11 +23,11 @@ reasoner = factpp.Reasoner()
 
 top_data = reasoner.data_top()
 
-cls = reasoner.create_concept('A')
-cls_b = reasoner.create_concept('B')
+cls = reasoner.concept('A')
+cls_b = reasoner.concept('B')
 reasoner.disjoint_concepts([cls, cls_b])
 
-role = reasoner.create_data_role('R')
+role = reasoner.data_role('R')
 reasoner.set_d_domain(role, cls)
 reasoner.set_d_range(role, reasoner.type_float)
 
@@ -35,7 +35,7 @@ rt = reasoner.d_cardinality(1, role, top_data)
 reasoner.implies_concepts(cls, rt)
 
 # a is instance of A due to use of R
-a = reasoner.create_individual('a')
+a = reasoner.individual('a')
 reasoner.value_of_float(a, role, 1)
 
 print('a added, consistent:', reasoner.is_consistent())

@@ -21,27 +21,27 @@ import factpp
 
 reasoner = factpp.Reasoner()
 
-cls_a = reasoner.create_concept('CLS-A')
-cls_b = reasoner.create_concept('CLS-B')
+cls_a = reasoner.concept('CLS-A')
+cls_b = reasoner.concept('CLS-B')
 reasoner.disjoint_concepts([cls_a, cls_b])
 
-r = reasoner.create_object_role('R')
+r = reasoner.object_role('R')
 reasoner.set_o_domain(r, cls_a)
 reasoner.set_o_range(r, cls_b)
 
-c = reasoner.create_individual('C')
+c = reasoner.individual('C')
 reasoner.instance_of(c, cls_a)
 
 restriction_max_one_cls_b = reasoner.max_o_cardinality(1, r, cls_b)
 reasoner.implies_concepts(cls_a, restriction_max_one_cls_b)
 
-d = reasoner.create_individual('D')
+d = reasoner.individual('D')
 reasoner.instance_of(d, cls_b)
 reasoner.related_to(c, r, d)
 print('consistent after 1st instance:', reasoner.is_consistent())
 
 # add another individual to class C, making ontology inconsistent
-x = reasoner.create_individual('X')
+x = reasoner.individual('X')
 reasoner.instance_of(x, cls_b)
 reasoner.related_to(c, r, x)
 reasoner.different_individuals([d, x])

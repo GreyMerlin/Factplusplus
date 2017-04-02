@@ -22,11 +22,11 @@ import factpp
 reasoner = factpp.Reasoner()
 top_data = reasoner.data_top()
 
-cls_a = reasoner.create_concept('CLS-A')
-c = reasoner.create_individual('C')
+cls_a = reasoner.concept('CLS-A')
+c = reasoner.individual('C')
 reasoner.instance_of(c, cls_a)
 
-r = reasoner.create_data_role('R')
+r = reasoner.data_role('R')
 reasoner.set_d_domain(r, cls_a)
 reasoner.set_d_range(r, reasoner.type_int)
 

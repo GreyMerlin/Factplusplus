@@ -206,7 +206,7 @@ cdef class Reasoner:
     # concepts
     #
 
-    def create_concept(self, str name):
+    def concept(self, str name):
         cdef ConceptExpr result = self._singleton(ConceptExpr, name)
         result.c_obj = self.c_mgr.Concept(name.encode())
         return result
@@ -226,7 +226,7 @@ cdef class Reasoner:
     # individuals
     #
 
-    def create_individual(self, str name):
+    def individual(self, str name):
         cdef IndividualExpr result = self._singleton(IndividualExpr, name)
         result.c_obj = self.c_mgr.Individual(name.encode())
         return result
@@ -249,7 +249,7 @@ cdef class Reasoner:
     # object roles
     #
 
-    def create_object_role(self, str name):
+    def object_role(self, str name):
         cdef ObjectRoleExpr result = self._singleton(ObjectRoleExpr, name)
         result.c_obj = self.c_mgr.ObjectRole(name.encode())
         return result
@@ -287,7 +287,7 @@ cdef class Reasoner:
     # data roles
     #
 
-    def create_data_role(self, str name):
+    def data_role(self, str name):
         cdef DataRoleExpr result = self._singleton(DataRoleExpr, name)
         result.c_obj = self.c_mgr.DataRole(name.encode())
         return result

@@ -22,57 +22,57 @@ from .._factpp import Reasoner
 def test_diff_concepts():
     reasoner = Reasoner()
 
-    c1 = reasoner.create_concept('C1')
-    c2 = reasoner.create_concept('C2')
+    c1 = reasoner.concept('C1')
+    c2 = reasoner.concept('C2')
     assert c1 is not c2
 
 def test_same_concepts():
     reasoner = Reasoner()
 
-    c1 = reasoner.create_concept('C')
-    c2 = reasoner.create_concept('C')
+    c1 = reasoner.concept('C')
+    c2 = reasoner.concept('C')
     assert c1 is c2
 
 def test_diff_individuals():
     reasoner = Reasoner()
 
-    i1 = reasoner.create_individual('i1')
-    i2 = reasoner.create_individual('i2')
+    i1 = reasoner.individual('i1')
+    i2 = reasoner.individual('i2')
     assert i1 is not i2
 
 def test_same_individuals():
     reasoner = Reasoner()
 
-    i1 = reasoner.create_individual('i')
-    i2 = reasoner.create_individual('i')
+    i1 = reasoner.individual('i')
+    i2 = reasoner.individual('i')
     assert i1 is i2
 
 def test_diff_object_roles():
     reasoner = Reasoner()
 
-    r1 = reasoner.create_object_role('r1')
-    r2 = reasoner.create_object_role('r2')
+    r1 = reasoner.object_role('r1')
+    r2 = reasoner.object_role('r2')
     assert r1 is not r2
 
 def test_same_object_roles():
     reasoner = Reasoner()
 
-    r1 = reasoner.create_object_role('r')
-    r2 = reasoner.create_object_role('r')
+    r1 = reasoner.object_role('r')
+    r2 = reasoner.object_role('r')
     assert r1 is r2
 
 def test_diff_data_roles():
     reasoner = Reasoner()
 
-    r1 = reasoner.create_data_role('r1')
-    r2 = reasoner.create_data_role('r2')
+    r1 = reasoner.data_role('r1')
+    r2 = reasoner.data_role('r2')
     assert r1 is not r2
 
 def test_same_data_roles():
     reasoner = Reasoner()
 
-    r1 = reasoner.create_data_role('r')
-    r2 = reasoner.create_data_role('r')
+    r1 = reasoner.data_role('r')
+    r2 = reasoner.data_role('r')
     assert r1 is r2
 
 # vim: sw=4:et:ai
