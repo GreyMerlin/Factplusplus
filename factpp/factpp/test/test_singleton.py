@@ -47,4 +47,32 @@ def test_same_individuals():
     i2 = reasoner.create_individual('i')
     assert i1 is i2
 
+def test_diff_object_roles():
+    reasoner = Reasoner()
+
+    r1 = reasoner.create_object_role('r1')
+    r2 = reasoner.create_object_role('r2')
+    assert r1 is not r2
+
+def test_same_object_roles():
+    reasoner = Reasoner()
+
+    r1 = reasoner.create_object_role('r')
+    r2 = reasoner.create_object_role('r')
+    assert r1 is r2
+
+def test_diff_data_roles():
+    reasoner = Reasoner()
+
+    r1 = reasoner.create_data_role('r1')
+    r2 = reasoner.create_data_role('r2')
+    assert r1 is not r2
+
+def test_same_data_roles():
+    reasoner = Reasoner()
+
+    r1 = reasoner.create_data_role('r')
+    r2 = reasoner.create_data_role('r')
+    assert r1 is r2
+
 # vim: sw=4:et:ai
