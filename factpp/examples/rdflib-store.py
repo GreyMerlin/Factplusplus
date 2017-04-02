@@ -21,36 +21,33 @@ from rdflib import Graph, Literal, BNode
 from rdflib.namespace import FOAF
 from rdflib.store import Store
 
-from _factpp import ffi, lib
+import factpp
 
 class FactStore(Store):
     def __init__(self):
-        self._kernel = lib.fact_reasoning_kernel_new()
+        self._reasoner = factpp.Reasoner()
         self._instances = {}
         self._roles = {}
 
-        self._type_str = lib.fact_data_type(self._kernel, b'http://www.w3.org/2001/XMLSchema#string')
 
     def add(self, triple, context=None, quoted=False):
         s, p, o = triple
 
         ref_s = self._instances.get(s)
         if ref_s is None:
-            ref_s = lib.fact_individual(self._kernel, s.encode())
+            ref_s = self._reasoner.create_individual(str(s))
             self._instances[str(s)] = ref_s
 
         ref_p = self._roles.get(p)
         if ref_p is None:
-            #ref_p = lib.fact_data_role(self._kernel, p.encode())
-            ref_p = lib.fact_object_role(self._kernel, p.encode())
+            ref_p = self._reasoner.create_object_role(str(p))
             self._roles[str(p)] = ref_p
             if p == FOAF.knows:
-                lib.fact_set_symmetric(self._kernel, ref_p)
-                lib.fact_set_transitive(self._kernel, ref_p)
+                self._reasoner.set_symmetric(ref_p)
+                self._reasoner.set_transitive(ref_p)
 
-        #value = lib.fact_data_value(self._kernel, o.encode(), self._type_str)
-        value = lib.fact_individual(self._kernel, o.encode())
-        lib.fact_related_to(self._kernel, ref_s, ref_p, value)
+        value = self._reasoner.create_individual(str(o))
+        self._reasoner.related_to(ref_s, ref_p, value)
 
     def triples(self, pattern, context=None):
         s, p, o = pattern
@@ -63,11 +60,9 @@ class FactStore(Store):
     def role_triples(self, s, p, context):
             ref_s = self._instances[str(s)]
             ref_p = self._roles[str(p)]
-            values = lib.fact_get_role_fillers(self._kernel, ref_s, ref_p)
-            i = 0
-            while values[i] != ffi.NULL:
-                yield ((s, p, ffi.string(values[i]).decode()), context)
-                i += 1
+            objects = self._reasoner.get_role_fillers(ref_s, ref_p)
+            for o in objects:
+                yield ((s, p, o.name), context)
             
 p1 = BNode()
 p2 = BNode()
