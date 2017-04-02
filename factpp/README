@@ -11,11 +11,15 @@ Compilation::
     $ git checkout factpp
     $ make -C Kernel LTYPE=shared OS=LINUX  # or OS=MACOSX
     $ cd factpp
-    $ CFLAGS="-I../Kernel" LDFLAGS="-L../Kernel/obj" python setup.py build
+    $ CFLAGS="-I../Kernel" LDFLAGS="-L../Kernel/obj" python setup.py build_ext --inplace
+
+Run unit tests::
+
+    $ LD_LIBRARY_PATH=../Kernel/obj PYTHONPATH=. py.test factpp/
 
 Run an example::
 
-    $ LD_LIBRARY_PATH=../Kernel/obj PYTHONPATH=build/lib.linux-x86_64-3.6/ python examples/imply-class.py
+    $ LD_LIBRARY_PATH=../Kernel/obj PYTHONPATH=. python examples/imply-class.py
 
 How to add more bindings? See the following commit
 
