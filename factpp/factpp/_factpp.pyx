@@ -177,6 +177,7 @@ cdef class Reasoner:
     cdef readonly DataType type_str
     cdef readonly DataType type_bool
     cdef readonly DataType type_datetime_long
+    cdef readonly dict _cache
 
     def __cinit__(self):
         self.c_kernel = new ReasoningKernel()
@@ -189,15 +190,25 @@ cdef class Reasoner:
         self.type_bool = self.data_type('http://www.w3.org/2001/XMLSchema#boolean')
         self.type_datetime_long = self.data_type('http://www.w3.org/2001/XMLSchema#dateTimeAsLong')
 
+        self._cache = {}  # it should be weakref dict
+
     def __dealloc__(self):
         del self.c_kernel
+
+    def _singleton(self, T, key):
+        result = self._cache.get(key)
+        if result is None:
+            result = T.__new__(T)
+            self._cache[key] = result
+        return result
 
     #
     # concepts
     #
 
     def create_concept(self, str name):
-        cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
+        cdef ConceptExpr result
+        result = self._singleton(ConceptExpr, name)
         result.c_obj = self.c_mgr.Concept(name.encode())
         return result
 
@@ -217,7 +228,8 @@ cdef class Reasoner:
     #
 
     def create_individual(self, str name):
-        cdef IndividualExpr result = IndividualExpr.__new__(IndividualExpr)
+        cdef IndividualExpr result
+        result = self._singleton(IndividualExpr, name)
         result.c_obj = self.c_mgr.Individual(name.encode())
         return result
 
