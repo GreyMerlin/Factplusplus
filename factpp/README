@@ -5,6 +5,18 @@ Goals
 - create RDFLib store with inference capabilities
 - demonstrate use of FaCT++ API
 
+Compilation::
+
+    $ git clone https://bitbucket.org/wrobell/factplusplus.git
+    $ git checkout factpp
+    $ make -C Kernel LTYPE=shared OS=LINUX  # or OS=MACOSX
+    $ cd factpp
+    $ CFLAGS="-I../Kernel" LDFLAGS="-L../Kernel/obj" python setup.py build
+
+Run an example::
+
+    $ LD_LIBRARY_PATH=../Kernel/obj PYTHONPATH=build/lib.linux-x86_64-3.6/ python examples/imply-class.py
+
 How to add more bindings? See the following commit
 
     https://bitbucket.org/wrobell/factplusplus/commits/a3aed0e6f9e9d9c784e29defee366b223b808481?at=factpp
