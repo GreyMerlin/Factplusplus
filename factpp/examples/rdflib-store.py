@@ -17,58 +17,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import factpp.rdflib
 from rdflib import Graph, Literal, BNode
 from rdflib.namespace import FOAF
-from rdflib.store import Store
-
-import factpp
-
-class FactStore(Store):
-    def __init__(self):
-        self._reasoner = factpp.Reasoner()
-        self._instances = {}
-        self._roles = {}
-
-
-    def add(self, triple, context=None, quoted=False):
-        s, p, o = triple
-
-        ref_s = self._instances.get(s)
-        if ref_s is None:
-            ref_s = self._reasoner.create_individual(str(s))
-            self._instances[str(s)] = ref_s
-
-        ref_p = self._roles.get(p)
-        if ref_p is None:
-            ref_p = self._reasoner.create_object_role(str(p))
-            self._roles[str(p)] = ref_p
-            if p == FOAF.knows:
-                self._reasoner.set_symmetric(ref_p)
-                self._reasoner.set_transitive(ref_p)
-
-        value = self._reasoner.create_individual(str(o))
-        self._reasoner.related_to(ref_s, ref_p, value)
-
-    def triples(self, pattern, context=None):
-        s, p, o = pattern
-        if s is None:
-            for s in self._instances:
-                yield from self.role_triples(s, p, context)
-        else:
-            yield from self.role_triples(s, p, context)
-
-    def role_triples(self, s, p, context):
-            ref_s = self._instances[str(s)]
-            ref_p = self._roles[str(p)]
-            objects = self._reasoner.get_role_fillers(ref_s, ref_p)
-            for o in objects:
-                yield ((s, p, o.name), context)
             
 p1 = BNode()
 p2 = BNode()
 p3 = BNode()
 
-g = Graph(store=FactStore())
+g = Graph(store=factpp.rdflib.Store())
 g.add((p1, FOAF.name, Literal('P 1')))
 g.add((p2, FOAF.name, Literal('P 2')))
 g.add((p3, FOAF.name, Literal('P 3')))

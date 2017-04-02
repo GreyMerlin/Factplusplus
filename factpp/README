@@ -24,4 +24,4 @@ How to add more bindings? See the following commit
 Todo:
 
 - convert all current examples to use cython based API
-- start working on rdflib store
+- support FOAF with RDFLib store
