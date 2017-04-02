@@ -28,36 +28,26 @@ import factpp
 class Store(rdflib.store.Store):
     def __init__(self):
         self._reasoner = factpp.Reasoner()
-        self._instances = {}
-        self._roles = {}
 
     def add(self, triple, context=None, quoted=False):
         s, p, o = triple
 
-        ref_s = self._instances.get(s)
-        if ref_s is None:
-            ref_s = self._reasoner.create_individual(str(s))
-            self._instances[str(s)] = ref_s
+        ref_s = self._reasoner.individual(str(s))
+        ref_p = self._reasoner.object_role(str(p))
+        value = self._reasoner.individual(str(o))
 
-        ref_p = self._roles.get(p)
-        if ref_p is None:
-            ref_p = self._reasoner.create_object_role(str(p))
-            self._roles[str(p)] = ref_p
-
-        value = self._reasoner.create_individual(str(o))
         self._reasoner.related_to(ref_s, ref_p, value)
 
     def triples(self, pattern, context=None):
         s, p, o = pattern
         if s is None:
-            for s in self._instances:
-                yield from self.role_triples(s, p, context)
+            assert False
         else:
             yield from self.role_triples(s, p, context)
 
     def role_triples(self, s, p, context):
-            ref_s = self._instances[str(s)]
-            ref_p = self._roles[str(p)]
+            ref_s = self._reasoner.individual(str(s))
+            ref_p = self._reasoner.object_role(str(p))
             objects = self._reasoner.get_role_fillers(ref_s, ref_p)
             for o in objects:
                 yield ((s, p, o.name), context)
