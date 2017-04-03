@@ -24,8 +24,6 @@ reasoner = factpp.Reasoner()
 top_data = reasoner.data_top()
 
 cls = reasoner.concept('A')
-cls_b = reasoner.concept('B')
-reasoner.disjoint_concepts([cls, cls_b])
 
 role = reasoner.data_role('R')
 reasoner.set_d_domain(role, cls)
