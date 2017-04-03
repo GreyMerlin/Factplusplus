@@ -217,9 +217,7 @@ cdef class Reasoner:
     def disjoint_concepts(self, classes):
         self.c_mgr.newArgList()
         for c in classes:
-            self.c_mgr.addArg(
-                <TDLConceptExpression*?>(<ConceptExpr>c).c_obj
-            )
+            self.c_mgr.addArg((<ConceptExpr>c).c_obj)
         self.c_kernel.disjointConcepts()
 
     #
@@ -237,9 +235,7 @@ cdef class Reasoner:
     def different_individuals(self, instances):
         self.c_mgr.newArgList()
         for i in instances:
-            self.c_mgr.addArg(
-                <TDLIndividualExpression*?>(<IndividualExpr>i).c_obj
-            )
+            self.c_mgr.addArg((<IndividualExpr>i).c_obj)
         self.c_kernel.processDifferent()
 
     def is_instance(self, IndividualExpr i, ConceptExpr c):
