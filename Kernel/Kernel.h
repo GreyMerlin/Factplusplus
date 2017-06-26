@@ -605,6 +605,13 @@ public:		// interface
 			pTBox->setUseUndefinedNames(value);
 	}
 
+	TaxonomyVertex *setUpCache ( const TConceptExpr *C )
+	{
+		realiseKB();	// ensure KB is ready to answer the query
+		setUpCache ( C, csClassified );
+		return cachedVertex;
+	}
+
 		/// set top/bottom role names to use them in the related output
 	void setTopBottomRoleNames ( const char* topORoleName, const char* botORoleName, const char* topDRoleName, const char* botDRoleName )
 	{
