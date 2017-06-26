@@ -22,13 +22,25 @@
 
 from libcpp cimport bool
 from libcpp.string cimport string
-from cython.operator cimport dereference, preincrement
+from cython.operator cimport dereference, postincrement
 
 cdef extern from "<vector>" namespace "std":
     cdef cppclass vector[T]:
+        cppclass iterator:
+            T operator*()
+            iterator operator++()
+            bint operator==(iterator)
+            bint operator!=(iterator)
+
         T& operator[](int)
         int size()
+        iterator begin()
+        iterator end()
 
+
+cdef extern from 'taxNamEntry.h':
+    cdef cppclass ClassifiableEntry:
+        ClassifiableEntry() except +
 
 cdef extern from 'tDLAxiom.h':
     cdef cppclass TDLAxiom:
@@ -38,7 +50,7 @@ cdef extern from 'tIndividual.h':
     cdef cppclass TRelatedMap:
         TRelatedMap() except +
 
-    cdef cppclass TIndividual:
+    cdef cppclass TIndividual(ClassifiableEntry):
         TIndividual(string) except +
         string getName()
 
@@ -116,6 +128,13 @@ cdef extern from 'tExpressionManager.h':
 #cdef extern from 'Kernel.h' namespace 'ReasoningKernel':
 #    ctypedef vector[TNamedEntry*] IndividualSet
 
+cdef extern from 'taxVertex.h':
+    cdef cppclass TaxonomyVertex:
+        TaxonomyVertex() except +
+        const ClassifiableEntry* getPrimer()
+        vector[TaxonomyVertex*].iterator begin(bool)
+        vector[TaxonomyVertex*].iterator end(bool)
+
 cdef extern from 'Kernel.h':
     cdef cppclass ReasoningKernel:
         ReasoningKernel() except +
@@ -139,6 +158,7 @@ cdef extern from 'Kernel.h':
         #CIVec& getRelated(TIndividual*, TRole*)
         #void getRoleFillers(TDLIndividualExpression*, TDLObjectRoleExpression*, IndividualSet&)
         CIVec& getRoleFillers(TDLIndividualExpression*, TDLObjectRoleExpression*)
+        TaxonomyVertex* setUpCache(TDLConceptExpression*);
 
         void realiseKB()
         bool isKBConsistent()
@@ -278,6 +298,20 @@ cdef class Reasoner:
             result = Individual.__new__(Individual)
             result.c_obj = data[k]
             yield result
+
+    def get_instances(self, ConceptExpr c, direct=True):
+        if not direct:
+            raise ValueError('Non-direct instances query not supported yet')
+
+        cdef Individual result
+        cdef TaxonomyVertex *node = self.c_kernel.setUpCache(c.c_obj)
+        cdef vector[TaxonomyVertex*].iterator it = node.begin(False)
+
+        while it != node.end(False):
+            result = Individual.__new__(Individual)
+            result.c_obj = <const TIndividual*>dereference(it).getPrimer()
+            yield result
+            postincrement(it)
 
     #
     # data roles
