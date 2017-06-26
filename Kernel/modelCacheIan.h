@@ -71,7 +71,7 @@ protected:	// members
 
 protected:	// methods
 		/// log a particular implementation of a cache entry
-	virtual void logCacheEntryImpl ( void ) const override;
+	void logCacheEntryImpl ( void ) const override;
 		/// add single concept from label to cache
 	void processConcept ( const DLVertex& cur, bool pos, bool det );
 		/// add all roles that are accepted by an automaton from a given entry
@@ -130,9 +130,6 @@ protected:	// methods
 	void mergeSingleton ( BipolarPointer bp );
 		/// actual merge with an Ian's cache
 	void mergeIan ( const modelCacheIan* p );
-
-		/// log given concept set
-	void logCacheSet ( const IndexSet& s ) const;
 
 public:
 		/// Create cache model of given CompletionTree using given HEAP
@@ -193,7 +190,7 @@ public:
 	/** Check the internal state of the model cache. The check is very fast.
 		Does NOT return csUnknown
 	*/
-	virtual modelCacheState getState ( void ) const override { return curState; }
+	modelCacheState getState ( void ) const override { return curState; }
 
 		/// init existRoles from arcs; can be used to create pseudo-cache with deps of CT edges
 	void initRolesFromArcs ( const DlCompletionTree* pCT )
@@ -213,7 +210,7 @@ public:
 	modelCacheState merge ( const modelCacheInterface* cache );
 
 		/// get type of cache (deep or shallow)
-	virtual bool shallowCache ( void ) const override { return existsRoles.empty(); }
+	bool shallowCache ( void ) const override { return existsRoles.empty(); }
 
 	//----------------------------------------------
 	//-- save/load interface; implementation in SaveLoad.cpp

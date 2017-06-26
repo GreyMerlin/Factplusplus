@@ -26,10 +26,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 /// taxonomy walkers that gathers all the relevant nodes
 class TaxGatheringWalker : public WalkerInterface
 {
-protected:	// types
-		/// vec of vertices
-	typedef std::vector<const TaxonomyVertex*> VertexVec;
-
 protected:	// members
 		/// vertices that satisfy the condition
 	std::vector<const TaxonomyVertex*> found;
@@ -51,18 +47,13 @@ protected:	// methods
 	}
 
 public:		// interface
-		/// empty d'tor
-	virtual ~TaxGatheringWalker ( void ) {}
-
-	// found management
-
 		/// clear found
 	virtual void clear ( void ) { found.clear(); }
 
 		/// taxonomy walking method.
 		/// @return true if node was processed
 		/// @return false if node can not be processed in current settings
-	virtual bool apply ( const TaxonomyVertex& v ) override
+	bool apply ( const TaxonomyVertex& v ) override
 	{
 		if ( tryVertex(v) )
 		{
@@ -71,6 +62,6 @@ public:		// interface
 		}
 		return false;
 	}
-}; // WalkerInterface
+}; // TaxGatheringWalker
 
 #endif
