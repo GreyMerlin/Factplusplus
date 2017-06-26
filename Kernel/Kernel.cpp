@@ -347,8 +347,8 @@ protected:
 	const ClassifiableEntry* pe;
 	void entry ( const ClassifiableEntry* q ) { if ( pe == q ) throw std::exception(); }
 public:
-	SupConceptActor ( ClassifiableEntry* q ) :pe(q) {}
-	virtual bool apply ( const TaxonomyVertex& v ) override
+	explicit SupConceptActor ( ClassifiableEntry* q ) : pe(q) {}
+	bool apply ( const TaxonomyVertex& v ) override
 	{
 		entry(v.getPrimer());
 		for ( const auto& synonym: v.synonyms() )
@@ -468,10 +468,9 @@ protected:
 	}
 
 public:
-	RIActor ( void ) {}
-	virtual ~RIActor ( void ) {}
+	RIActor() = default;
 
-	virtual bool apply ( const TaxonomyVertex& v ) override
+	bool apply ( const TaxonomyVertex& v ) override
 	{
 		bool ret = tryEntry(v.getPrimer());
 
