@@ -102,6 +102,9 @@ cdef extern from 'tDLExpression.h':
     cdef cppclass TDLConceptExpression(TDLExpression):
         pass
 
+    cdef cppclass TDLConceptName(TDLConceptExpression):
+        string getName()
+
     cdef cppclass TDLIndividualExpression(TDLExpression):
         pass
 
@@ -114,11 +117,17 @@ cdef extern from 'tExpressionManager.h':
         TDLObjectRoleExpression* ObjectRole(string)
         TDLDataExpression* DataTop()
         TDLDataTypeName* DataType(string)
-        TDLConceptExpression* Concept(string)
+        TDLConceptName* Concept(string)
         TDLDataRoleExpression* DataRole(string)
+
+        TDLConceptExpression* Top()
+        TDLConceptExpression* Exists(const TDLObjectRoleExpression*, const TDLConceptExpression*)
+        TDLConceptExpression* Exists(const TDLDataRoleExpression*, const TDLDataExpression*)
+
         TDLConceptExpression* Cardinality(unsigned int, const TDLDataRoleExpression*, const TDLDataExpression*)
         TDLConceptExpression* MaxCardinality(unsigned int, const TDLObjectRoleExpression*, const TDLConceptExpression*)
         TDLConceptExpression* MaxCardinality(unsigned int, const TDLDataRoleExpression*, const TDLDataExpression*)
+
         const TDLDataValue* DataValue(string, const TDLDataTypeExpression*);
 
         void newArgList()
@@ -176,6 +185,11 @@ cdef class IndividualExpr:
 cdef class ConceptExpr:
     cdef const TDLConceptExpression *c_obj
 
+cdef class Concept(ConceptExpr):
+    @property
+    def name(self):
+        return (<TDLConceptName*>self.c_obj).getName()
+
 cdef class ObjectRoleExpr:
     cdef const TDLObjectRoleExpression *c_obj
 
@@ -227,7 +241,7 @@ cdef class Reasoner:
     #
 
     def concept(self, str name):
-        cdef ConceptExpr result = self._singleton(ConceptExpr, name)
+        cdef Concept result = self._singleton(Concept, name)
         result.c_obj = self.c_mgr.Concept(name.encode())
         return result
 
@@ -272,6 +286,19 @@ cdef class Reasoner:
 
     def set_o_domain(self, ObjectRoleExpr r, ConceptExpr c):
         self.c_kernel.setODomain(r.c_obj, c.c_obj)
+
+    def get_o_domain(self, ObjectRoleExpr r):
+        cdef Concept result
+        cdef const TDLConceptName *obj
+        cdef TaxonomyVertex *node = self.c_kernel.setUpCache(self.c_mgr.Exists(r.c_obj, self.c_mgr.Top()))
+        cdef vector[TaxonomyVertex*].iterator it = node.begin(True)
+
+        while it != node.end(True):
+            obj = <const TDLConceptName*>dereference(it).getPrimer()
+            result = self._singleton(Concept, obj.getName())
+            result.c_obj = obj
+            yield result
+            postincrement(it)
 
     def set_o_range(self, ObjectRoleExpr r, ConceptExpr c):
         self.c_kernel.setORange(r.c_obj, c.c_obj)
