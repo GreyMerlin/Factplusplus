@@ -20,12 +20,24 @@
 import factpp.rdflib
 from rdflib import Graph, Literal, BNode
 from rdflib.namespace import FOAF
-            
+
+g = Graph(store=factpp.rdflib.Store())
+reasoner = g.store._reasoner
+
 p1 = BNode()
 p2 = BNode()
 p3 = BNode()
 
-g = Graph(store=factpp.rdflib.Store())
+# TODO: use g.add once store supports appropriate OWL predicates
+cls = reasoner.concept(str(FOAF.Person))
+r = reasoner.object_role(str(FOAF.knows))
+reasoner.set_o_domain(r, cls)
+reasoner.set_o_range(r, cls)
+instances = [reasoner.individual(str(p)) for p in (p1, p2, p3)]
+for i in instances:
+    reasoner.instance_of(i, cls)
+
+reasoner.realise()
 g.add((p1, FOAF.name, Literal('P 1')))
 g.add((p2, FOAF.name, Literal('P 2')))
 g.add((p3, FOAF.name, Literal('P 3')))
@@ -43,7 +55,7 @@ WHERE {
 """)
 
 for r in result:
-    print('result', r[0], 'knows', r[1])
+    print('result "{}" knows "{}"'.format(r[0], r[1]))
 
 
 # vim: sw=4:et:ai
