@@ -33,7 +33,7 @@ g.add((p1, FOAF.knows, p2))
 g.add((p2, FOAF.knows, p3))
 
 result = g.query("""
-PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 SELECT ?n1 ?n2
 WHERE {
     ?p1 foaf:knows ?p2.
