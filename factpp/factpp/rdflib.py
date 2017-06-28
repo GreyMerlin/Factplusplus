@@ -41,7 +41,10 @@ class Store(rdflib.store.Store):
     def triples(self, pattern, context=None):
         s, p, o = pattern
         if s is None:
-            assert False
+            ref_p = self._reasoner.object_role(str(p))
+            c = next(self._reasoner.get_o_domain(ref_p))
+            for s in self._reasoner.get_instances(c):
+                yield from self.role_triples(s.name, p, context)
         else:
             yield from self.role_triples(s, p, context)
 
