@@ -172,15 +172,13 @@ cdef extern from 'Kernel.h':
         void realiseKB()
         bool isKBConsistent()
 
-cdef class Individual:
-    cdef const TIndividual *c_obj
-
-    @property
-    def name(self):
-        return self.c_obj.getName()
-
 cdef class IndividualExpr:
     cdef const TDLIndividualExpression *c_obj
+
+cdef class Individual(IndividualExpr):
+    @property
+    def name(self):
+        return (<TIndividual*>self.c_obj).getName()
 
 cdef class ConceptExpr:
     cdef const TDLConceptExpression *c_obj
@@ -259,7 +257,7 @@ cdef class Reasoner:
     #
 
     def individual(self, str name):
-        cdef IndividualExpr result = self._singleton(IndividualExpr, name)
+        cdef Individual result = self._singleton(Individual, name)
         result.c_obj = self.c_mgr.Individual(name.encode())
         return result
 
@@ -295,8 +293,7 @@ cdef class Reasoner:
 
         while it != node.end(True):
             obj = <const TDLConceptName*>dereference(it).getPrimer()
-            result = self._singleton(Concept, obj.getName())
-            result.c_obj = obj
+            result = self._cache[obj.getName()]
             yield result
             postincrement(it)
 
@@ -322,8 +319,7 @@ cdef class Reasoner:
         cdef Individual result
 
         for k in range(data.size()):
-            result = Individual.__new__(Individual)
-            result.c_obj = data[k]
+            result = self._cache[data[k].getName()]
             yield result
 
     def get_instances(self, ConceptExpr c, direct=True):
@@ -331,12 +327,13 @@ cdef class Reasoner:
             raise ValueError('Non-direct instances query not supported yet')
 
         cdef Individual result
+        cdef const TIndividual *obj
         cdef TaxonomyVertex *node = self.c_kernel.setUpCache(c.c_obj)
         cdef vector[TaxonomyVertex*].iterator it = node.begin(False)
 
         while it != node.end(False):
-            result = Individual.__new__(Individual)
-            result.c_obj = <const TIndividual*>dereference(it).getPrimer()
+            obj = <const TIndividual*>dereference(it).getPrimer()
+            result = self._cache[obj.getName()]
             yield result
             postincrement(it)
 
@@ -399,7 +396,6 @@ cdef class Reasoner:
     #
     # general
     #
-
     def realise(self):
         self.c_kernel.realiseKB()
 
