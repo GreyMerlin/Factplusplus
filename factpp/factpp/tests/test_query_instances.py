@@ -32,5 +32,27 @@ def test_instances_query():
     names = [i.name for i in reasoner.get_instances(cls)]
     assert ['a', 'b', 'c'] == names
 
+def test_instances_query_from_object_role_domain():
+    """
+    Test getting instances of a class, which is a domain of an object role.
+    """
+    reasoner = Reasoner()
+
+    cls = reasoner.concept('CLS')
+    r = reasoner.object_role('R')
+    reasoner.set_o_domain(r, cls)
+
+    for v in 'abc':
+        i = reasoner.individual(v)
+        reasoner.instance_of(i, cls)
+
+    reasoner.realise()
+
+    # get role domain
+    value = next(reasoner.get_o_domain(r))
+
+    # get instances of the domain
+    names = [i.name for i in reasoner.get_instances(value)]
+    assert ['a', 'b', 'c'] == names
 
 # vim: sw=4:et:ai
