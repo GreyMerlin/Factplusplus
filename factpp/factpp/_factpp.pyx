@@ -283,9 +283,13 @@ cdef class Reasoner:
         cdef Concept result
         cdef const TDLConceptName *obj
 
-        cdef TDLConceptExpression *start = self.c_mgr.Top() if top else self.c_mgr.Bottom()
-        cdef TaxonomyVertex *node = self.c_kernel.setUpCache(self.c_mgr.Exists(r.c_obj, start))
-        cdef vector[TaxonomyVertex*].iterator it = node.begin(True)
+        cdef TDLConceptExpression *start
+        cdef TaxonomyVertex *node
+        cdef vector[TaxonomyVertex*].iterator it
+
+        start = self.c_mgr.Top() if top else self.c_mgr.Bottom()
+        node = self.c_kernel.setUpCache(self.c_mgr.Exists(r.c_obj, start))
+        it = node.begin(True)
 
         while it != node.end(True):
             obj = <const TDLConceptName*>dereference(it).getPrimer()
