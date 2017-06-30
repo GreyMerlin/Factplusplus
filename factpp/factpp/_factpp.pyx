@@ -121,8 +121,11 @@ cdef extern from 'tExpressionManager.h':
         TDLDataRoleExpression* DataRole(string)
 
         TDLConceptExpression* Top()
+        TDLConceptExpression* Bottom()
         TDLConceptExpression* Exists(const TDLObjectRoleExpression*, const TDLConceptExpression*)
         TDLConceptExpression* Exists(const TDLDataRoleExpression*, const TDLDataExpression*)
+        TDLObjectRoleExpression* Inverse(const TDLObjectRoleExpression*)
+
 
         TDLConceptExpression* Cardinality(unsigned int, const TDLDataRoleExpression*, const TDLDataExpression*)
         TDLConceptExpression* MaxCardinality(unsigned int, const TDLObjectRoleExpression*, const TDLConceptExpression*)
@@ -276,6 +279,19 @@ cdef class Reasoner:
     #
     # object roles
     #
+    def _find_role_items(self, ObjectRoleExpr r, bool top):
+        cdef Concept result
+        cdef const TDLConceptName *obj
+
+        cdef TDLConceptExpression *start = self.c_mgr.Top() if top else self.c_mgr.Bottom()
+        cdef TaxonomyVertex *node = self.c_kernel.setUpCache(self.c_mgr.Exists(r.c_obj, start))
+        cdef vector[TaxonomyVertex*].iterator it = node.begin(True)
+
+        while it != node.end(True):
+            obj = <const TDLConceptName*>dereference(it).getPrimer()
+            result = self._cache[obj.getName()]
+            yield result
+            postincrement(it)
 
     def object_role(self, str name):
         cdef ObjectRoleExpr result = self._singleton(ObjectRoleExpr, name)
@@ -286,16 +302,12 @@ cdef class Reasoner:
         self.c_kernel.setODomain(r.c_obj, c.c_obj)
 
     def get_o_domain(self, ObjectRoleExpr r):
-        cdef Concept result
-        cdef const TDLConceptName *obj
-        cdef TaxonomyVertex *node = self.c_kernel.setUpCache(self.c_mgr.Exists(r.c_obj, self.c_mgr.Top()))
-        cdef vector[TaxonomyVertex*].iterator it = node.begin(True)
+        yield from self._find_role_items(r, True)
 
-        while it != node.end(True):
-            obj = <const TDLConceptName*>dereference(it).getPrimer()
-            result = self._cache[obj.getName()]
-            yield result
-            postincrement(it)
+    def get_o_range(self, ObjectRoleExpr r):
+        cdef ObjectRoleExpr rev = ObjectRoleExpr.__new__(ObjectRoleExpr)
+        rev.c_obj = r.c_obj
+        yield from self._find_role_items(rev, False)
 
     def set_o_range(self, ObjectRoleExpr r, ConceptExpr c):
         self.c_kernel.setORange(r.c_obj, c.c_obj)
