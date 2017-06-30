@@ -22,6 +22,7 @@ RDFLib store.
 """
 
 import rdflib.store
+from rdflib.namespace import RDF
 
 import factpp
 
@@ -32,11 +33,16 @@ class Store(rdflib.store.Store):
     def add(self, triple, context=None, quoted=False):
         s, p, o = triple
 
-        ref_s = self._reasoner.individual(str(s))
-        ref_p = self._reasoner.object_role(str(p))
-        value = self._reasoner.individual(str(o))
+        if p is RDF.type:
+            ref_s = self._reasoner.individual(str(s))
+            ref_o = self._reasoner.concept(str(o))
+            self._reasoner.instance_of(ref_s, ref_o)
+        else:
+            ref_s = self._reasoner.individual(str(s))
+            ref_p = self._reasoner.object_role(str(p))
+            ref_o = self._reasoner.individual(str(o))
 
-        self._reasoner.related_to(ref_s, ref_p, value)
+            self._reasoner.related_to(ref_s, ref_p, ref_o)
 
     def triples(self, pattern, context=None):
         s, p, o = pattern
@@ -55,3 +61,4 @@ class Store(rdflib.store.Store):
             for o in objects:
                 yield ((s, p, o.name), context)
 
+# vim: sw=4:et:ai

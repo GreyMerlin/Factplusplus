@@ -17,46 +17,26 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+"""
+RDFLib store unit tests.
+"""
+
 from rdflib import Graph, Literal, BNode
 from rdflib.namespace import FOAF, RDF
 
 import factpp.rdflib
+from .._factpp import Reasoner
 
-g = Graph(store=factpp.rdflib.Store())
-reasoner = g.store._reasoner
+def test_class_instance():
+    g = Graph(store=factpp.rdflib.Store())
+    reasoner = g.store._reasoner
 
-p1 = BNode()
-p2 = BNode()
-p3 = BNode()
+    p = BNode()
+    cls = reasoner.concept(str(FOAF.Person))
+    obj = reasoner.individual(str(p))
 
-# TODO: use g.add once store supports appropriate OWL predicates
-cls = reasoner.concept(str(FOAF.Person))
-r = reasoner.object_role(str(FOAF.knows))
-reasoner.set_o_domain(r, cls)
-reasoner.set_o_range(r, cls)
-
-for p in [p1, p2, p3]:
     g.add((p, RDF.type, FOAF.Person))
 
-reasoner.realise()
-g.add((p1, FOAF.name, Literal('P 1')))
-g.add((p2, FOAF.name, Literal('P 2')))
-g.add((p3, FOAF.name, Literal('P 3')))
-g.add((p1, FOAF.knows, p2))
-g.add((p2, FOAF.knows, p3))
-
-result = g.query("""
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-SELECT ?n1 ?n2
-WHERE {
-    ?p1 foaf:knows ?p2.
-    ?p1 foaf:name ?n1.
-    ?p2 foaf:name ?n2.
-}
-""")
-
-for r in result:
-    print('result "{}" knows "{}"'.format(r[0], r[1]))
-
+    assert reasoner.is_instance(obj, cls)
 
 # vim: sw=4:et:ai
