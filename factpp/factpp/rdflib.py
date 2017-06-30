@@ -22,7 +22,7 @@ RDFLib store.
 """
 
 import rdflib.store
-from rdflib.namespace import RDF
+from rdflib.namespace import RDF, RDFS, OWL
 
 import factpp
 
@@ -37,6 +37,14 @@ class Store(rdflib.store.Store):
             ref_s = self._reasoner.individual(str(s))
             ref_o = self._reasoner.concept(str(o))
             self._reasoner.instance_of(ref_s, ref_o)
+        elif p is RDFS.domain:
+            ref_s = self._reasoner.object_role(str(s))
+            ref_o = self._reasoner.concept(str(o))
+            self._reasoner.set_o_domain(ref_s, ref_o)
+        elif p is RDFS.range:
+            ref_s = self._reasoner.object_role(str(s))
+            ref_o = self._reasoner.concept(str(o))
+            self._reasoner.set_o_range(ref_s, ref_o)
         else:
             ref_s = self._reasoner.individual(str(s))
             ref_p = self._reasoner.object_role(str(p))

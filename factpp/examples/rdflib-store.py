@@ -18,7 +18,7 @@
 #
 
 from rdflib import Graph, Literal, BNode
-from rdflib.namespace import FOAF, RDF
+from rdflib.namespace import FOAF, RDF, RDFS
 
 import factpp.rdflib
 
@@ -29,16 +29,12 @@ p1 = BNode()
 p2 = BNode()
 p3 = BNode()
 
-# TODO: use g.add once store supports appropriate OWL predicates
-cls = reasoner.concept(str(FOAF.Person))
-r = reasoner.object_role(str(FOAF.knows))
-reasoner.set_o_domain(r, cls)
-reasoner.set_o_range(r, cls)
-
 for p in [p1, p2, p3]:
     g.add((p, RDF.type, FOAF.Person))
 
-reasoner.realise()
+g.add((FOAF.knows, RDFS.domain, FOAF.Person))
+g.add((FOAF.knows, RDFS.range, FOAF.Person))
+
 g.add((p1, FOAF.name, Literal('P 1')))
 g.add((p2, FOAF.name, Literal('P 2')))
 g.add((p3, FOAF.name, Literal('P 3')))

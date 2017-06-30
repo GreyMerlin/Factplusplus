@@ -22,14 +22,33 @@ RDFLib store unit tests.
 """
 
 from rdflib import Graph, Literal, BNode
-from rdflib.namespace import FOAF, RDF
+from rdflib.namespace import FOAF, RDF, RDFS
 
 import factpp.rdflib
 from .._factpp import Reasoner
 
-def test_class_instance():
+def graph():
     g = Graph(store=factpp.rdflib.Store())
-    reasoner = g.store._reasoner
+    return g, g.store._reasoner
+
+def test_property_domain():
+    g, reasoner = graph()
+    g.add((FOAF.knows, RDFS.domain, FOAF.Person))
+
+    r = reasoner.object_role(str(FOAF.knows))
+    value = next(reasoner.get_o_domain(r))
+    assert value.name == str(FOAF.Person)
+
+def test_property_range():
+    g, reasoner = graph()
+    g.add((FOAF.knows, RDFS.range, FOAF.Person))
+
+    r = reasoner.object_role(str(FOAF.knows))
+    value = next(reasoner.get_o_range(r))
+    assert value.name == str(FOAF.Person)
+
+def test_class_instance():
+    g, reasoner = graph()
 
     p = BNode()
     cls = reasoner.concept(str(FOAF.Person))
