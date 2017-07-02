@@ -238,14 +238,32 @@ cdef class Reasoner:
             self._cache[key] = result
         return result
 
-    #
-    # concepts
-    #
+    def _find_role_items(self, ObjectRoleExpr r, bool top):
+        cdef Concept result
+        cdef const TDLConceptName *obj
+
+        cdef TDLConceptExpression *start
+        cdef TaxonomyVertex *node
+        cdef vector[TaxonomyVertex*].iterator it
+
+        start = self.c_mgr.Top() if top else self.c_mgr.Bottom()
+        node = self.c_kernel.setUpCache(self.c_mgr.Exists(r.c_obj, start))
+        it = node.begin(True)
+
+        while it != node.end(True):
+            obj = <const TDLConceptName*>dereference(it).getPrimer()
+            result = self._cache[obj.getName()]
+            yield result
+            postincrement(it)
+
     def _arg_list(self, classes):
         self.c_mgr.newArgList()
         for c in classes:
             self.c_mgr.addArg((<ConceptExpr>c).c_obj)
 
+    #
+    # concepts
+    #
     def concept(self, str name):
         cdef Concept result = self._singleton(Concept, name)
         result.c_obj = self.c_mgr.Concept(name.encode())
@@ -268,7 +286,6 @@ cdef class Reasoner:
     #
     # individuals
     #
-
     def individual(self, str name):
         cdef Individual result = self._singleton(Individual, name)
         result.c_obj = self.c_mgr.Individual(name.encode())
@@ -289,24 +306,6 @@ cdef class Reasoner:
     #
     # object roles
     #
-    def _find_role_items(self, ObjectRoleExpr r, bool top):
-        cdef Concept result
-        cdef const TDLConceptName *obj
-
-        cdef TDLConceptExpression *start
-        cdef TaxonomyVertex *node
-        cdef vector[TaxonomyVertex*].iterator it
-
-        start = self.c_mgr.Top() if top else self.c_mgr.Bottom()
-        node = self.c_kernel.setUpCache(self.c_mgr.Exists(r.c_obj, start))
-        it = node.begin(True)
-
-        while it != node.end(True):
-            obj = <const TDLConceptName*>dereference(it).getPrimer()
-            result = self._cache[obj.getName()]
-            yield result
-            postincrement(it)
-
     def object_role(self, str name):
         cdef ObjectRoleExpr result = self._singleton(ObjectRoleExpr, name)
         result.c_obj = self.c_mgr.ObjectRole(name.encode())
