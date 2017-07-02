@@ -126,6 +126,7 @@ cdef extern from 'tExpressionManager.h':
         TDLConceptExpression* Exists(const TDLDataRoleExpression*, const TDLDataExpression*)
         TDLObjectRoleExpression* Inverse(const TDLObjectRoleExpression*)
 
+        TDLConceptExpression* And()
 
         TDLConceptExpression* Cardinality(unsigned int, const TDLDataRoleExpression*, const TDLDataExpression*)
         TDLConceptExpression* MaxCardinality(unsigned int, const TDLObjectRoleExpression*, const TDLConceptExpression*)
@@ -240,6 +241,10 @@ cdef class Reasoner:
     #
     # concepts
     #
+    def _arg_list(self, classes):
+        self.c_mgr.newArgList()
+        for c in classes:
+            self.c_mgr.addArg((<ConceptExpr>c).c_obj)
 
     def concept(self, str name):
         cdef Concept result = self._singleton(Concept, name)
@@ -250,10 +255,15 @@ cdef class Reasoner:
         self.c_kernel.impliesConcepts(c1.c_obj, c2.c_obj)
 
     def disjoint_concepts(self, classes):
-        self.c_mgr.newArgList()
-        for c in classes:
-            self.c_mgr.addArg((<ConceptExpr>c).c_obj)
+        self._arg_list(classes)
         self.c_kernel.disjointConcepts()
+
+    def intersection(self, classes):
+        cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
+
+        self._arg_list(classes)
+        result.c_obj = self.c_mgr.And()
+        return result
 
     #
     # individuals
