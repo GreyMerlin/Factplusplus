@@ -21,6 +21,9 @@
 RDFLib store.
 """
 
+from collections import defaultdict
+from functools import partial
+
 import rdflib.store
 from rdflib.namespace import RDF, RDFS, OWL
 
@@ -29,7 +32,7 @@ import factpp
 class Store(rdflib.store.Store):
     def __init__(self):
         self._reasoner = factpp.Reasoner()
-        self._lists = {}
+        self._list_cache = ListState.CACHE
 
     def add(self, triple, context=None, quoted=False):
         s, p, o = triple
@@ -51,16 +54,13 @@ class Store(rdflib.store.Store):
             ref_o = self._reasoner.concept(str(o))
             self._reasoner.set_o_range(ref_s, ref_o)
         elif p is RDF.first:
-            self._lists[s] = [o]
+            self._list_cache[s].first = o
         elif p is RDF.rest:
-            self._lists[s].append(o)
+            self._list_cache[s].rest = o
         elif p == OWL.intersectionOf:
-            ref_s = self._reasoner.concept(str(s))
-            o1, o2 = self._lists[o]
-            ref_o1 = self._reasoner.concept(str(o1))
-            ref_o2 = self._reasoner.concept(str(o2))
-            o1_o2 = self._reasoner.intersection([ref_o1, ref_o2])
-            self._reasoner.implies_concepts(o1_o2, ref_s)
+            self._list_cache[o].store = self
+            self._list_cache[o].object = o
+            self._list_cache[o].subject = s
         else:
             ref_s = self._reasoner.individual(str(s))
             ref_p = self._reasoner.object_role(str(p))
@@ -84,5 +84,63 @@ class Store(rdflib.store.Store):
             objects = self._reasoner.get_role_fillers(ref_s, ref_p)
             for o in objects:
                 yield ((s, p, o.name), context)
+
+
+class ListState:
+    """
+    RDF list state.
+
+    Used to create subclass of intersection of classes.
+
+    Store subject, first-element and rest-of-list items. Create the
+    subclass when all elements are defined.
+    """
+    def __init__(self):
+        self.store = None
+
+        self._subject = None
+        self._object = None
+        self._first = None
+        self._rest = None
+
+    def _set_subject(self, cls):
+        self._subject = cls
+        self._realise()
+
+    def _set_object(self, obj):
+        self._object = obj
+        self._realise()
+
+    def _set_first(self, cls):
+        self._first = cls
+        self._realise()
+
+    def _set_rest(self, cls):
+        self._rest = cls
+        self._realise()
+
+    subject = property(fset=_set_subject)
+    first = property(fset=_set_first)
+    rest = property(fset=_set_rest)
+    object = property(fset=_set_object)
+
+    def _realise(self):
+        if all([self._subject, self._first, self._rest]):
+            assert self._object is not None
+            assert self.store is not None
+
+            reasoner = self.store._reasoner
+
+            ref_s = reasoner.concept(str(self._subject))
+            ref_f = reasoner.concept(str(self._first))
+            ref_r = reasoner.concept(str(self._rest))
+
+            cls = reasoner.intersection([ref_f, ref_r])
+            reasoner.implies_concepts(cls, ref_s)
+
+            # remove from store
+            ListState.CACHE.pop(self._object)
+
+ListState.CACHE = defaultdict(ListState)
 
 # vim: sw=4:et:ai

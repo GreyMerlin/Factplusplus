@@ -27,6 +27,8 @@ from rdflib.namespace import FOAF, RDF, RDFS, OWL, Namespace
 import factpp.rdflib
 from .._factpp import Reasoner
 
+from unittest import mock
+
 NS = Namespace('http://test.com/ns#')
 
 def graph():
@@ -84,5 +86,42 @@ def test_owl_intersection():
     i = reasoner.individual(str(p))
     cls_f = reasoner.concept(str(NS.Father))
     assert reasoner.is_instance(i, cls_f)
+
+def test_list_cache():
+    """
+    Test creating RDF list state.
+    """
+    cache = factpp.rdflib.ListState.CACHE
+    store = mock.Mock()
+
+    cache['O1'].store = store
+    cache['O1'].object = 'O1'
+
+    cache['O1'].subject = 'S'
+    assert 0 == store._reasoner.concept.call_count
+
+    cache['O1'].first = 'F'
+    assert 0 == store._reasoner.concept.call_count
+
+    cache['O1'].rest = 'R'
+    assert 3 == store._reasoner.concept.call_count
+
+    assert 'O1' not in cache
+
+    # in different order
+    store.reset_mock()
+    cache['O2'].store = store
+    cache['O2'].object = 'O2'
+
+    cache['O2'].rest = 'R'
+    assert 0 == store._reasoner.concept.call_count
+
+    cache['O2'].first = 'F'
+    assert 0 == store._reasoner.concept.call_count
+
+    cache['O2'].subject = 'S'
+    assert 3 == store._reasoner.concept.call_count
+
+    assert 'O2' not in cache
 
 # vim: sw=4:et:ai
