@@ -69,5 +69,20 @@ def test_owl_subclass_of():
     cls_p = reasoner.concept(str(NS.Person))
     assert reasoner.is_subsumed_by(cls_w, cls_p)
 
+def test_owl_intersection():
+    g, reasoner = graph()
+
+    p = BNode('John')
+    g.add((p, RDF.type, NS.Parent))
+    g.add((p, RDF.type, NS.Man))
+
+    b = BNode()
+    g.add((b, RDF.first, NS.Parent))
+    g.add((b, RDF.rest, NS.Man))
+    g.add((NS.Father, OWL.intersectionOf, b))
+    
+    i = reasoner.individual(str(p))
+    cls_f = reasoner.concept(str(NS.Father))
+    assert reasoner.is_instance(i, cls_f)
 
 # vim: sw=4:et:ai

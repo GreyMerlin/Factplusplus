@@ -29,6 +29,7 @@ import factpp
 class Store(rdflib.store.Store):
     def __init__(self):
         self._reasoner = factpp.Reasoner()
+        self._lists = {}
 
     def add(self, triple, context=None, quoted=False):
         s, p, o = triple
@@ -49,6 +50,17 @@ class Store(rdflib.store.Store):
             ref_s = self._reasoner.object_role(str(s))
             ref_o = self._reasoner.concept(str(o))
             self._reasoner.set_o_range(ref_s, ref_o)
+        elif p is RDF.first:
+            self._lists[s] = [o]
+        elif p is RDF.rest:
+            self._lists[s].append(o)
+        elif p == OWL.intersectionOf:
+            ref_s = self._reasoner.concept(str(s))
+            o1, o2 = self._lists[o]
+            ref_o1 = self._reasoner.concept(str(o1))
+            ref_o2 = self._reasoner.concept(str(o2))
+            o1_o2 = self._reasoner.intersection([ref_o1, ref_o2])
+            self._reasoner.implies_concepts(o1_o2, ref_s)
         else:
             ref_s = self._reasoner.individual(str(s))
             ref_p = self._reasoner.object_role(str(p))
