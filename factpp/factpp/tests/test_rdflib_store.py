@@ -60,7 +60,7 @@ def test_class_instance():
 
     assert reasoner.is_instance(obj, cls)
 
-def test_owl_subclass_of():
+def test_subclass_of():
     g, reasoner = graph()
 
     g.add((NS.Woman, RDFS.subClassOf, NS.Person))
