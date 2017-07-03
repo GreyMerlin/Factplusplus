@@ -22,10 +22,12 @@ RDFLib store unit tests.
 """
 
 from rdflib import Graph, Literal, BNode
-from rdflib.namespace import FOAF, RDF, RDFS
+from rdflib.namespace import FOAF, RDF, RDFS, OWL, Namespace
 
 import factpp.rdflib
 from .._factpp import Reasoner
+
+NS = Namespace('http://test.com/ns#')
 
 def graph():
     g = Graph(store=factpp.rdflib.Store())
@@ -57,5 +59,15 @@ def test_class_instance():
     g.add((p, RDF.type, FOAF.Person))
 
     assert reasoner.is_instance(obj, cls)
+
+def test_owl_subclass_of():
+    g, reasoner = graph()
+
+    g.add((NS.Woman, OWL.SubClassOf, NS.Person))
+
+    cls_w = reasoner.concept(str(NS.Woman))
+    cls_p = reasoner.concept(str(NS.Person))
+    assert reasoner.is_subsumed_by(cls_w, cls_p)
+
 
 # vim: sw=4:et:ai
