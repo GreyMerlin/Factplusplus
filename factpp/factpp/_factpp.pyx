@@ -152,6 +152,7 @@ cdef extern from 'Kernel.h':
     cdef cppclass ReasoningKernel:
         ReasoningKernel() except +
         TExpressionManager* getExpressionManager()
+
         TDLAxiom* setSymmetric(TDLObjectRoleExpression*)
         TDLAxiom* setTransitive(TDLObjectRoleExpression*)
         TDLAxiom* relatedTo(TDLIndividualExpression*, TDLObjectRoleExpression*, TDLIndividualExpression*)
@@ -166,6 +167,7 @@ cdef extern from 'Kernel.h':
         TDLAxiom* disjointConcepts()
         TDLAxiom* processDifferent()
         TDLAxiom* impliesConcepts(TDLConceptExpression*, TDLConceptExpression*)
+        bool isSubsumedBy(TDLConceptExpression*, TDLConceptExpression*)
         #TIndividual* getIndividual(TDLIndividualExpression*, char*)
         #TRole* getRole(TDLObjectRoleExpression*, char*)
         #CIVec& getRelated(TIndividual*, TRole*)
@@ -271,6 +273,9 @@ cdef class Reasoner:
 
     def implies_concepts(self, ConceptExpr c1, ConceptExpr c2):
         self.c_kernel.impliesConcepts(c1.c_obj, c2.c_obj)
+
+    def is_subsumed_by(self, ConceptExpr c1, ConceptExpr c2):
+        return self.c_kernel.isSubsumedBy(c1.c_obj, c2.c_obj)
 
     def disjoint_concepts(self, classes):
         self._arg_list(classes)
