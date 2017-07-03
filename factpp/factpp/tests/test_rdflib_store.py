@@ -63,7 +63,7 @@ def test_class_instance():
 def test_owl_subclass_of():
     g, reasoner = graph()
 
-    g.add((NS.Woman, OWL.SubClassOf, NS.Person))
+    g.add((NS.Woman, RDFS.subClassOf, NS.Person))
 
     cls_w = reasoner.concept(str(NS.Woman))
     cls_p = reasoner.concept(str(NS.Person))

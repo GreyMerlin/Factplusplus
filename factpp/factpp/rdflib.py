@@ -38,7 +38,7 @@ class Store(rdflib.store.Store):
             ref_s = self._reasoner.individual(str(s))
             ref_o = self._reasoner.concept(str(o))
             self._reasoner.instance_of(ref_s, ref_o)
-        elif p == OWL.SubClassOf:
+        elif p is RDFS.subClassOf:
             ref_s = self._reasoner.concept(str(s))
             ref_o = self._reasoner.concept(str(o))
             self._reasoner.implies_concepts(ref_s, ref_o)
