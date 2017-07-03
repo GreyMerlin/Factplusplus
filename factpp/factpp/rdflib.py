@@ -97,18 +97,14 @@ class ListState:
     """
     def __init__(self):
         self.store = None
+        self.object = None
 
         self._subject = None
-        self._object = None
         self._first = None
         self._rest = None
 
     def _set_subject(self, cls):
         self._subject = cls
-        self._realise()
-
-    def _set_object(self, obj):
-        self._object = obj
         self._realise()
 
     def _set_first(self, cls):
@@ -119,14 +115,15 @@ class ListState:
         self._rest = cls
         self._realise()
 
+    # a list is realised only when subject, first-element and rest-of-list
+    # items are set; caller has to set `store` and `object`
     subject = property(fset=_set_subject)
     first = property(fset=_set_first)
     rest = property(fset=_set_rest)
-    object = property(fset=_set_object)
 
     def _realise(self):
         if all([self._subject, self._first, self._rest]):
-            assert self._object is not None
+            assert self.object is not None
             assert self.store is not None
 
             reasoner = self.store._reasoner
@@ -139,7 +136,7 @@ class ListState:
             reasoner.implies_concepts(cls, ref_s)
 
             # remove from store
-            ListState.CACHE.pop(self._object)
+            del ListState.CACHE[self.object]
 
 ListState.CACHE = defaultdict(ListState)
 
