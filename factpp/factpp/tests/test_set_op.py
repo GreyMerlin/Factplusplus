@@ -19,14 +19,14 @@
 
 from .._factpp import Reasoner
 
-def test_intersection():
+def test_intersection_subclass():
     """
     Test intersection of classes.
 
     From OWL 2 primer::
 
         SubClassOf(
-          :Father 
+          :Grandfather
           ObjectIntersectionOf(:Man :Parent)
         )
     """
@@ -34,21 +34,49 @@ def test_intersection():
 
     cls_p = reasoner.concept('Parent')
     cls_m = reasoner.concept('Man')
-    cls_f = reasoner.concept('Father')
+    cls_g = reasoner.concept('Grandfather')
 
-    cls_uf = reasoner.intersection([cls_p, cls_m])
-    reasoner.implies_concepts(cls_uf, cls_f)
+    cls = reasoner.intersection([cls_p, cls_m])
+    reasoner.implies_concepts(cls_g, cls)
 
     i = reasoner.individual('John')
-    reasoner.instance_of(i, cls_m)
+    reasoner.instance_of(i, cls_g)
     reasoner.realise()
 
-    # is a man, but not a parent yet
-    assert not reasoner.is_instance(i, cls_f)
+    assert reasoner.is_instance(i, cls_m)
+    assert reasoner.is_instance(i, cls_p)
 
-    # is a parent, so father as well
-    reasoner.instance_of(i, cls_p)
+
+def test_intersection_eq():
+    """
+    Test intersection of classes.
+
+    From OWL 2 primer::
+
+        EquivalentClasses(
+          :Mother
+          ObjectIntersectionOf(:Woman :Parent)
+        )
+    """
+    reasoner = Reasoner()
+
+    cls_p = reasoner.concept('Parent')
+    cls_w = reasoner.concept('Woman')
+    cls_m = reasoner.concept('Mother')
+
+    cls = reasoner.intersection([cls_p, cls_m])
+    reasoner.equal_concepts([cls, cls_m])
+
+    a = reasoner.individual('Alice')
+    reasoner.instance_of(a, cls_m)
     reasoner.realise()
-    assert reasoner.is_instance(i, cls_f)
+
+    # is a woman, but not a parent yet
+    assert not reasoner.is_instance(a, cls_w)
+
+    # becomes a parent, so mother as well
+    reasoner.instance_of(a, cls_p)
+    reasoner.realise()
+    assert reasoner.is_instance(a, cls_m)
 
 # vim: sw=4:et:ai
