@@ -20,12 +20,31 @@
 import factpp
 
 def test_subclass():
+    """
+    Test subclasses.
+    """
     reasoner = factpp.Reasoner()
 
-    a = reasoner.concept('A')
-    b = reasoner.concept('B')
+    cls_a = reasoner.concept('A')
+    cls_b = reasoner.concept('B')
 
-    reasoner.implies_concepts(a, b)
-    assert reasoner.is_subsumed_by(a, b)
+    reasoner.implies_concepts(cls_a, cls_b)
+    assert reasoner.is_subsumed_by(cls_a, cls_b)
+
+def test_equal_concepts():
+    """
+    Test equal concepts.
+    """
+    reasoner = factpp.Reasoner()
+
+    cls_a = reasoner.concept('A')
+    cls_b = reasoner.concept('B')
+
+    a = reasoner.individual('a')
+    reasoner.instance_of(a, cls_a)
+
+    reasoner.equal_concepts([cls_a, cls_b])
+
+    assert reasoner.is_instance(a, cls_b)
 
 # vim: sw=4:et:ai

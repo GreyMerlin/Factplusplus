@@ -164,6 +164,7 @@ cdef extern from 'Kernel.h':
         TDLAxiom* setDDomain(TDLDataRoleExpression*, TDLConceptExpression*)
         TDLAxiom* setDRange(TDLDataRoleExpression*, TDLDataExpression*)
 
+        TDLAxiom* equalConcepts()
         TDLAxiom* disjointConcepts()
         TDLAxiom* processDifferent()
         TDLAxiom* impliesConcepts(TDLConceptExpression*, TDLConceptExpression*)
@@ -276,6 +277,10 @@ cdef class Reasoner:
 
     def is_subsumed_by(self, ConceptExpr c1, ConceptExpr c2):
         return self.c_kernel.isSubsumedBy(c1.c_obj, c2.c_obj)
+
+    def equal_concepts(self, classes):
+        self._arg_list(classes)
+        self.c_kernel.equalConcepts()
 
     def disjoint_concepts(self, classes):
         self._arg_list(classes)
