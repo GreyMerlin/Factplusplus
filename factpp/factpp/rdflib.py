@@ -57,6 +57,10 @@ class Store(rdflib.store.Store):
             self._list_cache[s].first = o
         elif p is RDF.rest:
             self._list_cache[s].rest = o
+        elif p == OWL.equivalentClass:
+            ref_s = self._reasoner.concept(str(s))
+            ref_o = self._reasoner.concept(str(o))
+            self._reasoner.equal_concepts([ref_s, ref_o])
         elif p == OWL.intersectionOf:
             self._list_cache[o].store = self
             self._list_cache[o].object = o
@@ -131,9 +135,8 @@ class ListState:
             ref_s = reasoner.concept(str(self._subject))
             ref_f = reasoner.concept(str(self._first))
             ref_r = reasoner.concept(str(self._rest))
-
             cls = reasoner.intersection([ref_f, ref_r])
-            reasoner.implies_concepts(cls, ref_s)
+            reasoner.equal_concepts([cls, ref_s])
 
             # remove from store
             del ListState.CACHE[self.object]

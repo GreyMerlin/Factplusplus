@@ -71,21 +71,44 @@ def test_subclass_of():
     cls_p = reasoner.concept(str(NS.Person))
     assert reasoner.is_subsumed_by(cls_w, cls_p)
 
-def test_owl_intersection():
+def test_owl_intersection_subclass():
     g, reasoner = graph()
 
     p = BNode('John')
-    g.add((p, RDF.type, NS.Parent))
-    g.add((p, RDF.type, NS.Man))
+    g.add((p, RDF.type, NS.Grandfather))
 
-    b = BNode()
-    g.add((b, RDF.first, NS.Parent))
-    g.add((b, RDF.rest, NS.Man))
-    g.add((NS.Father, OWL.intersectionOf, b))
+    b1 = BNode()
+    b2 = BNode()
+
+    g.add((NS.Grandfather, RDFS.subClassOf, b1))
+    g.add((b1, OWL.intersectionOf, b2))
+    g.add((b2, RDF.first, NS.Parent))
+    g.add((b2, RDF.rest, NS.Man))
+
+    i = reasoner.individual(str(p))
+    cls_p = reasoner.concept(str(NS.Parent))
+    cls_m = reasoner.concept(str(NS.Man))
+    assert reasoner.is_instance(i, cls_p)
+    assert reasoner.is_instance(i, cls_m)
+
+def test_owl_intersection_eq_class():
+    g, reasoner = graph()
+
+    p = BNode('Alice')
+    g.add((p, RDF.type, NS.Parent))
+    g.add((p, RDF.type, NS.Woman))
+
+    b1 = BNode()
+    b2 = BNode()
+
+    g.add((NS.Mother, OWL.equivalentClass, b1))
+    g.add((b1, OWL.intersectionOf, b2))
+    g.add((b2, RDF.first, NS.Parent))
+    g.add((b2, RDF.rest, NS.Woman))
     
     i = reasoner.individual(str(p))
-    cls_f = reasoner.concept(str(NS.Father))
-    assert reasoner.is_instance(i, cls_f)
+    cls_m = reasoner.concept(str(NS.Mother))
+    assert reasoner.is_instance(i, cls_m)
 
 def test_list_cache():
     """
