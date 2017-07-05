@@ -43,13 +43,16 @@ class Store(rdflib.store.Store):
             (RDF.type, RDFS.Class): self._parse_class,
             (RDF.type, RDF.Property): self._parse_property,
             RDF.type: make_parser('instance_of', 'individual', 'concept'),
+            RDF.first: self._parse_rdf_first,
+            RDF.rest: self._parse_rdf_rest,
+
             RDFS.subClassOf: make_parser('implies_concepts', 'concept', 'concept'),
             RDFS.domain: make_parser('set_o_domain', 'object_role', 'concept'),
             RDFS.range: make_parser('set_o_range', 'object_role', 'concept'),
+
             OWL.equivalentClass: make_parser('equal_concepts', 'concept', 'concept', as_list=True),
             OWL.intersectionOf: self._parse_intersection,
-            RDF.first: self._parse_rdf_first,
-            RDF.rest: self._parse_rdf_rest,
+
             None: self._parse_nop,
         }
 
@@ -78,11 +81,11 @@ class Store(rdflib.store.Store):
             yield from self.role_triples(s, p, context)
 
     def role_triples(self, s, p, context):
-            ref_s = self._reasoner.individual(str(s))
-            ref_p = self._reasoner.object_role(str(p))
-            objects = self._reasoner.get_role_fillers(ref_s, ref_p)
-            for o in objects:
-                yield ((s, p, o.name), context)
+        ref_s = self._reasoner.individual(str(s))
+        ref_p = self._reasoner.object_role(str(p))
+        objects = self._reasoner.get_role_fillers(ref_s, ref_p)
+        for o in objects:
+            yield ((s, p, o.name), context)
 
     #
     # parsers
