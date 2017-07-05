@@ -129,8 +129,10 @@ def test_new_property():
     g, reasoner = graph()
     parsers = g.store._parsers
 
-    g.add((NS.P, RDF.type, RDF.Property))
-    assert (RDF.Property, NS.P) in parsers
+    g.add((NS.P1, RDF.type, RDF.Property))
+    g.add((NS.P2, RDF.type, OWL.ObjectProperty))
+    assert NS.P1 in parsers
+    assert NS.P2 in parsers
 
 def test_list_cache():
     """

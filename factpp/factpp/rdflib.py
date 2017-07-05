@@ -42,6 +42,11 @@ class Store(rdflib.store.Store):
             (RDF.type, OWL.Class): self._parse_class,
             (RDF.type, RDFS.Class): self._parse_class,
             (RDF.type, RDF.Property): self._parse_property,
+            (RDF.type, OWL.ObjectProperty): self._parse_property,
+            (RDF.type, OWL.DatatypeProperty): self._parse_nop,
+            (RDF.type, OWL.FunctionalProperty): self._parse_nop,
+            (RDF.type, OWL.InverseFunctionalProperty): self._parse_nop,
+            (RDF.type, OWL.AnnotationProperty): self._parse_nop,
             RDF.type: make_parser('instance_of', 'individual', 'concept'),
             RDF.first: self._parse_rdf_first,
             RDF.rest: self._parse_rdf_rest,
@@ -62,7 +67,7 @@ class Store(rdflib.store.Store):
             logger.debug('{}, {}, {}'.format(s, p, o))
 
         parsers = self._parsers
-        keys = ((RDF.type, o), p, None)
+        keys = ((p, o), p, None)
 
         assert None in parsers
         parse = next(self._parsers.get(k) for k in keys if k in parsers)
@@ -117,7 +122,7 @@ class Store(rdflib.store.Store):
 
     def _parse_property(self, s, o):
         self._reasoner.object_role(str(s))
-        self._parsers[RDF.Property, s] = self._parse_property
+        self._parsers[s] = self._make_parser('related_to', 'individual', 'individual')
 
     def _parse_nop(self, s, o):
         if __debug__:
