@@ -21,6 +21,7 @@
 RDFLib store.
 """
 
+import logging
 from collections import defaultdict
 from functools import partial
 
@@ -29,6 +30,8 @@ from rdflib.namespace import RDF, RDFS, OWL
 
 import factpp
 
+logger = logging.getLogger(__name__)
+
 class Store(rdflib.store.Store):
     def __init__(self):
         self._reasoner = factpp.Reasoner()
@@ -36,6 +39,8 @@ class Store(rdflib.store.Store):
 
     def add(self, triple, context=None, quoted=False):
         s, p, o = triple
+        if __debug__:
+            logger.debug('{}, {}, {}'.format(s, p, o))
 
         if p is RDF.type:
             ref_s = self._reasoner.individual(str(s))
