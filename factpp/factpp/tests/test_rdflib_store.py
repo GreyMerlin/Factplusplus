@@ -110,6 +110,16 @@ def test_owl_intersection_eq_class():
     cls_m = reasoner.concept(str(NS.Mother))
     assert reasoner.is_instance(i, cls_m)
 
+def test_new_class():
+    """
+    Test adding new classes.
+    """
+    g, reasoner = graph()
+
+    g.add((NS.A, RDF.type, OWL.Class))
+    g.add((NS.B, RDF.type, RDFS.Class))
+    assert {NS.A, NS.B} == g.store._classes
+
 def test_list_cache():
     """
     Test creating RDF list state.

@@ -36,31 +36,35 @@ class Store(rdflib.store.Store):
     def __init__(self):
         self._reasoner = factpp.Reasoner()
         self._list_cache = ListState.CACHE
+        self._classes = set()
 
     def add(self, triple, context=None, quoted=False):
         s, p, o = triple
         if __debug__:
             logger.debug('{}, {}, {}'.format(s, p, o))
 
-        if p is RDF.type:
+        if p == RDF.type and (o == OWL.Class or o == RDFS.Class or o in self._classes):
+            self._reasoner.concept(str(s))
+            self._classes.add(s)
+        elif p == RDF.type:
             ref_s = self._reasoner.individual(str(s))
             ref_o = self._reasoner.concept(str(o))
             self._reasoner.instance_of(ref_s, ref_o)
-        elif p is RDFS.subClassOf:
+        elif p == RDFS.subClassOf:
             ref_s = self._reasoner.concept(str(s))
             ref_o = self._reasoner.concept(str(o))
             self._reasoner.implies_concepts(ref_s, ref_o)
-        elif p is RDFS.domain:
+        elif p == RDFS.domain:
             ref_s = self._reasoner.object_role(str(s))
             ref_o = self._reasoner.concept(str(o))
             self._reasoner.set_o_domain(ref_s, ref_o)
-        elif p is RDFS.range:
+        elif p == RDFS.range:
             ref_s = self._reasoner.object_role(str(s))
             ref_o = self._reasoner.concept(str(o))
             self._reasoner.set_o_range(ref_s, ref_o)
-        elif p is RDF.first:
+        elif p == RDF.first:
             self._list_cache[s].first = o
-        elif p is RDF.rest:
+        elif p == RDF.rest:
             self._list_cache[s].rest = o
         elif p == OWL.equivalentClass:
             ref_s = self._reasoner.concept(str(s))
@@ -70,12 +74,8 @@ class Store(rdflib.store.Store):
             self._list_cache[o].store = self
             self._list_cache[o].object = o
             self._list_cache[o].subject = s
-        else:
-            ref_s = self._reasoner.individual(str(s))
-            ref_p = self._reasoner.object_role(str(p))
-            ref_o = self._reasoner.individual(str(o))
-
-            self._reasoner.related_to(ref_s, ref_p, ref_o)
+        elif __debug__:
+            logger.debug('skipped')
 
     def triples(self, pattern, context=None):
         s, p, o = pattern
