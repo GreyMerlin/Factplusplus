@@ -94,6 +94,7 @@ class Store(rdflib.store.Store):
         f_rel = getattr(self._reasoner, rel)
         f_sub = getattr(self._reasoner, sub)
         f_obj = getattr(self._reasoner, obj)
+
         if as_list:
             return lambda s, o: f_rel([f_sub(str(s)), f_obj(str(o))])
         else:
