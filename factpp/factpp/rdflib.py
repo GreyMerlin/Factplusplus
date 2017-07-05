@@ -36,16 +36,20 @@ class Store(rdflib.store.Store):
     def __init__(self):
         self._reasoner = factpp.Reasoner()
         self._list_cache = ListState.CACHE
-        self._classes = set()
+        self._classes = {OWL.Class, RDFS.Class}
+        self._properties = {RDF.Property}
 
     def add(self, triple, context=None, quoted=False):
         s, p, o = triple
         if __debug__:
             logger.debug('{}, {}, {}'.format(s, p, o))
 
-        if p == RDF.type and (o == OWL.Class or o == RDFS.Class or o in self._classes):
+        if p == RDF.type and o in self._classes:
             self._reasoner.concept(str(s))
             self._classes.add(s)
+        elif p == RDF.type and o in self._properties:
+            self._reasoner.object_role(str(s))
+            self._properties.add(s)
         elif p == RDF.type:
             ref_s = self._reasoner.individual(str(s))
             ref_o = self._reasoner.concept(str(o))
