@@ -21,6 +21,10 @@ Run an example::
 
     $ LD_LIBRARY_PATH=../Kernel/obj PYTHONPATH=. python examples/imply-class.py
 
+Try to load FOAF ontology::
+
+    $ LD_LIBRARY_PATH=../Kernel/obj PYTHONPATH=. bin/factpp-load ontologies/foaf.rdf
+
 How to add more bindings? See the following commit
 
     https://bitbucket.org/wrobell/factplusplus/commits/a3aed0e6f9e9d9c784e29defee366b223b808481?at=factpp
