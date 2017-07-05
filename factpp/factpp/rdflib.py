@@ -61,11 +61,11 @@ class Store(rdflib.store.Store):
         if __debug__:
             logger.debug('{}, {}, {}'.format(s, p, o))
 
+        parsers = self._parsers
         keys = ((RDF.type, o), p, None)
 
-        assert None in self._parsers
-        parsers = (self._parsers.get(k) for k in keys)
-        parse = next(p for p in parsers if p is not None)
+        assert None in parsers
+        parse = next(self._parsers.get(k) for k in keys if k in parsers)
 
         assert parse
         parse(s, o)
