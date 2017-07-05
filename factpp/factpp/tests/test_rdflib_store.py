@@ -115,19 +115,22 @@ def test_new_class():
     Test adding new classes.
     """
     g, reasoner = graph()
+    parsers = g.store._parsers
 
     g.add((NS.A, RDF.type, OWL.Class))
     g.add((NS.B, RDF.type, RDFS.Class))
-    assert {OWL.Class, RDFS.Class, NS.A, NS.B} == g.store._classes
+    assert (RDF.type, NS.A) in parsers
+    assert (RDF.type, NS.B) in parsers
 
 def test_new_property():
     """
     Test adding new properties.
     """
     g, reasoner = graph()
+    parsers = g.store._parsers
 
     g.add((NS.P, RDF.type, RDF.Property))
-    assert {RDF.Property, NS.P} == g.store._properties
+    assert (RDF.Property, NS.P) in parsers
 
 def test_list_cache():
     """

@@ -36,50 +36,36 @@ class Store(rdflib.store.Store):
     def __init__(self):
         self._reasoner = factpp.Reasoner()
         self._list_cache = ListState.CACHE
-        self._classes = {OWL.Class, RDFS.Class}
-        self._properties = {RDF.Property}
+
+        make_parser = self._make_parser
+        self._parsers = {
+            (RDF.type, OWL.Class): self._parse_class,
+            (RDF.type, RDFS.Class): self._parse_class,
+            (RDF.type, RDF.Property): self._parse_property,
+            RDF.type: make_parser('instance_of', 'individual', 'concept'),
+            RDFS.subClassOf: make_parser('implies_concepts', 'concept', 'concept'),
+            RDFS.domain: make_parser('set_o_domain', 'object_role', 'concept'),
+            RDFS.range: make_parser('set_o_range', 'object_role', 'concept'),
+            OWL.equivalentClass: make_parser('equal_concepts', 'concept', 'concept', as_list=True),
+            OWL.intersectionOf: self._parse_intersection,
+            RDF.first: self._parse_rdf_first,
+            RDF.rest: self._parse_rdf_rest,
+            None: self._parse_nop,
+        }
 
     def add(self, triple, context=None, quoted=False):
         s, p, o = triple
         if __debug__:
             logger.debug('{}, {}, {}'.format(s, p, o))
 
-        if p == RDF.type and o in self._classes:
-            self._reasoner.concept(str(s))
-            self._classes.add(s)
-        elif p == RDF.type and o in self._properties:
-            self._reasoner.object_role(str(s))
-            self._properties.add(s)
-        elif p == RDF.type:
-            ref_s = self._reasoner.individual(str(s))
-            ref_o = self._reasoner.concept(str(o))
-            self._reasoner.instance_of(ref_s, ref_o)
-        elif p == RDFS.subClassOf:
-            ref_s = self._reasoner.concept(str(s))
-            ref_o = self._reasoner.concept(str(o))
-            self._reasoner.implies_concepts(ref_s, ref_o)
-        elif p == RDFS.domain:
-            ref_s = self._reasoner.object_role(str(s))
-            ref_o = self._reasoner.concept(str(o))
-            self._reasoner.set_o_domain(ref_s, ref_o)
-        elif p == RDFS.range:
-            ref_s = self._reasoner.object_role(str(s))
-            ref_o = self._reasoner.concept(str(o))
-            self._reasoner.set_o_range(ref_s, ref_o)
-        elif p == RDF.first:
-            self._list_cache[s].first = o
-        elif p == RDF.rest:
-            self._list_cache[s].rest = o
-        elif p == OWL.equivalentClass:
-            ref_s = self._reasoner.concept(str(s))
-            ref_o = self._reasoner.concept(str(o))
-            self._reasoner.equal_concepts([ref_s, ref_o])
-        elif p == OWL.intersectionOf:
-            self._list_cache[o].store = self
-            self._list_cache[o].object = o
-            self._list_cache[o].subject = s
-        elif __debug__:
-            logger.debug('skipped')
+        keys = ((RDF.type, o), p, None)
+
+        assert None in self._parsers
+        parsers = (self._parsers.get(k) for k in keys)
+        parse = next(p for p in parsers if p is not None)
+
+        assert parse
+        parse(s, o)
 
     def triples(self, pattern, context=None):
         s, p, o = pattern
@@ -97,6 +83,41 @@ class Store(rdflib.store.Store):
             objects = self._reasoner.get_role_fillers(ref_s, ref_p)
             for o in objects:
                 yield ((s, p, o.name), context)
+
+    #
+    # parsers
+    #
+    def _make_parser(self, rel, sub, obj, as_list=False):
+        f_rel = getattr(self._reasoner, rel)
+        f_sub = getattr(self._reasoner, sub)
+        f_obj = getattr(self._reasoner, obj)
+        if as_list:
+            return lambda s, o: f_rel([f_sub(str(s)), f_obj(str(o))])
+        else:
+            return lambda s, o: f_rel(f_sub(str(s)), f_obj(str(o)))
+
+    def _parse_intersection(self, s, o):
+        self._list_cache[o].store = self
+        self._list_cache[o].object = o
+        self._list_cache[o].subject = s
+
+    def _parse_rdf_first(self, s, o):
+        self._list_cache[s].first = o
+
+    def _parse_rdf_rest(self, s, o):
+        self._list_cache[s].rest = o
+
+    def _parse_class(self, s, o):
+        self._reasoner.concept(str(s))
+        self._parsers[RDF.type, s] = self._parse_class
+
+    def _parse_property(self, s, o):
+        self._reasoner.object_role(str(s))
+        self._parsers[RDF.Property, s] = self._parse_property
+
+    def _parse_nop(self, s, o):
+        if __debug__:
+            logger.debug('skipped')
 
 
 class ListState:
