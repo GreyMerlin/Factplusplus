@@ -66,6 +66,7 @@ class Store(rdflib.store.Store):
             RDFS.label: as_meta,
             RDFS.isDefinedBy: as_meta,
             OWL.versionInfo: as_meta,
+            (RDF.type, OWL.AnnotationProperty): as_meta,
             VS.term_status: as_meta,
 
             None: self._parse_nop,
