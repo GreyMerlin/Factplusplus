@@ -41,9 +41,9 @@ class Store(rdflib.store.Store):
         self._parsers = {
             (RDF.type, OWL.Class): self._parse_class,
             (RDF.type, RDFS.Class): self._parse_class,
-            (RDF.type, RDF.Property): self._parse_property,
-            (RDF.type, OWL.ObjectProperty): self._parse_property,
-            (RDF.type, OWL.DatatypeProperty): self._parse_nop,
+            (RDF.type, RDF.Property): self._parse_nop,
+            (RDF.type, OWL.ObjectProperty): self._parse_o_property,
+            (RDF.type, OWL.DatatypeProperty): self._parse_d_property,
             (RDF.type, OWL.FunctionalProperty): self._parse_nop,
             (RDF.type, OWL.InverseFunctionalProperty): self._parse_nop,
             (RDF.type, OWL.AnnotationProperty): self._parse_nop,
@@ -52,8 +52,6 @@ class Store(rdflib.store.Store):
             RDF.rest: self._parse_rdf_rest,
 
             RDFS.subClassOf: make_parser('implies_concepts', 'concept', 'concept'),
-            RDFS.domain: make_parser('set_o_domain', 'object_role', 'concept'),
-            RDFS.range: make_parser('set_o_range', 'object_role', 'concept'),
 
             OWL.equivalentClass: make_parser('equal_concepts', 'concept', 'concept', as_list=True),
             OWL.intersectionOf: self._parse_intersection,
@@ -67,7 +65,7 @@ class Store(rdflib.store.Store):
             logger.debug('{}, {}, {}'.format(s, p, o))
 
         parsers = self._parsers
-        keys = ((p, o), p, None)
+        keys = ((p, o), (s, p), p, None)
 
         assert None in parsers
         parse = next(self._parsers.get(k) for k in keys if k in parsers)
@@ -120,9 +118,30 @@ class Store(rdflib.store.Store):
         self._reasoner.concept(str(s))
         self._parsers[RDF.type, s] = self._parse_class
 
-    def _parse_property(self, s, o):
+    def _parse_o_property(self, s, o):
         self._reasoner.object_role(str(s))
-        self._parsers[s] = self._make_parser('related_to', 'individual', 'individual')
+        parsers = self._parsers
+        make_parser = self._make_parser
+        parsers[s, RDFS.domain] = make_parser('set_o_domain', 'object_role', 'concept')
+        parsers[s, RDFS.range] = make_parser('set_o_range', 'object_role', 'concept')
+        parsers[s] = make_parser('related_to', 'individual', 'individual')
+
+    def _parse_d_property(self, s, o):
+        self._reasoner.data_role(str(s))
+
+        parsers = self._parsers
+        make_parser = self._make_parser
+        parsers[s, RDFS.domain] = make_parser('set_d_domain', 'data_role', 'concept')
+        parsers[s, RDFS.range] = self._parse_d_range
+
+    def _parse_d_range(self, s, o):
+        r = self._reasoner.data_role(str(s))
+        self._reasoner.set_d_range(r, self._reasoner.type_str)
+        self._parsers[s] = partial(self._parse_d_set_str, r)
+
+    def _parse_d_set_str(self, r, s, o):
+        i = self._reasoner.individual(str(s))
+        self._reasoner.value_of_str(i, r, str(o))
 
     def _parse_nop(self, s, o):
         if __debug__:

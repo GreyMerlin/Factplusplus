@@ -37,6 +37,8 @@ def graph():
 
 def test_property_domain():
     g, reasoner = graph()
+
+    g.add((FOAF.knows, RDF.type, OWL.ObjectProperty))
     g.add((FOAF.knows, RDFS.domain, FOAF.Person))
 
     r = reasoner.object_role(str(FOAF.knows))
@@ -45,6 +47,8 @@ def test_property_domain():
 
 def test_property_range():
     g, reasoner = graph()
+
+    g.add((FOAF.knows, RDF.type, OWL.ObjectProperty))
     g.add((FOAF.knows, RDFS.range, FOAF.Person))
 
     r = reasoner.object_role(str(FOAF.knows))
@@ -122,17 +126,54 @@ def test_new_class():
     assert (RDF.type, NS.A) in parsers
     assert (RDF.type, NS.B) in parsers
 
-def test_new_property():
+def test_new_o_property():
     """
-    Test adding new properties.
+    Test adding new object property.
     """
     g, reasoner = graph()
     parsers = g.store._parsers
 
-    g.add((NS.P1, RDF.type, RDF.Property))
-    g.add((NS.P2, RDF.type, OWL.ObjectProperty))
-    assert NS.P1 in parsers
-    assert NS.P2 in parsers
+    g.add((NS.P, RDF.type, OWL.ObjectProperty))
+    assert NS.P in parsers
+    assert (NS.P, RDFS.domain) in parsers
+    assert (NS.P, RDFS.range) in parsers
+
+def test_new_d_property():
+    """
+    Test adding new data property.
+    """
+    g, reasoner = graph()
+    parsers = g.store._parsers
+
+    g.add((NS.P, RDF.type, OWL.DatatypeProperty))
+    assert (NS.P, RDFS.domain) in parsers
+    assert (NS.P, RDFS.range) in parsers
+
+def test_d_property_range():
+    """
+    Test setting data property range.
+    """
+    g, reasoner = graph()
+    parsers = g.store._parsers
+
+    g.add((NS.P, RDF.type, OWL.DatatypeProperty))
+    g.add((NS.P, RDFS.range, RDFS.Literal))
+
+    assert NS.P in parsers
+
+def test_d_property_set_str():
+    """
+    Test setting data property string value.
+    """
+    g, reasoner = graph()
+    parsers = g.store._parsers
+
+    g.add((NS.P, RDF.type, OWL.DatatypeProperty))
+    g.add((NS.P, RDFS.range, RDFS.Literal))
+    g.add((NS.O, NS.P, Literal('a-value')))
+
+    i = reasoner.individual(str(NS.O))
+    assert False, 'check assigned value'
 
 def test_list_cache():
     """
