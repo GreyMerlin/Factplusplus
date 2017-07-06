@@ -8,7 +8,7 @@ Try to load FOAF ontology::
 
 and print ontology report::
 
-    $ LD_LIBRARY_PATH=../Kernel/obj PYTHONPATH=. bin/factpp-load ontologies/foaf.rdf | ./bin/fact-load-report
+    $ LD_LIBRARY_PATH=../Kernel/obj PYTHONPATH=. bin/factpp-load ontologies/foaf.rdf | bin/fact-load-report
 
       1 metadata: http://purl.org/dc/elements/1.1/description,
       1 metadata: http://purl.org/dc/elements/1.1/title,
