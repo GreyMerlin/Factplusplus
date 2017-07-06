@@ -26,7 +26,9 @@ from collections import defaultdict
 from functools import partial
 
 import rdflib.store
-from rdflib.namespace import RDF, RDFS, OWL
+from rdflib.namespace import DC, RDF, RDFS, OWL, Namespace
+
+VS = Namespace('http://www.w3.org/2003/06/sw-vocab-status/ns#')
 
 import factpp
 
@@ -38,6 +40,7 @@ class Store(rdflib.store.Store):
         self._list_cache = ListState.CACHE
 
         make_parser = self._make_parser
+        as_meta = partial(self._parse_nop, reason='metadata')
         self._parsers = {
             (RDF.type, OWL.Class): self._parse_class,
             (RDF.type, RDFS.Class): self._parse_class,
@@ -55,6 +58,15 @@ class Store(rdflib.store.Store):
 
             OWL.equivalentClass: make_parser('equal_concepts', 'concept', 'concept', as_list=True),
             OWL.intersectionOf: self._parse_intersection,
+
+            # metadata
+            DC.title: as_meta,
+            DC.description: as_meta,
+            RDFS.comment: as_meta,
+            RDFS.label: as_meta,
+            RDFS.isDefinedBy: as_meta,
+            OWL.versionInfo: as_meta,
+            VS.term_status: as_meta,
 
             None: self._parse_nop,
         }
@@ -143,9 +155,9 @@ class Store(rdflib.store.Store):
         i = self._reasoner.individual(str(s))
         self._reasoner.value_of_str(i, r, str(o))
 
-    def _parse_nop(self, s, o):
+    def _parse_nop(self, s, o, reason='unsupported'):
         if __debug__:
-            logger.debug('skipped')
+            logger.debug('skipped: {}'.format(reason))
 
 
 class ListState:
