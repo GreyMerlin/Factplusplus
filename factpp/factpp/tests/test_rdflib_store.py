@@ -175,6 +175,24 @@ def test_d_property_set_str():
     i = reasoner.individual(str(NS.O))
     assert False, 'check assigned value'
 
+def test_equivalent_classes():
+    """
+    Test equivalent classes.
+    """
+    g, reasoner = graph()
+
+    g.add((NS.P1, OWL.equivalentClass, NS.P2))
+    assert False, 'check if two classes are equivalent'
+
+def test_disjoin_with():
+    """
+    Test disjoint classes.
+    """
+    g, reasoner = graph()
+
+    g.add((NS.P1, OWL.disjointWith, NS.P2))
+    assert False, 'check if two classes are disjoint'
+
 def test_list_cache():
     """
     Test creating RDF list state.

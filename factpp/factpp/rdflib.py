@@ -57,6 +57,7 @@ class Store(rdflib.store.Store):
             RDFS.subClassOf: make_parser('implies_concepts', 'concept', 'concept'),
 
             OWL.equivalentClass: make_parser('equal_concepts', 'concept', 'concept', as_list=True),
+            OWL.disjointWith: make_parser('disjoint_concepts', 'concept', 'concept', as_list=True),
             OWL.intersectionOf: self._parse_intersection,
 
             # metadata
