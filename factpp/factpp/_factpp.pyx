@@ -320,8 +320,8 @@ cdef class Reasoner:
         yield from self._find_role_items(r, True)
 
     def get_o_range(self, ObjectRoleExpr r):
-        rev = self._get(ObjectRoleExpr, r.c_obj())
-        yield from self._find_role_items(rev, False)
+        rev = self._get(ObjectRoleExpr, self.c_mgr.Inverse((r.c_obj())))
+        yield from self._find_role_items(rev, True)
 
     def set_o_range(self, ObjectRoleExpr r, ConceptExpr c):
         self.c_kernel.setORange(r.c_obj(), c.c_obj())
