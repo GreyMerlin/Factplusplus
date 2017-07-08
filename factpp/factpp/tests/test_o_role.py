@@ -33,5 +33,19 @@ def test_get_o_domain():
     assert 'CLS' == next(values).name
     assert next(values, None) is None
 
+def test_get_o_range():
+    """
+    Test getting object role range.
+    """
+    reasoner = Reasoner()
+
+    cls = reasoner.concept('CLS')
+    r = reasoner.object_role('R')
+    reasoner.set_o_range(r, cls)
+
+    values = reasoner.get_o_range(r)
+    assert 'CLS' == next(values).name
+    assert next(values, None) is None
+
 
 # vim: sw=4:et:ai
