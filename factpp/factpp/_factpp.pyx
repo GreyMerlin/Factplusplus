@@ -179,11 +179,6 @@ cdef extern from 'Kernel.h':
         void realiseKB()
         bool isKBConsistent()
 
-ctypedef fused TI:
-    TDLExpression
-    TDLIndividualExpression
-    TDLIndividualName
-
 cdef class Expression:
     cdef const TDLExpression *_obj
 
