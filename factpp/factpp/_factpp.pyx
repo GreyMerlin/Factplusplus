@@ -41,6 +41,7 @@ cdef extern from "<vector>" namespace "std":
 cdef extern from 'taxNamEntry.h':
     cdef cppclass ClassifiableEntry:
         ClassifiableEntry() except +
+        string getName()
 
 cdef extern from 'tDLAxiom.h':
     cdef cppclass TDLAxiom:
@@ -52,7 +53,6 @@ cdef extern from 'tIndividual.h':
 
     cdef cppclass TIndividual(ClassifiableEntry):
         TIndividual(string) except +
-        string getName()
 
 cdef extern from 'tRole.h':
     cdef cppclass TRole:
@@ -67,10 +67,6 @@ cdef extern from 'tIndividual.h' namespace 'TRelatedMap':
 #         string getName()
 
 cdef extern from 'tDLExpression.h':
-    cdef cppclass TDLIndividualName:
-        TDLIndividualName(string) except +
-        string getName()
-
     cdef cppclass TDLObjectRoleName:
         TDLObjectRoleName(string) except +
         string getName()
@@ -78,7 +74,7 @@ cdef extern from 'tDLExpression.h':
     cdef cppclass TDLExpression:
         pass
 
-    cdef cppclass TDLRoleExpression:
+    cdef cppclass TDLRoleExpression(TDLExpression):
         pass
 
     cdef cppclass TDLObjectRoleComplexExpression(TDLRoleExpression):
@@ -108,7 +104,11 @@ cdef extern from 'tDLExpression.h':
     cdef cppclass TDLIndividualExpression(TDLExpression):
         pass
 
-    cdef cppclass TDLDataRoleExpression:
+    cdef cppclass TDLIndividualName(TDLIndividualExpression):
+        TDLIndividualName(string) except +
+        string getName()
+
+    cdef cppclass TDLDataRoleExpression(TDLExpression):
         pass
 
 cdef extern from 'tExpressionManager.h':
@@ -179,27 +179,39 @@ cdef extern from 'Kernel.h':
         void realiseKB()
         bool isKBConsistent()
 
-cdef class IndividualExpr:
-    cdef const TDLIndividualExpression *c_obj
+ctypedef fused TI:
+    TDLExpression
+    TDLIndividualExpression
+    TDLIndividualName
+
+cdef class Expression:
+    cdef const TDLExpression *_obj
+
+cdef class IndividualExpr(Expression):
+    cdef TDLIndividualExpression *c_obj(self):
+        return <TDLIndividualExpression*>self._obj
 
 cdef class Individual(IndividualExpr):
     @property
     def name(self):
-        return (<TIndividual*>self.c_obj).getName()
+        return (<TDLIndividualName*>self.c_obj()).getName()
 
-cdef class ConceptExpr:
-    cdef const TDLConceptExpression *c_obj
+cdef class ConceptExpr(Expression):
+    cdef TDLConceptExpression *c_obj(self):
+        return <TDLConceptExpression*>self._obj
 
 cdef class Concept(ConceptExpr):
     @property
     def name(self):
-        return (<TDLConceptName*>self.c_obj).getName()
+        return (<TDLConceptName*>self.c_obj()).getName()
 
-cdef class ObjectRoleExpr:
-    cdef const TDLObjectRoleExpression *c_obj
+cdef class ObjectRoleExpr(Expression):
+    cdef TDLObjectRoleExpression *c_obj(self):
+        return <TDLObjectRoleExpression*>self._obj
 
-cdef class DataRoleExpr:
-    cdef const TDLDataRoleExpression *c_obj
+cdef class DataRoleExpr(Expression):
+    cdef TDLDataRoleExpression *c_obj(self):
+        return <TDLDataRoleExpression*>self._obj
 
 cdef class DataExpr:
     cdef const TDLDataExpression *c_obj
@@ -234,49 +246,41 @@ cdef class Reasoner:
     def __dealloc__(self):
         del self.c_kernel
 
-    def _singleton(self, T, key):
-        result = self._cache.get(key)
-        if result is None:
-            result = T.__new__(T)
-            self._cache[key] = result
-        return result
+    cdef _get(self, type T, TDLExpression *c_obj):
+        return instance(self._cache, T, c_obj)
 
     def _find_role_items(self, ObjectRoleExpr r, bool top):
-        cdef Concept result
-        cdef const TDLConceptName *obj
+        cdef const ClassifiableEntry *obj
 
         cdef TDLConceptExpression *start
         cdef TaxonomyVertex *node
         cdef vector[TaxonomyVertex*].iterator it
 
         start = self.c_mgr.Top() if top else self.c_mgr.Bottom()
-        node = self.c_kernel.setUpCache(self.c_mgr.Exists(r.c_obj, start))
+        node = self.c_kernel.setUpCache(self.c_mgr.Exists(r.c_obj(), start))
         it = node.begin(True)
 
         while it != node.end(True):
-            obj = <const TDLConceptName*>dereference(it).getPrimer()
-            result = self._cache[obj.getName()]
-            yield result
+            obj = <const ClassifiableEntry*>dereference(it).getPrimer()
+            yield self.concept(obj.getName())
             postincrement(it)
 
     def _arg_list(self, classes):
         self.c_mgr.newArgList()
         for c in classes:
-            self.c_mgr.addArg((<ConceptExpr>c).c_obj)
+            self.c_mgr.addArg((<ConceptExpr>c).c_obj())
 
     #
     # concepts
     #
     def concept(self, str name):
-        cdef Concept result = self._singleton(Concept, name)
-        result.c_obj = self.c_mgr.Concept(name.encode())
-        return result
+        return self._get(Concept, self.c_mgr.Concept(name.encode()))
 
     def implies_concepts(self, ConceptExpr c1, ConceptExpr c2):
-        self.c_kernel.impliesConcepts(c1.c_obj, c2.c_obj)
+        self.c_kernel.impliesConcepts(c1.c_obj(), c2.c_obj())
 
     def is_subsumed_by(self, ConceptExpr c1, ConceptExpr c2):
-        return self.c_kernel.isSubsumedBy(c1.c_obj, c2.c_obj)
+        return self.c_kernel.isSubsumedBy(c1.c_obj(), c2.c_obj())
 
     def equal_concepts(self, classes):
         self._arg_list(classes)
@@ -287,89 +291,75 @@ cdef class Reasoner:
         self.c_kernel.disjointConcepts()
 
     def intersection(self, classes):
-        cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
-
         self._arg_list(classes)
-        result.c_obj = self.c_mgr.And()
-        return result
+        return self._get(ConceptExpr, self.c_mgr.And())
 
     #
     # individuals
     #
     def individual(self, str name):
-        cdef Individual result = self._singleton(Individual, name)
-        result.c_obj = self.c_mgr.Individual(name.encode())
-        return result
+        return self._get(Individual, self.c_mgr.Individual(name.encode()))
 
     def instance_of(self, IndividualExpr i, ConceptExpr c):
-        self.c_kernel.instanceOf(i.c_obj, c.c_obj)
+        self.c_kernel.instanceOf(i.c_obj(), c.c_obj())
 
     def different_individuals(self, instances):
         self.c_mgr.newArgList()
         for i in instances:
-            self.c_mgr.addArg((<IndividualExpr>i).c_obj)
+            self.c_mgr.addArg((<IndividualExpr>i).c_obj())
         self.c_kernel.processDifferent()
 
     def is_instance(self, IndividualExpr i, ConceptExpr c):
-        return self.c_kernel.isInstance(i.c_obj, c.c_obj)
+        return self.c_kernel.isInstance(i.c_obj(), c.c_obj())
 
     #
     # object roles
     #
     def object_role(self, str name):
-        cdef ObjectRoleExpr result = self._singleton(ObjectRoleExpr, name)
-        result.c_obj = self.c_mgr.ObjectRole(name.encode())
-        return result
+        return self._get(ObjectRoleExpr, self.c_mgr.ObjectRole(name.encode()))
 
     def set_o_domain(self, ObjectRoleExpr r, ConceptExpr c):
-        self.c_kernel.setODomain(r.c_obj, c.c_obj)
+        self.c_kernel.setODomain(r.c_obj(), c.c_obj())
 
     def get_o_domain(self, ObjectRoleExpr r):
         yield from self._find_role_items(r, True)
 
     def get_o_range(self, ObjectRoleExpr r):
-        cdef ObjectRoleExpr rev = ObjectRoleExpr.__new__(ObjectRoleExpr)
-        rev.c_obj = r.c_obj
+        rev = self._get(ObjectRoleExpr, r.c_obj())
         yield from self._find_role_items(rev, False)
 
     def set_o_range(self, ObjectRoleExpr r, ConceptExpr c):
-        self.c_kernel.setORange(r.c_obj, c.c_obj)
+        self.c_kernel.setORange(r.c_obj(), c.c_obj())
 
     def max_o_cardinality(self, unsigned int n, ObjectRoleExpr r, ConceptExpr c):
-        cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
-        result.c_obj = self.c_mgr.MaxCardinality(n, r.c_obj, c.c_obj)
-        return result
+        return self._get(Concept, self.c_mgr.MaxCardinality(n, r.c_obj(), c.c_obj()))
 
-    def set_symmetric(self, ObjectRoleExpr role):
-        self.c_kernel.setSymmetric(role.c_obj)
+    def set_symmetric(self, ObjectRoleExpr r):
+        self.c_kernel.setSymmetric(r.c_obj())
 
-    def set_transitive(self, ObjectRoleExpr role):
-        self.c_kernel.setTransitive(role.c_obj)
+    def set_transitive(self, ObjectRoleExpr r):
+        self.c_kernel.setTransitive(r.c_obj())
 
     def related_to(self, IndividualExpr i1, ObjectRoleExpr r, IndividualExpr i2):
-        self.c_kernel.relatedTo(i1.c_obj, r.c_obj, i2.c_obj)
+        self.c_kernel.relatedTo(i1.c_obj(), r.c_obj(), i2.c_obj())
 
     def get_role_fillers(self, IndividualExpr i, ObjectRoleExpr r):
-        cdef CIVec data = self.c_kernel.getRoleFillers(i.c_obj, r.c_obj)
-        cdef Individual result
+        cdef CIVec data = self.c_kernel.getRoleFillers(i.c_obj(), r.c_obj())
 
         for k in range(data.size()):
-            result = self._cache[data[k].getName()]
-            yield result
+            yield self.individual(data[k].getName())
 
     def get_instances(self, ConceptExpr c, direct=True):
         if not direct:
             raise ValueError('Non-direct instances query not supported yet')
 
-        cdef Individual result
-        cdef const TIndividual *obj
-        cdef TaxonomyVertex *node = self.c_kernel.setUpCache(c.c_obj)
+        cdef const ClassifiableEntry *obj
+        cdef TaxonomyVertex *node = self.c_kernel.setUpCache(c.c_obj())
         cdef vector[TaxonomyVertex*].iterator it = node.begin(False)
 
         while it != node.end(False):
-            obj = <const TIndividual*>dereference(it).getPrimer()
-            result = self._cache[obj.getName()]
-            yield result
+            obj = <const ClassifiableEntry*>dereference(it).getPrimer()
+            yield self.individual(obj.getName())
             postincrement(it)
 
     #
@@ -377,9 +367,7 @@ cdef class Reasoner:
     #
 
     def data_role(self, str name):
-        cdef DataRoleExpr result = self._singleton(DataRoleExpr, name)
-        result.c_obj = self.c_mgr.DataRole(name.encode())
-        return result
+        return self._get(DataRoleExpr, self.c_mgr.DataRole(name.encode()))
 
     def data_top(self):
         cdef DataExpr result = DataExpr.__new__(DataExpr)
@@ -392,20 +380,16 @@ cdef class Reasoner:
         return result
 
     def set_d_domain(self, DataRoleExpr r, ConceptExpr c):
-        self.c_kernel.setDDomain(r.c_obj, c.c_obj)
+        self.c_kernel.setDDomain(r.c_obj(), c.c_obj())
 
     def set_d_range(self, DataRoleExpr r, DataType t):
-        self.c_kernel.setDRange(r.c_obj, t.c_obj)
+        self.c_kernel.setDRange(r.c_obj(), t.c_obj)
 
     def d_cardinality(self, unsigned int n, DataRoleExpr r, DataExpr d):
-        cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
-        result.c_obj = self.c_mgr.Cardinality(n, r.c_obj, d.c_obj)
-        return result
+        return self._get(Concept, self.c_mgr.Cardinality(n, r.c_obj(), d.c_obj))
 
     def max_d_cardinality(self, unsigned int n, DataRoleExpr r, DataExpr d):
-        cdef ConceptExpr result = ConceptExpr.__new__(ConceptExpr)
-        result.c_obj = self.c_mgr.MaxCardinality(n, r.c_obj, d.c_obj)
-        return result
+        return self._get(Concept, self.c_mgr.MaxCardinality(n, r.c_obj(), d.c_obj))
 
 #   def data_value(self, string v, DataType t):
 #       cdef DataExpr result = DataExpr.__new__(DataExpr)
@@ -414,19 +398,19 @@ cdef class Reasoner:
 
     def value_of_int(self, IndividualExpr i, DataRoleExpr r, int v):
         value = self.c_mgr.DataValue(str(v).encode(), self.type_int.c_obj)
-        self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
+        self.c_kernel.valueOf(i.c_obj(), r.c_obj(), value)
 
     def value_of_str(self, IndividualExpr i, DataRoleExpr r, str v):
         value = self.c_mgr.DataValue(v.encode(), self.type_str.c_obj)
-        self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
+        self.c_kernel.valueOf(i.c_obj(), r.c_obj(), value)
 
     def value_of_float(self, IndividualExpr i, DataRoleExpr r, float v):
         value = self.c_mgr.DataValue(str(v).encode(), self.type_float.c_obj)
-        self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
+        self.c_kernel.valueOf(i.c_obj(), r.c_obj(), value)
 
     def value_of_bool(self, IndividualExpr i, DataRoleExpr r, bool v):
         value = self.c_mgr.DataValue(str(v).encode(), self.type_bool.c_obj)
-        self.c_kernel.valueOf(i.c_obj, r.c_obj, value)
+        self.c_kernel.valueOf(i.c_obj(), r.c_obj(), value)
 
     #
     # general
@@ -436,5 +420,18 @@ cdef class Reasoner:
 
     def is_consistent(self):
         return self.c_kernel.isKBConsistent()
+
+cdef instance(dict cache, type T, const TDLExpression *c_obj):
+    cdef Expression result
+
+    key = <long>c_obj
+    result = cache.get(key)
+
+    if result is None:
+        result = T.__new__(T)
+        result._obj = c_obj
+        cache[key] = result
+    assert result is not None
+    return result
 
 # vim: sw=4:et:ai
