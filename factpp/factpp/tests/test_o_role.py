@@ -19,6 +19,17 @@
 
 from .._factpp import Reasoner
 
+def test_subproperty():
+    """
+    Test creating subproperty of an object property.
+    """
+    reasoner = Reasoner()
+
+    r = reasoner.object_role('R')
+    sub_r = reasoner.object_role('SR')
+    reasoner.implies_o_roles(sub_r, r)
+    assert reasoner.is_sub_o_role(sub_r, r)
+
 def test_get_o_domain():
     """
     Test getting object role domain.
