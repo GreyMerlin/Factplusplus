@@ -31,8 +31,23 @@ from unittest import mock
 
 NS = Namespace('http://test.com/ns#')
 
-def graph():
-    g = Graph(store=factpp.rdflib.Store())
+class MockProxy:
+    def __init__(self, reasoner, method):
+        self.reasoner = reasoner
+        self.method = method
+        self.mock = mock.MagicMock()
+
+    def __getattr__(self, attr):
+        if attr == self.method:
+            return self.mock
+        else:
+            return getattr(self.reasoner, attr)
+
+def graph(mock=None):
+    store = factpp.rdflib.Store()
+    if mock:
+        store._reasoner = MockProxy(store._reasoner, mock)
+    g = Graph(store=store)
     return g, g.store._reasoner
 
 def test_property_domain():
@@ -109,7 +124,7 @@ def test_owl_intersection_eq_class():
     g.add((b1, OWL.intersectionOf, b2))
     g.add((b2, RDF.first, NS.Parent))
     g.add((b2, RDF.rest, NS.Woman))
-    
+
     i = reasoner.individual(str(p))
     cls_m = reasoner.concept(str(NS.Mother))
     assert reasoner.is_instance(i, cls_m)
@@ -165,15 +180,15 @@ def test_d_property_set_str():
     """
     Test setting data property string value.
     """
-    g, reasoner = graph()
-    parsers = g.store._parsers
+    g, reasoner = graph('value_of_str')
 
     g.add((NS.P, RDF.type, OWL.DatatypeProperty))
     g.add((NS.P, RDFS.range, RDFS.Literal))
     g.add((NS.O, NS.P, Literal('a-value')))
 
     i = reasoner.individual(str(NS.O))
-    assert False, 'check assigned value'
+    r = reasoner.data_role(str(NS.P))
+    reasoner.value_of_str.assert_called_once_with(i, r, 'a-value')
 
 def test_equivalent_classes():
     """

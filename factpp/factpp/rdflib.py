@@ -35,8 +35,8 @@ import factpp
 logger = logging.getLogger(__name__)
 
 class Store(rdflib.store.Store):
-    def __init__(self):
-        self._reasoner = factpp.Reasoner()
+    def __init__(self, reasoner=None):
+        self._reasoner = reasoner if reasoner else factpp.Reasoner()
         self._list_cache = ListState.CACHE
 
         make_parser = self._make_parser
