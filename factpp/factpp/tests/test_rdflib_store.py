@@ -47,6 +47,8 @@ def graph(mock=None):
     store = factpp.rdflib.Store()
     if mock:
         store._reasoner = MockProxy(store._reasoner, mock)
+        # reset parsers after mock is created
+        store._create_parsers()
     g = Graph(store=store)
     return g, g.store._reasoner
 
@@ -194,10 +196,13 @@ def test_equivalent_classes():
     """
     Test equivalent classes.
     """
-    g, reasoner = graph()
+    g, reasoner = graph('equal_concepts')
 
     g.add((NS.P1, OWL.equivalentClass, NS.P2))
-    assert False, 'check if two classes are equivalent'
+
+    c1 = reasoner.concept(str(NS.P1))
+    c2 = reasoner.concept(str(NS.P2))
+    reasoner.equal_concepts.assert_called_once_with([c1, c2])
 
 def test_disjoin_with():
     """

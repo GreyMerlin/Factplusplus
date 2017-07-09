@@ -38,7 +38,11 @@ class Store(rdflib.store.Store):
     def __init__(self, reasoner=None):
         self._reasoner = reasoner if reasoner else factpp.Reasoner()
         self._list_cache = ListState.CACHE
+        self._parsers = {}
 
+        self._create_parsers()
+
+    def _create_parsers(self):
         make_parser = self._make_parser
         as_meta = partial(self._parse_nop, reason='metadata')
         self._parsers = {
