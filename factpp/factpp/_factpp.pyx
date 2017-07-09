@@ -163,6 +163,7 @@ cdef extern from 'Kernel.h':
         TDLAxiom* setORange(TDLObjectRoleExpression*, TDLConceptExpression*)
         TDLAxiom* setDDomain(TDLDataRoleExpression*, TDLConceptExpression*)
         TDLAxiom* setDRange(TDLDataRoleExpression*, TDLDataExpression*)
+        TDLAxiom* setInverseRoles(TDLObjectRoleExpression*, TDLObjectRoleExpression*)
 
         TDLAxiom* equalConcepts()
         TDLAxiom* disjointConcepts()
@@ -337,6 +338,9 @@ cdef class Reasoner:
 
     def inverse(self, ObjectRoleExpr r):
         return self._get(ObjectRoleExpr, self.c_mgr.Inverse(r.c_obj()))
+
+    def set_inverse_roles(self, ObjectRoleExpr r1, ObjectRoleExpr r2):
+        self.c_kernel.setInverseRoles(r1.c_obj(), r2.c_obj())
 
     def related_to(self, IndividualExpr i1, ObjectRoleExpr r, IndividualExpr i2):
         self.c_kernel.relatedTo(i1.c_obj(), r.c_obj(), i2.c_obj())

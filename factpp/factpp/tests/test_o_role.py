@@ -87,4 +87,25 @@ def test_inverse_role():
     values = reasoner.get_role_fillers(i3, r_inv)
     assert ['A1', 'A2'] == [i.name for i in values]
 
+def test_set_inverse_role():
+    """
+    Test setting two object roles as inverse.
+    """
+    reasoner = Reasoner()
+
+    r = reasoner.object_role('R1')
+    r_inv = reasoner.object_role('R2')
+
+    i1 = reasoner.individual('A1')
+    i2 = reasoner.individual('A2')
+    i3 = reasoner.individual('B')
+    # ([A1, A2], R, B)
+    reasoner.related_to(i1, r, i3)
+    reasoner.related_to(i2, r, i3)
+
+    reasoner.set_inverse_roles(r, r_inv)
+
+    values = reasoner.get_role_fillers(i3, r_inv)
+    assert ['A1', 'A2'] == [i.name for i in values]
+
 # vim: sw=4:et:ai
