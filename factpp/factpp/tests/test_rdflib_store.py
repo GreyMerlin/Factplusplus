@@ -216,6 +216,30 @@ def test_disjoin_with():
     c2 = reasoner.concept(str(NS.P2))
     reasoner.disjoint_concepts.assert_called_once_with([c1, c2])
 
+def test_inverse_role():
+    """
+    Test setting OWL invverse role.
+    """
+    g, reasoner = graph()
+
+    g, reasoner = graph()
+    g.add((NS.P1, RDF.type, OWL.ObjectProperty))
+    g.add((NS.P2, RDF.type, OWL.ObjectProperty))
+    g.add((NS.P2, OWL.inverseOf, NS.P1))
+
+    g.add((NS.C, RDF.type, OWL.Class))
+    g.add((NS.A1, RDF.type, NS.C))
+    g.add((NS.A2, RDF.type, NS.C))
+    g.add((NS.B, RDF.type, NS.C))
+
+    g.add((NS.A1, NS.P1, NS.B))
+    g.add((NS.A2, NS.P1, NS.B))
+
+    r_inv = reasoner.object_role(str(NS.P2))
+    i = reasoner.individual(str(NS.B))
+    values = reasoner.get_role_fillers(i, r_inv)
+    assert [str(NS.A1), str(NS.A2)] == [i.name for i in values]
+
 def test_list_cache():
     """
     Test creating RDF list state.

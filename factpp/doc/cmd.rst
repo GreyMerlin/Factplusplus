@@ -26,6 +26,6 @@ and print ontology report::
       1 unsupported: http://www.w3.org/2000/01/rdf-schema#range, http://xmlns.com/foaf/0.1/Document
      13 unsupported: http://www.w3.org/2000/01/rdf-schema#subPropertyOf,
       1 unsupported: http://www.w3.org/2002/07/owl#equivalentProperty,
-      8 unsupported: http://www.w3.org/2002/07/owl#inverseOf,
+
 
 .. vim: sw=4:et:ai

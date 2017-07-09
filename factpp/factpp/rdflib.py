@@ -63,6 +63,7 @@ class Store(rdflib.store.Store):
             OWL.equivalentClass: make_parser('equal_concepts', 'concept', 'concept', as_list=True),
             OWL.disjointWith: make_parser('disjoint_concepts', 'concept', 'concept', as_list=True),
             OWL.intersectionOf: self._parse_intersection,
+            OWL.inverseOf: make_parser('set_inverse_roles', 'object_role', 'object_role'),
 
             # metadata
             DC.title: as_meta,
@@ -137,12 +138,12 @@ class Store(rdflib.store.Store):
         self._parsers[RDF.type, s] = self._parse_class
 
     def _parse_o_property(self, s, o):
-        self._reasoner.object_role(str(s))
+        r = self._reasoner.object_role(str(s))
         parsers = self._parsers
         make_parser = self._make_parser
         parsers[s, RDFS.domain] = make_parser('set_o_domain', 'object_role', 'concept')
         parsers[s, RDFS.range] = make_parser('set_o_range', 'object_role', 'concept')
-        parsers[s] = make_parser('related_to', 'individual', 'individual')
+        parsers[s] = partial(self._parse_related, r)
 
     def _parse_d_property(self, s, o):
         self._reasoner.data_role(str(s))
@@ -156,6 +157,12 @@ class Store(rdflib.store.Store):
         r = self._reasoner.data_role(str(s))
         self._reasoner.set_d_range(r, self._reasoner.type_str)
         self._parsers[s] = partial(self._parse_d_set_str, r)
+
+    def _parse_related(self, role, s, o):
+        reasoner = self._reasoner
+        ref_s = reasoner.individual(str(s))
+        ref_o = reasoner.individual(str(o))
+        reasoner.related_to(ref_s, role, ref_o)
 
     def _parse_d_set_str(self, r, s, o):
         i = self._reasoner.individual(str(s))
