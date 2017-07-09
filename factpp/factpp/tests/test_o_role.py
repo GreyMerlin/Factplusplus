@@ -68,5 +68,23 @@ def test_get_o_domain_range():
     assert 'C2' == next(values).name
     assert next(values, None) is None
 
+def test_inverse_role():
+    """
+    Test getting inverse of an object role.
+    """
+    reasoner = Reasoner()
+
+    r = reasoner.object_role('R')
+
+    i1 = reasoner.individual('A1')
+    i2 = reasoner.individual('A2')
+    i3 = reasoner.individual('B')
+    # ([A1, A2], R, B)
+    reasoner.related_to(i1, r, i3)
+    reasoner.related_to(i2, r, i3)
+
+    r_inv = reasoner.inverse(r)
+    values = reasoner.get_role_fillers(i3, r_inv)
+    assert ['A1', 'A2'] == [i.name for i in values]
 
 # vim: sw=4:et:ai

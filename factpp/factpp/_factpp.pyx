@@ -335,6 +335,9 @@ cdef class Reasoner:
     def set_transitive(self, ObjectRoleExpr r):
         self.c_kernel.setTransitive(r.c_obj())
 
+    def inverse(self, ObjectRoleExpr r):
+        return self._get(ObjectRoleExpr, self.c_mgr.Inverse(r.c_obj()))
+
     def related_to(self, IndividualExpr i1, ObjectRoleExpr r, IndividualExpr i2):
         self.c_kernel.relatedTo(i1.c_obj(), r.c_obj(), i2.c_obj())
 
