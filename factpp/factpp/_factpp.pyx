@@ -269,7 +269,7 @@ cdef class Reasoner:
     #
     # concepts
     #
-    def concept(self, str name):
+    def concept(self, name):
         return self._get(Concept, self.c_mgr.Concept(name.encode()))
 
     def implies_concepts(self, ConceptExpr c1, ConceptExpr c2):
@@ -293,7 +293,7 @@ cdef class Reasoner:
     #
     # individuals
     #
-    def individual(self, str name):
+    def individual(self, name):
         return self._get(Individual, self.c_mgr.Individual(name.encode()))
 
     def instance_of(self, IndividualExpr i, ConceptExpr c):
@@ -311,7 +311,7 @@ cdef class Reasoner:
     #
     # object roles
     #
-    def object_role(self, str name):
+    def object_role(self, name):
         return self._get(ObjectRoleExpr, self.c_mgr.ObjectRole(name.encode()))
 
     def set_o_domain(self, ObjectRoleExpr r, ConceptExpr c):
@@ -368,7 +368,7 @@ cdef class Reasoner:
     # data roles
     #
 
-    def data_role(self, str name):
+    def data_role(self, name):
         return self._get(DataRoleExpr, self.c_mgr.DataRole(name.encode()))
 
     def data_top(self):
@@ -376,7 +376,7 @@ cdef class Reasoner:
         result.c_obj = self.c_mgr.DataTop()
         return result
 
-    def data_type(self, str name):
+    def data_type(self, name):
         cdef DataType result = DataType.__new__(DataType)
         result.c_obj = self.c_mgr.DataType(name.encode())
         return result

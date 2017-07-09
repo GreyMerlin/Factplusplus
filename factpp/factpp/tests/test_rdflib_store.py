@@ -58,7 +58,7 @@ def test_property_domain():
     g.add((FOAF.knows, RDF.type, OWL.ObjectProperty))
     g.add((FOAF.knows, RDFS.domain, FOAF.Person))
 
-    r = reasoner.object_role(str(FOAF.knows))
+    r = reasoner.object_role(FOAF.knows)
     value = next(reasoner.get_o_domain(r))
     assert value.name == str(FOAF.Person)
 
@@ -68,7 +68,7 @@ def test_property_range():
     g.add((FOAF.knows, RDF.type, OWL.ObjectProperty))
     g.add((FOAF.knows, RDFS.range, FOAF.Person))
 
-    r = reasoner.object_role(str(FOAF.knows))
+    r = reasoner.object_role(FOAF.knows)
     value = next(reasoner.get_o_range(r))
     assert value.name == str(FOAF.Person)
 
@@ -76,8 +76,8 @@ def test_class_instance():
     g, reasoner = graph()
 
     p = BNode()
-    cls = reasoner.concept(str(FOAF.Person))
-    obj = reasoner.individual(str(p))
+    cls = reasoner.concept(FOAF.Person)
+    obj = reasoner.individual(p)
 
     g.add((p, RDF.type, FOAF.Person))
 
@@ -88,8 +88,8 @@ def test_subclass_of():
 
     g.add((NS.Woman, RDFS.subClassOf, NS.Person))
 
-    cls_w = reasoner.concept(str(NS.Woman))
-    cls_p = reasoner.concept(str(NS.Person))
+    cls_w = reasoner.concept(NS.Woman)
+    cls_p = reasoner.concept(NS.Person)
     assert reasoner.is_subsumed_by(cls_w, cls_p)
 
 def test_owl_intersection_subclass():
@@ -106,9 +106,9 @@ def test_owl_intersection_subclass():
     g.add((b2, RDF.first, NS.Parent))
     g.add((b2, RDF.rest, NS.Man))
 
-    i = reasoner.individual(str(p))
-    cls_p = reasoner.concept(str(NS.Parent))
-    cls_m = reasoner.concept(str(NS.Man))
+    i = reasoner.individual(p)
+    cls_p = reasoner.concept(NS.Parent)
+    cls_m = reasoner.concept(NS.Man)
     assert reasoner.is_instance(i, cls_p)
     assert reasoner.is_instance(i, cls_m)
 
@@ -127,8 +127,8 @@ def test_owl_intersection_eq_class():
     g.add((b2, RDF.first, NS.Parent))
     g.add((b2, RDF.rest, NS.Woman))
 
-    i = reasoner.individual(str(p))
-    cls_m = reasoner.concept(str(NS.Mother))
+    i = reasoner.individual(p)
+    cls_m = reasoner.concept(NS.Mother)
     assert reasoner.is_instance(i, cls_m)
 
 def test_new_class():
@@ -188,8 +188,8 @@ def test_d_property_set_str():
     g.add((NS.P, RDFS.range, RDFS.Literal))
     g.add((NS.O, NS.P, Literal('a-value')))
 
-    i = reasoner.individual(str(NS.O))
-    r = reasoner.data_role(str(NS.P))
+    i = reasoner.individual(NS.O)
+    r = reasoner.data_role(NS.P)
     reasoner.value_of_str.assert_called_once_with(i, r, 'a-value')
 
 def test_equivalent_classes():
@@ -200,8 +200,8 @@ def test_equivalent_classes():
 
     g.add((NS.P1, OWL.equivalentClass, NS.P2))
 
-    c1 = reasoner.concept(str(NS.P1))
-    c2 = reasoner.concept(str(NS.P2))
+    c1 = reasoner.concept(NS.P1)
+    c2 = reasoner.concept(NS.P2)
     reasoner.equal_concepts.assert_called_once_with([c1, c2])
 
 def test_disjoin_with():
@@ -212,8 +212,8 @@ def test_disjoin_with():
 
     g.add((NS.P1, OWL.disjointWith, NS.P2))
 
-    c1 = reasoner.concept(str(NS.P1))
-    c2 = reasoner.concept(str(NS.P2))
+    c1 = reasoner.concept(NS.P1)
+    c2 = reasoner.concept(NS.P2)
     reasoner.disjoint_concepts.assert_called_once_with([c1, c2])
 
 def test_inverse_role():
@@ -235,8 +235,8 @@ def test_inverse_role():
     g.add((NS.A1, NS.P1, NS.B))
     g.add((NS.A2, NS.P1, NS.B))
 
-    r_inv = reasoner.object_role(str(NS.P2))
-    i = reasoner.individual(str(NS.B))
+    r_inv = reasoner.object_role(NS.P2)
+    i = reasoner.individual(NS.B)
     values = reasoner.get_role_fillers(i, r_inv)
     assert [str(NS.A1), str(NS.A2)] == [i.name for i in values]
 

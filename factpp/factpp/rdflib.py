@@ -95,7 +95,7 @@ class Store(rdflib.store.Store):
     def triples(self, pattern, context=None):
         s, p, o = pattern
         if s is None:
-            ref_p = self._reasoner.object_role(str(p))
+            ref_p = self._reasoner.object_role(p)
             c = next(self._reasoner.get_o_domain(ref_p))
             for s in self._reasoner.get_instances(c):
                 yield from self.role_triples(s.name, p, context)
@@ -103,8 +103,8 @@ class Store(rdflib.store.Store):
             yield from self.role_triples(s, p, context)
 
     def role_triples(self, s, p, context):
-        ref_s = self._reasoner.individual(str(s))
-        ref_p = self._reasoner.object_role(str(p))
+        ref_s = self._reasoner.individual(s)
+        ref_p = self._reasoner.object_role(p)
         objects = self._reasoner.get_role_fillers(ref_s, ref_p)
         for o in objects:
             yield ((s, p, o.name), context)
@@ -118,9 +118,9 @@ class Store(rdflib.store.Store):
         f_obj = getattr(self._reasoner, obj)
 
         if as_list:
-            return lambda s, o: f_rel([f_sub(str(s)), f_obj(str(o))])
+            return lambda s, o: f_rel([f_sub(s), f_obj(o)])
         else:
-            return lambda s, o: f_rel(f_sub(str(s)), f_obj(str(o)))
+            return lambda s, o: f_rel(f_sub(s), f_obj(o))
 
     def _parse_intersection(self, s, o):
         self._list_cache[o].store = self
@@ -134,11 +134,11 @@ class Store(rdflib.store.Store):
         self._list_cache[s].rest = o
 
     def _parse_class(self, s, o):
-        self._reasoner.concept(str(s))
+        self._reasoner.concept(s)
         self._parsers[RDF.type, s] = self._parse_class
 
     def _parse_o_property(self, s, o):
-        r = self._reasoner.object_role(str(s))
+        r = self._reasoner.object_role(s)
         parsers = self._parsers
         make_parser = self._make_parser
         parsers[s, RDFS.domain] = make_parser('set_o_domain', 'object_role', 'concept')
@@ -146,7 +146,7 @@ class Store(rdflib.store.Store):
         parsers[s] = partial(self._parse_related, r)
 
     def _parse_d_property(self, s, o):
-        self._reasoner.data_role(str(s))
+        self._reasoner.data_role(s)
 
         parsers = self._parsers
         make_parser = self._make_parser
@@ -154,18 +154,18 @@ class Store(rdflib.store.Store):
         parsers[s, RDFS.range] = self._parse_d_range
 
     def _parse_d_range(self, s, o):
-        r = self._reasoner.data_role(str(s))
+        r = self._reasoner.data_role(s)
         self._reasoner.set_d_range(r, self._reasoner.type_str)
         self._parsers[s] = partial(self._parse_d_set_str, r)
 
     def _parse_related(self, role, s, o):
         reasoner = self._reasoner
-        ref_s = reasoner.individual(str(s))
-        ref_o = reasoner.individual(str(o))
+        ref_s = reasoner.individual(s)
+        ref_o = reasoner.individual(o)
         reasoner.related_to(ref_s, role, ref_o)
 
     def _parse_d_set_str(self, r, s, o):
-        i = self._reasoner.individual(str(s))
+        i = self._reasoner.individual(s)
         self._reasoner.value_of_str(i, r, str(o))
 
     def _parse_nop(self, s, o, reason='unsupported'):
@@ -215,9 +215,9 @@ class ListState:
 
             reasoner = self.store._reasoner
 
-            ref_s = reasoner.concept(str(self._subject))
-            ref_f = reasoner.concept(str(self._first))
-            ref_r = reasoner.concept(str(self._rest))
+            ref_s = reasoner.concept(self._subject)
+            ref_f = reasoner.concept(self._first)
+            ref_r = reasoner.concept(self._rest)
             cls = reasoner.intersection([ref_f, ref_r])
             reasoner.equal_concepts([cls, ref_s])
 
