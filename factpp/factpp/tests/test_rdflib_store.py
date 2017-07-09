@@ -208,10 +208,13 @@ def test_disjoin_with():
     """
     Test disjoint classes.
     """
-    g, reasoner = graph()
+    g, reasoner = graph('disjoint_concepts')
 
     g.add((NS.P1, OWL.disjointWith, NS.P2))
-    assert False, 'check if two classes are disjoint'
+
+    c1 = reasoner.concept(str(NS.P1))
+    c2 = reasoner.concept(str(NS.P2))
+    reasoner.disjoint_concepts.assert_called_once_with([c1, c2])
 
 def test_list_cache():
     """
