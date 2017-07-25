@@ -19,6 +19,27 @@
 
 from .._factpp import Reasoner
 
+def test_equivalent_roles():
+    """
+    Test creating equivalent data roles.
+    """
+    reasoner = Reasoner()
+
+    r1 = reasoner.data_role('R1')
+    cls = reasoner.concept('CLS')
+    reasoner.set_d_domain(r1, cls)
+
+    r2 = reasoner.data_role('R2')
+    reasoner.equal_d_roles((r1, r2))
+
+    # precondition
+    assert r1 != r2
+
+    # r1 and r2 are equivalent, so they have the same domain
+    values = reasoner.get_d_domain(r2)
+    assert 'CLS' == next(values).name
+    assert next(values, None) is None
+
 def test_sub_property():
     """
     Test creating sub-property of a data property.

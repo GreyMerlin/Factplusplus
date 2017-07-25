@@ -154,6 +154,7 @@ cdef extern from 'Kernel.h':
         TExpressionManager* getExpressionManager()
 
         TDLAxiom* equalORoles()
+        TDLAxiom* equalDRoles()
         TDLAxiom* setSymmetric(TDLObjectRoleExpression*)
         TDLAxiom* setTransitive(TDLObjectRoleExpression*)
         TDLAxiom* relatedTo(TDLIndividualExpression*, TDLObjectRoleExpression*, TDLIndividualExpression*)
@@ -396,6 +397,10 @@ cdef class Reasoner:
         cdef DataType result = DataType.__new__(DataType)
         result.c_obj = self.c_mgr.DataType(name.encode())
         return result
+
+    def equal_d_roles(self, roles):
+        self._arg_list(roles)
+        self.c_kernel.equalDRoles()
 
     def set_d_domain(self, DataRoleExpr r, ConceptExpr c):
         self.c_kernel.setDDomain(r.c_obj(), c.c_obj())
