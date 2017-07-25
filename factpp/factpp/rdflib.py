@@ -156,6 +156,8 @@ class Store(rdflib.store.Store):
         parsers[s, RDFS.domain] = make_parser('set_d_domain', 'data_role', 'concept')
         parsers[s, RDFS.range] = self._parse_d_range
         parsers[RDFS.subPropertyOf, s] = make_parser('implies_d_roles', 'data_role', 'data_role')
+        parsers[OWL.equivalentProperty, s] = make_parser('equal_d_roles', 'data_role', 'data_role', as_list=True)
+        parsers[s, OWL.equivalentProperty] = make_parser('equal_d_roles', 'data_role', 'data_role', as_list=True)
 
     def _parse_d_range(self, s, o):
         r = self._reasoner.data_role(s)

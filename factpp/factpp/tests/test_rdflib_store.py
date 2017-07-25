@@ -181,6 +181,20 @@ def test_new_d_property():
     assert (NS.P, RDFS.domain) in parsers
     assert (NS.P, RDFS.range) in parsers
 
+def test_equivalent_data_properties():
+    """
+    Test equivalent data properties.
+    """
+    g, reasoner = graph('equal_d_roles')
+
+    g.add((NS.P1, RDF.type, OWL.DatatypeProperty))
+    g.add((NS.P2, RDF.type, OWL.DatatypeProperty))
+    g.add((NS.P1, OWL.equivalentProperty, NS.P2))
+
+    r1 = reasoner.data_role(NS.P1)
+    r2 = reasoner.data_role(NS.P2)
+    reasoner.equal_d_roles.assert_called_once_with([r1, r2])
+
 def test_d_sub_property():
     """
     Test adding data sub-property.
