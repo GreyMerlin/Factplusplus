@@ -19,9 +19,9 @@
 
 from .._factpp import Reasoner
 
-def test_subproperty():
+def test_sub_property():
     """
-    Test creating subproperty of an object property.
+    Test creating sub-property of an object property.
     """
     reasoner = Reasoner()
 
