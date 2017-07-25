@@ -270,6 +270,20 @@ def test_inverse_role():
     values = reasoner.get_role_fillers(i, r_inv)
     assert [str(NS.A1), str(NS.A2)] == [i.name for i in values]
 
+def test_equivalent_object_properties():
+    """
+    Test equivalent object properties.
+    """
+    g, reasoner = graph('equal_o_roles')
+
+    g.add((NS.P1, RDF.type, OWL.ObjectProperty))
+    g.add((NS.P2, RDF.type, OWL.ObjectProperty))
+    g.add((NS.P1, OWL.equivalentProperty, NS.P2))
+
+    r1 = reasoner.object_role(NS.P1)
+    r2 = reasoner.object_role(NS.P2)
+    reasoner.equal_o_roles.assert_called_once_with([r1, r2])
+
 def test_list_cache():
     """
     Test creating RDF list state.
