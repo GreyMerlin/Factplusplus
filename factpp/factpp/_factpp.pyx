@@ -160,7 +160,9 @@ cdef extern from 'Kernel.h':
         bool isInstance(TDLIndividualExpression*, TDLConceptExpression* C)
         TDLAxiom* valueOf(TDLIndividualExpression*, TDLDataRoleExpression*, TDLDataValue*)
         TDLAxiom* impliesORoles(TDLObjectRoleComplexExpression*, TDLObjectRoleExpression*)
+        TDLAxiom* impliesDRoles(TDLDataRoleExpression*, TDLDataRoleExpression*)
         bool isSubRoles(const TDLObjectRoleExpression*, const TDLObjectRoleExpression*)
+        bool isSubRoles(const TDLDataRoleExpression*, const TDLDataRoleExpression*)
         TDLAxiom* setODomain(TDLObjectRoleExpression*, TDLConceptExpression*)
         TDLAxiom* setORange(TDLObjectRoleExpression*, TDLConceptExpression*)
         TDLAxiom* setDDomain(TDLDataRoleExpression*, TDLConceptExpression*)
@@ -400,6 +402,12 @@ cdef class Reasoner:
 
     def max_d_cardinality(self, unsigned int n, DataRoleExpr r, DataExpr d):
         return self._get(Concept, self.c_mgr.MaxCardinality(n, r.c_obj(), d.c_obj))
+
+    def implies_d_roles(self, DataRoleExpr r1, DataRoleExpr r2):
+        self.c_kernel.impliesDRoles(r1.c_obj(), r2.c_obj())
+
+    def is_sub_d_role(self, DataRoleExpr r1, DataRoleExpr r2):
+        return self.c_kernel.isSubRoles(r1.c_obj(), r2.c_obj())
 
 #   def data_value(self, string v, DataType t):
 #       cdef DataExpr result = DataExpr.__new__(DataExpr)
