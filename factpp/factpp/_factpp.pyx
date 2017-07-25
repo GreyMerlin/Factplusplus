@@ -153,6 +153,7 @@ cdef extern from 'Kernel.h':
         ReasoningKernel() except +
         TExpressionManager* getExpressionManager()
 
+        TDLAxiom* equalORoles()
         TDLAxiom* setSymmetric(TDLObjectRoleExpression*)
         TDLAxiom* setTransitive(TDLObjectRoleExpression*)
         TDLAxiom* relatedTo(TDLIndividualExpression*, TDLObjectRoleExpression*, TDLIndividualExpression*)
@@ -315,6 +316,7 @@ cdef class Reasoner:
     #
     # object roles
     #
+
     def object_role(self, name):
         return self._get(ObjectRoleExpr, self.c_mgr.ObjectRole(name.encode()))
 
@@ -333,6 +335,10 @@ cdef class Reasoner:
 
     def max_o_cardinality(self, unsigned int n, ObjectRoleExpr r, ConceptExpr c):
         return self._get(Concept, self.c_mgr.MaxCardinality(n, r.c_obj(), c.c_obj()))
+
+    def equal_o_roles(self, roles):
+        self._arg_list(roles)
+        self.c_kernel.equalORoles()
 
     def implies_o_roles(self, ObjectRoleExpr r1, ObjectRoleExpr r2):
         self.c_kernel.impliesORoles(r1.c_obj(), r2.c_obj())
