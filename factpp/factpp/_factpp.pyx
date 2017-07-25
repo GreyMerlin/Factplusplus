@@ -265,10 +265,10 @@ cdef class Reasoner:
             yield self.concept(obj.getName())
             postincrement(it)
 
-    def _arg_list(self, classes):
+    def _arg_list(self, items):
         self.c_mgr.newArgList()
-        for c in classes:
-            self.c_mgr.addArg((<ConceptExpr>c).c_obj())
+        for e in items:
+            self.c_mgr.addArg((<Expression>e)._obj)
 
     #
     # concepts
