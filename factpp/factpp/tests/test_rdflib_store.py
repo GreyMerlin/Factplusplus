@@ -157,7 +157,7 @@ def test_new_o_property():
 
 def test_o_sub_property():
     """
-    Test adding object sub property.
+    Test adding object sub-property.
     """
     g, reasoner = graph()
     parsers = g.store._parsers
@@ -180,6 +180,21 @@ def test_new_d_property():
     g.add((NS.P, RDF.type, OWL.DatatypeProperty))
     assert (NS.P, RDFS.domain) in parsers
     assert (NS.P, RDFS.range) in parsers
+
+def test_d_sub_property():
+    """
+    Test adding data sub-property.
+    """
+    g, reasoner = graph()
+    parsers = g.store._parsers
+
+    g.add((NS.P1, RDF.type, OWL.DatatypeProperty))
+    g.add((NS.P2, RDF.type, OWL.DatatypeProperty))
+    g.add((NS.P1, RDFS.subPropertyOf, NS.P2))
+
+    r1 = reasoner.data_role(NS.P1)
+    r2 = reasoner.data_role(NS.P2)
+    assert reasoner.is_sub_d_role(r1, r2)
 
 def test_d_property_range():
     """

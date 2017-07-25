@@ -27,10 +27,7 @@ and print ontology report::
       1 unsupported: http://www.w3.org/2000/01/rdf-schema#subPropertyOf, http://www.w3.org/2000/01/rdf-schema#label
       1 unsupported: http://www.w3.org/2000/01/rdf-schema#subPropertyOf, http://xmlns.com/foaf/0.1/depiction
       2 unsupported: http://www.w3.org/2000/01/rdf-schema#subPropertyOf, http://xmlns.com/foaf/0.1/isPrimaryTopicOf
-      5 unsupported: http://www.w3.org/2000/01/rdf-schema#subPropertyOf, http://xmlns.com/foaf/0.1/nick
       4 unsupported: http://www.w3.org/2000/01/rdf-schema#subPropertyOf, http://xmlns.com/foaf/0.1/page
       1 unsupported: http://www.w3.org/2002/07/owl#equivalentProperty,
-
-
 
 .. vim: sw=4:et:ai
