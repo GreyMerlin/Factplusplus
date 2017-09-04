@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 class ProgressIndicatorInterface;
 
-/// atomical ontology structure
+/// atomic ontology structure
 class AOStructure
 {
 public:		// types
@@ -43,7 +43,7 @@ public:		// interface
 		/// empty c'tor
 	AOStructure ( void ) {}
 		/// d'tor: delete all atoms
-	~AOStructure ( void )
+	~AOStructure()
 	{
 		for ( iterator p = Atoms.begin(), p_end = Atoms.end(); p != p_end; ++p )
 			delete *p;
@@ -77,7 +77,7 @@ public:		// interface
 	size_t size ( void ) const { return Atoms.size(); }
 }; // AOStructure
 
-/// atomical decomposer of the ontology
+/// atomic decomposer of the ontology
 class AtomicDecomposer
 {
 protected:	// members
@@ -110,9 +110,9 @@ protected:	// methods
 
 public:		// interface
 		/// init c'tor; M would NOT be deleted in d'tor
-	AtomicDecomposer ( TModularizer* m ) : AOS(nullptr), pModularizer(m), PI(nullptr), rootAtom(nullptr) {}
+	explicit AtomicDecomposer ( TModularizer* m ) : AOS(nullptr), pModularizer(m), PI(nullptr), rootAtom(nullptr) {}
 		/// d'tor
-	~AtomicDecomposer ( void );
+	~AtomicDecomposer();
 
 		/// get the atomic structure for given module type TYPE
 	AOStructure* getAOS ( TOntology* O, ModuleType type );
@@ -122,7 +122,7 @@ public:		// interface
 		/// set progress indicator to be PI
 	void setProgressIndicator ( ProgressIndicatorInterface* pi ) { PI = pi; }
 		/// get number of performed locality checks
-	unsigned long long getLocChekNumber ( void ) const { return pModularizer->getNChecks(); }
+	unsigned long long getLocCheckNumber(void) const { return pModularizer->getNChecks(); }
 }; // AtomicDecomposer
 
 #endif

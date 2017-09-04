@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "eFPPCycleInRIA.h"
 
 #ifdef RKG_USE_SORTED_REASONING
-#	include "mergableLabel.h"
+#	include "mergeableLabel.h"
 #endif
 
 class TBox;
@@ -58,9 +58,7 @@ protected:	// types
 
 	public:		// interface
 			/// init c'tor
-		TKnownValue ( bool val = false ) : value(val), known(false) {}
-			/// empty d'tor
-		~TKnownValue ( void ) {}
+		explicit TKnownValue ( bool val = false ) : value(val), known(false) {}
 
 			/// @return true iff the value is known to be set
 		bool isKnown ( void ) const { return known; }
@@ -99,7 +97,7 @@ protected:	// members
 
 #ifdef RKG_USE_SORTED_REASONING
 		/// label of a domain (inverse role is used for a range label)
-	mergableLabel domLabel;
+	mergeableLabel domLabel;
 #endif
 
 	// for later filling
@@ -197,9 +195,9 @@ public:		// interface
 		/// no assignment
 	TRole& operator = ( const TRole& ) = delete;
 		/// the only c'tor
-	TRole ( const std::string& name );
+	explicit TRole ( const std::string& name );
 		/// d'tor
-	virtual ~TRole ( void );
+	~TRole() override;
 
 		/// get (unsigned) unique index of the role
 	unsigned int getIndex ( void ) const
@@ -253,7 +251,7 @@ public:		// interface
 	bool isFunctionalityKnown ( void ) const { return Functionality.isKnown(); }
 		/// check if the role is topmost-functional (ie, has no functional ancestors).
 	bool isTopFunc ( void ) const
-	{	// check for emptyness is here due to case where a role is determined to be a functional
+	{	// check for emptiness is here due to case where a role is determined to be a functional
 		return !TopFunc.empty() && *TopFunc.begin() == this;
 	}
 		/// set role functionality value
@@ -326,9 +324,9 @@ public:		// interface
 	// Sorted reasoning interface
 
 		/// get label of the role's domain
-	mergableLabel& getDomainLabel ( void ) { return domLabel; }
+	mergeableLabel& getDomainLabel ( void ) { return domLabel; }
 		/// get label of the role's range
-	mergableLabel& getRangeLabel ( void ) { return inverse()->getDomainLabel(); }
+	mergeableLabel& getRangeLabel ( void ) { return inverse()->getDomainLabel(); }
 		/// merge label of given role and all its super-roles
 	void mergeSupersDomain ( void );
 #endif
@@ -534,7 +532,7 @@ inline TRole :: TRole ( const std::string& name )
 	addTrivialTransition (this);
 }
 
-inline TRole :: ~TRole ( void )
+inline TRole :: ~TRole()
 {
 	deleteTree(pDomain);
 	deleteTree(pSpecialDomain);

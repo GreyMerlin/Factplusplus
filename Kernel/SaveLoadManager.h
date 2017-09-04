@@ -36,7 +36,7 @@ class SaveLoadManager
 {
 protected:	// types
 		// maps pointers and numbers
-	template<class T>
+	template <typename T>
 	class PointerMap
 	{
 	protected:	// types
@@ -66,8 +66,6 @@ protected:	// types
 	public:		// interface
 			/// empty c'tor
 		PointerMap ( void ) : last(0) {}
-			/// empty d'tor
-		~PointerMap ( void ) {}
 			/// clear the maps
 		void clear ( void )
 		{
@@ -114,9 +112,9 @@ protected:	// members
 
 public:		// methods
 		/// init c'tor: remember the S/L name
-	SaveLoadManager ( const std::string& name ) : dirname(name), ip(nullptr), op(nullptr) { filename = name+".fpp.state"; }
+	explicit SaveLoadManager ( const std::string& name ) : dirname(name), ip(nullptr), op(nullptr) { filename = name+".fpp.state"; }
 		/// empty d'tor
-	~SaveLoadManager ( void )
+	~SaveLoadManager()
 	{
 		delete ip;
 		delete op;
@@ -207,7 +205,7 @@ public:		// methods
 	TNamedEntry* loadEntry ( void ) { return neMap.getP(loadUInt()); }
 		/// load Entity pointer
 	TNamedEntity* loadEntity ( void ) { return eMap.getP(loadUInt()); }
-		/// load Vetrex pointer
+		/// load Vertex pointer
 	TaxonomyVertex* loadVertex ( void ) { return tvMap.getP(loadUInt()); }
 }; // SaveLoadManager
 

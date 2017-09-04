@@ -38,7 +38,7 @@ protected:	// methods
 
 public:		// interface
 		/// c'tor: create the TYPE entry
-	TDataType ( const std::string& name )
+	explicit TDataType ( const std::string& name )
 		: TNECollection<TDataEntry>(name)
 		{ Type = new TDataEntry(name); }
 		/// no copy c'tor
@@ -46,7 +46,7 @@ public:		// interface
 		/// no assignment
 	TDataType& operator = ( const TDataType& ) = delete;
 		/// d'tor: delete data type entry and all the expressions
-	virtual ~TDataType ( void )
+	virtual ~TDataType()
 	{
 		for ( auto& p: Expr )
 			delete p;

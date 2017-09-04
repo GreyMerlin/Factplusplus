@@ -39,7 +39,7 @@ protected:	// methods
 
 public:		// interface
 		/// c'tor: no nominals can be here
-	modelCacheSingleton ( BipolarPointer bp )
+	explicit modelCacheSingleton ( BipolarPointer bp )
 		: modelCacheInterface{/*flagNominals=*/false}
 		, Singleton{bp}
 		{}
@@ -48,15 +48,13 @@ public:		// interface
 		: modelCacheInterface{m.hasNominalNode}
 		, Singleton{m.Singleton}
 		{}
-		/// empty d'tor
-	virtual ~modelCacheSingleton ( void ) {}
 
 		/// Check if the model contains clash
 	modelCacheState getState ( void ) const override { return csValid; }
 		/// access to internal value
 	BipolarPointer getValue ( void ) const { return Singleton; }
 
-	// mergable part
+	// mergeable part
 
 		/// check whether two caches can be merged; @return state of "merged" model
 	modelCacheState canMerge ( const modelCacheInterface* cache ) const override

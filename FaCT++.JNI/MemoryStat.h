@@ -35,9 +35,9 @@ protected:	// members
 
 public:
 		/// c'tor: start timer, save memory usage
-	MemoryStatistics ( const std::string& name );
+	explicit MemoryStatistics ( const std::string& name );
 		/// d'tor: dump taken time and memory usage
-	~MemoryStatistics ( void );
+	~MemoryStatistics();
 }; // MemoryStatistics
 
 #endif

@@ -38,7 +38,7 @@ protected:	// members
 
 protected:	// methods
 		/// helper to print several expressions in a row
-	template<class Expression>
+	template <typename Expression>
 	TLISPOntologyPrinter& operator << ( const TDLNAryExpression<Expression>& c )
 	{
 		if (printAxioms)
@@ -119,13 +119,12 @@ public:		// visitor interface
 
 public:		// interface
 		/// init c'tor
-	TLISPOntologyPrinter ( std::ostream& o_ )
+	explicit TLISPOntologyPrinter ( std::ostream& o_ )
 		: o(o_)
 		, LEP(o_)
 		, printDeclarations(true)
 		, printAxioms(true)
 		{}
-	virtual ~TLISPOntologyPrinter ( void ) {}
 
 		/// instruct printer whether to print/ignore declarations and axioms
 	void setPrintFlags(bool declarations, bool axioms)

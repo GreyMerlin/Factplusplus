@@ -57,7 +57,7 @@ TBox :: TBox ( const ifOptionSet* Options, const std::string& TopORoleName, cons
 	, testTimeout(0)
 	, useNodeCache(true)
 	, useSortedReasoning(true)
-	, isLikeGALEN(false)	// just in case Relevance part would be omited
+	, isLikeGALEN(false)	// just in case Relevance part would be omitted
 	, isLikeWINE(false)
 	, Consistent(true)
 	, preprocTime(0)
@@ -69,7 +69,7 @@ TBox :: TBox ( const ifOptionSet* Options, const std::string& TopORoleName, cons
 	setForbidUndefinedNames(false);
 }
 
-TBox :: ~TBox ( void )
+TBox :: ~TBox()
 {
 	// remove all RELATED structures
 	for ( RelatedCollection::iterator p = RelatedI.begin(), p_end = RelatedI.end(); p < p_end; ++p )

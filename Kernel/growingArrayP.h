@@ -28,7 +28,7 @@ using std::size_t;
  *	Generic class for structures which creates elements (by pointers) and re-use
  *	them (does not delete things).  Derived types may add operations.
  */
-template<class T>
+template <typename T>
 class growingArrayP
 {
 protected:	// typedefs
@@ -76,7 +76,7 @@ protected:	// methods
 
 public:		// interface
 		/// c'tor: make SIZE objects
-	growingArrayP ( size_t size = 0 ) : Base(size), last(0)
+	explicit growingArrayP ( size_t size = 0 ) : Base(size), last(0)
 	{
 		initArray ( Base.begin(), Base.end() );
 	}
@@ -85,7 +85,7 @@ public:		// interface
 		/// no assignment
 	growingArrayP& operator= ( const growingArrayP& ) = delete;
 		/// d'tor: delete all allocated objects
-	virtual ~growingArrayP ( void )
+	virtual ~growingArrayP()
 	{
 		for ( auto p = Base.rbegin(), p_end = Base.rend(); p != p_end; ++p )
 			delete *p;

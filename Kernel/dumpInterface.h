@@ -90,9 +90,9 @@ protected:	// methods
 
 public:		// interface
 		/// the only c'tor -- empty
-	dumpInterface ( std::ostream& oo ) : o(oo), indent(0), oneliner(false) {}
+	explicit dumpInterface ( std::ostream& oo ) : o(oo), indent(0), oneliner(false) {}
 		/// empty d'tor
-	virtual ~dumpInterface ( void ) {}
+	virtual ~dumpInterface() = default;
 
 		/// set ONELINER flag; @return previous value
 	bool useIndentation ( bool val )

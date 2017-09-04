@@ -55,7 +55,7 @@ protected:	// methods
 	{
 		try
 		{
-			TreeDeleter i = e(I);
+			TreeDeleter i{e(I)};
 			if ( i == nullptr )
 				throw EFaCTPlusPlus(reason);
 			return static_cast<TIndividual*>(kb.getCI(i));
@@ -71,7 +71,7 @@ protected:	// methods
 		fpp_assert ( Expr != nullptr );	// FORNOW
 	}
 		/// prepare arguments for the [begin,end) interval
-	template<class Collection>
+	template <typename Collection>
 	void prepareArgList ( Collection argList )
 	{
 		ArgList.clear();
@@ -379,9 +379,7 @@ public:		// visitor interface
 
 public:		// interface
 		/// init c'tor
-	TOntologyLoader ( TBox& KB ) : kb(KB), ETrans(KB) {}
-		/// empty d'tor
-	virtual ~TOntologyLoader ( void ) {}
+	explicit TOntologyLoader ( TBox& KB ) : kb(KB), ETrans(KB) {}
 
 		/// load ontology to a given KB
 	void visitOntology ( TOntology& ontology )

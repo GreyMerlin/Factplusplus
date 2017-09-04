@@ -43,9 +43,7 @@ protected:	// types
 
 	public:		// interface
 			/// empty c'tor
-		TOneOfCache ( TExpressionManager* p ) : THeadTailCache<TDLConceptExpression, const TDLIndividualExpression>(), pManager(p) {}
-			/// empty d'tor
-		virtual ~TOneOfCache ( void ) {}
+		explicit TOneOfCache ( TExpressionManager* p ) : THeadTailCache<TDLConceptExpression, const TDLIndividualExpression>(), pManager(p) {}
 
 			/// clear the cache
 		void clear ( void ) { Map.clear(); }
@@ -63,9 +61,7 @@ protected:	// types
 
 	public:		// interface
 			/// empty c'tor
-		TInverseRoleCache ( TExpressionManager* p ) : THeadTailCache<TDLObjectRoleExpression, const TDLObjectRoleExpression>(), pManager(p) {}
-			/// empty d'tor
-		virtual ~TInverseRoleCache ( void ) {}
+		explicit TInverseRoleCache ( TExpressionManager* p ) : THeadTailCache<TDLObjectRoleExpression, const TDLObjectRoleExpression>(), pManager(p) {}
 
 			/// clear the cache
 		void clear ( void ) { Map.clear(); }
@@ -113,14 +109,14 @@ protected:	// members
 
 protected:	// methods
 		/// record the reference; @return the argument
-	template<class T>
+	template <typename T>
 	T* record ( T* arg ) { RefRecorder.push_back(arg); return arg; }
 
 public:		// interface
 		/// empty c'tor
 	TExpressionManager ( void );
 		/// d'tor
-	~TExpressionManager ( void );
+	~TExpressionManager();
 
 		/// clear the ontology
 	void clear ( void );

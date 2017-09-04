@@ -50,7 +50,7 @@ KnowledgeExplorer :: KnowledgeExplorer ( const TBox* box, TExpressionManager* pE
 }
 
 /// @return true if the entry does not have correspondent entity
-template<class Entity>
+template <typename Entity>
 bool
 KnowledgeExplorer::EE2Map<Entity> :: check ( const TNamedEntry* e ) const
 {
@@ -90,7 +90,7 @@ KnowledgeExplorer :: addC ( const TDLExpression* e )
 }
 
 // couldn't get it as a method, so
-#define addAll(S) do { Roles.insert(S.begin(),S.end()); } while(0)
+#define addAll(S) do { Roles.insert(S.begin(),S.end()); } while (false)
 
 const KnowledgeExplorer::TCGRoleSet&
 KnowledgeExplorer :: getDataRoles ( const TCGNode* node, bool onlyDet )

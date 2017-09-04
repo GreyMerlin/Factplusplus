@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *	template list for Saving/Restoring internal state (saving class is template parameter).
  *  template class should define empty/copy c'tors, member function level()
  */
-template <class T>
+template <typename T>
 class TSaveList
 {
 protected:	// internal types
@@ -37,7 +37,7 @@ protected:	// internal types
 
 	public:		// interface
 			/// empty c'tor
-		List ( List* n = nullptr ) : next(n) {}
+		explicit List ( List* n = nullptr ) : next(n) {}
 			/// create object from given one and from given next
 		List ( const T& obj, List* n ) : T(obj), next(n) {}
 			/// no copy c'tor
@@ -45,7 +45,7 @@ protected:	// internal types
 			/// no assignment
 		List& operator = ( const List& ) = delete;
 			/// d'tor: do nothing
-		~List ( void ) {}
+		~List() = default;
 
 			/// clone given sub-list
 		List* clone ( void ) { return new List ( *this, next ? next->clone() : nullptr ); }
@@ -70,7 +70,7 @@ public:		// interface
 		/// copy c'tor
 	TSaveList ( const TSaveList& copy ) : head ( copy.head ? copy.head->clone() : nullptr ) {}
 		/// d'tor -- clear stack
-	~TSaveList ( void ) { clear(); }
+	~TSaveList() { clear(); }
 
 	// stack operations
 

@@ -173,8 +173,6 @@ public:		// interface
 #	endif
 		, value(0)
 		{}
-		/// empty d'tor
-	virtual ~CardinalityEvaluatorBase ( void ) {}
 
 		/// set all other evaluators
 	void setEvaluators ( UpperBoundDirectEvaluator* pUD, LowerBoundDirectEvaluator* pLD, UpperBoundComplementEvaluator* pUC, LowerBoundComplementEvaluator* pLC )
@@ -275,7 +273,7 @@ protected:	// methods
 	}
 
 		/// helper for And
-	template<class C>
+	template <typename C>
 	int getAndValue ( const TDLNAryExpression<C>& expr )
 	{
 		// noUpperValue is a maximal element
@@ -286,7 +284,7 @@ protected:	// methods
 		return min;
 	}
 		/// helper for Or
-	template<class C>
+	template <typename C>
 	int getOrValue ( const TDLNAryExpression<C>& expr )
 	{
 		int sum = 0;
@@ -302,9 +300,7 @@ protected:	// methods
 
 public:		// interface
 		/// init c'tor
-	UpperBoundDirectEvaluator ( const TSignature* s ) : CardinalityEvaluatorBase ( s, "UpperBoundDirect" ) {}
-		/// empty d'tor
-	virtual ~UpperBoundDirectEvaluator ( void ) {}
+	explicit UpperBoundDirectEvaluator ( const TSignature* s ) : CardinalityEvaluatorBase ( s, "UpperBoundDirect" ) {}
 
 public:		// visitor implementation
 	// make all other visit() methods from the base implementation visible
@@ -321,7 +317,7 @@ public:		// visitor implementation
 	void visit ( const TDLConceptDataValue& expr ) override { value = getAllNoneUpper(isBotEquivalent(expr.getDR())); }
 
 	// object role expressions
-	// TODO!! properly process roles that are isTop/isot
+	// TODO!! properly process roles that are isTop/isBot
 	void visit ( const TDLObjectRoleTop& ) override { value = noUpperValue(); }
 	void visit ( const TDLObjectRoleBottom& ) override { value = anyUpperValue(); }
 	void visit ( const TDLObjectRoleInverse& expr ) override { value = getUpperBoundDirect(expr.getOR()); }
@@ -394,7 +390,7 @@ protected:	// methods
 	}
 
 		/// helper for And
-	template<class C>
+	template <typename C>
 	int getAndValue ( const TDLNAryExpression<C>& expr )
 	{
 		int sum = 0;
@@ -408,7 +404,7 @@ protected:	// methods
 		return sum;
 	}
 		/// helper for Or
-	template<class C>
+	template <typename C>
 	int getOrValue ( const TDLNAryExpression<C>& expr )
 	{
 		// noUpperValue is a maximal element
@@ -421,9 +417,7 @@ protected:	// methods
 
 public:		// interface
 		/// init c'tor
-	UpperBoundComplementEvaluator ( const TSignature* s ) : CardinalityEvaluatorBase ( s, "UpperBoundCompliment" ) {}
-		/// empty d'tor
-	virtual ~UpperBoundComplementEvaluator ( void ) {}
+	explicit UpperBoundComplementEvaluator ( const TSignature* s ) : CardinalityEvaluatorBase ( s, "UpperBoundCompliment" ) {}
 
 public:		// visitor interface
 	// make all other visit() methods from the base implementation visible
@@ -520,7 +514,7 @@ protected:	// methods
 
 		/// helper for And
 		// FIXME!! not done yet
-	template<class C>
+	template <typename C>
 	int getAndValue ( const TDLNAryExpression<C>& expr )
 	{
 		// return m - sumK, where
@@ -576,7 +570,7 @@ protected:	// methods
 		}
 	}
 		/// helper for Or
-	template<class C>
+	template <typename C>
 	int getOrValue ( const TDLNAryExpression<C>& expr )
 	{
 		int max = noLowerValue();
@@ -593,9 +587,7 @@ protected:	// methods
 
 public:		// interface
 		/// init c'tor
-	LowerBoundDirectEvaluator ( const TSignature* s ) : CardinalityEvaluatorBase ( s, "LowerBoundDirect" ) {}
-		/// empty d'tor
-	virtual ~LowerBoundDirectEvaluator ( void ) {}
+	explicit LowerBoundDirectEvaluator ( const TSignature* s ) : CardinalityEvaluatorBase ( s, "LowerBoundDirect" ) {}
 
 public:		// visitor interface
 	// make all other visit() methods from the base implementation visible
@@ -689,7 +681,7 @@ protected:	// methods
 	}
 
 		/// helper for And
-	template<class C>
+	template <typename C>
 	int getAndValue ( const TDLNAryExpression<C>& expr )
 	{
 		int max = noLowerValue();
@@ -704,7 +696,7 @@ protected:	// methods
 		return max;
 	}
 		/// helper for Or
-	template<class C>
+	template <typename C>
 	int getOrValue ( const TDLNAryExpression<C>& expr )
 	{
 		// return m - sumK, where
@@ -762,9 +754,7 @@ protected:	// methods
 
 public:		// interface
 		/// init c'tor
-	LowerBoundComplementEvaluator ( const TSignature* s ) : CardinalityEvaluatorBase ( s, "LowerBoundComplement" ) {}
-		/// empty d'tor
-	virtual ~LowerBoundComplementEvaluator ( void ) {}
+	explicit LowerBoundComplementEvaluator ( const TSignature* s ) : CardinalityEvaluatorBase ( s, "LowerBoundComplement" ) {}
 
 public:		// visitor implementation
 	// make all other visit() methods from the base implementation visible
@@ -868,7 +858,7 @@ protected:	// methods
 
 public:		// interface
 		/// init c'tor
-	ExtendedSyntacticLocalityChecker ( const TSignature* s )
+	explicit ExtendedSyntacticLocalityChecker ( const TSignature* s )
 		: GeneralSyntacticLocalityChecker(s)
 		, UBD(s)
 		, LBD(s)
@@ -883,8 +873,6 @@ public:		// interface
 		UBC.setEvaluators ( &UBD, &LBD, &UBC, &LBC );
 		LBC.setEvaluators ( &UBD, &LBD, &UBC, &LBC );
 	}
-		/// empty d'tor
-	virtual ~ExtendedSyntacticLocalityChecker ( void ) {}
 }; // ExtendedSyntacticLocalityChecker
 
 #endif

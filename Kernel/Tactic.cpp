@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "logging.h"
 
 #define switchResult(expr)\
-do { if (unlikely(expr)) return true; } while(0)
+do { if (unlikely(expr)) return true; } while (false)
 
 /********************************************************************************
   * Tactics section;
@@ -35,7 +35,7 @@ do { if (unlikely(expr)) return true; } while(0)
   *
   * Each tactic returns:
   * - true		- if expansion of CUR lead to clash
-  * - false		- overwise
+  * - false		- otherwise
   *
   ******************************************************************************/
 
@@ -578,7 +578,7 @@ bool DlSatTester :: commonTacticBodySome ( const DLVertex& cur )	// for ER.C con
 
 			DlCompletionTree* succ = functionalArc->getArcEnd();
 
-			// add current dependences (from processed entry)
+			// add current dependencies (from processed entry)
 			DepSet newDep = { functionalArc->getDep() };
 			newDep.add(dep);
 
@@ -971,7 +971,7 @@ bool DlSatTester :: commonTacticBodyLE ( const DLVertex& cur )	// for <=nR.C con
 	}
 
 	// we need to repeat merge until there will be necessary amount of edges
-	while (1)
+	for (;;)
 	{
 		if ( isFirstBranchCall() )
 			if ( initLEProcessing(cur) )
@@ -993,7 +993,7 @@ bool DlSatTester :: commonTacticBodyLE ( const DLVertex& cur )	// for <=nR.C con
 
 		DepSet dep;	// empty dep-set
 		// fast check for FROM =/= TO
-		if ( CGraph.nonMergable ( from, to, dep ) )
+		if ( CGraph.nonMergeable ( from, to, dep ) )
 		{
 			// need this for merging two nominal nodes
 			dep.add(fromArc->getDep());
@@ -1029,7 +1029,7 @@ bool DlSatTester :: commonTacticBodyLE ( const DLVertex& cur )	// for <=nR.C con
 		curDep.add(fromArc->getDep());
 
 		switchResult ( Merge ( from, to, curDep ) );
-		// it might be the case (see bIssue28) that after the merge there is an R-neigbour
+		// it might be the case (see bIssue28) that after the merge there is an R-neighbour
 		// that have neither C or ~C in its label (it was far in the nominal cloud)
 		if ( C != bpTOP )
 			switchResult ( commonTacticBodyChoose ( R, C ) );
@@ -1152,7 +1152,7 @@ DlSatTester :: processTopRoleLE ( const DLVertex& cur )	// for <=nR.C concepts
 	}
 
 	// we need to repeat merge until there will be necessary amount of edges
-	while (1)
+	for (;;)
 	{
 		if ( isFirstBranchCall() )
 			if ( initTopLEProcessing(cur) )
@@ -1172,7 +1172,7 @@ DlSatTester :: processTopRoleLE ( const DLVertex& cur )	// for <=nR.C concepts
 
 		DepSet dep;	// empty dep-set
 		// fast check for FROM =/= TO
-		if ( CGraph.nonMergable ( from, to, dep ) )
+		if ( CGraph.nonMergeable ( from, to, dep ) )
 		{
 			// add dep-set from labels
 			if ( C == bpTOP )	// dep-set is known now
@@ -1380,7 +1380,7 @@ bool DlSatTester :: Merge ( DlCompletionTree* from, DlCompletionTree* to, const 
 
 	// can't merge 2 nodes which are in inequality relation
 	DepSet dep(depF);
-	if ( CGraph.nonMergable ( from, to, dep ) )
+	if ( CGraph.nonMergeable ( from, to, dep ) )
 	{
 		setClashSet(dep);
 		return true;
@@ -1436,7 +1436,7 @@ public:
 }; // EdgeCompare
 
 /// aux method to check whether edge ended to NODE should be added to EdgesToMerge
-template<class Iterator>
+template <typename Iterator>
 bool isNewEdge ( const DlCompletionTree* node, Iterator begin, Iterator end )
 {
 	for ( Iterator q = begin; q != end; ++q )
@@ -1557,7 +1557,7 @@ bool DlSatTester :: commonTacticBodyNN ( const DLVertex& cur )	// NN-rule
 
 	// check whether we did all possible tries
 	if ( bcNN->noMoreNNOptions(cur.getNumberLE()) )
-	{	// set global clashset to cummulative one from previous branch failures
+	{	// set global clashset to cumulative one from previous branch failures
 		useBranchDep();
 		return true;
 	}
@@ -1658,7 +1658,7 @@ bool DlSatTester :: commonTacticBodyProj ( const TRole* R, BipolarPointer C, con
 	if ( curNode->isLabelledBy(inverse(C)) )
 		return false;
 
-	// checkProjection() might change curNode's edge vector and thusly invalidate iterators
+	// checkProjection() might change curNode's edge vector and thus invalidate iterators
 	DlCompletionTree::const_edge_iterator p = curNode->begin(), p_end = curNode->end();
 
 	for ( std::ptrdiff_t i = 0, n = p_end - p; i < n; ++i )

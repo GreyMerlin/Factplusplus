@@ -36,12 +36,10 @@ public:
 		, reason("FaCT++.Kernel: General exception")
 		{}
 		/// init c'tor
-	EFaCTPlusPlus ( const char* str )
+	explicit EFaCTPlusPlus ( const char* str )
 		: exception()
 		, reason(str)
 		{}
-		/// empty d'tor
-	virtual ~EFaCTPlusPlus ( void ) noexcept {}
 
 		/// reason
 	const char* what ( void ) const noexcept override { return reason; }

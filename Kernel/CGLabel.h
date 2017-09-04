@@ -43,8 +43,6 @@ public:		// external classes
 		SaveState ( void ) {}
 			/// copy c'tor
 		SaveState ( const SaveState& ss ) : sc(ss.sc), cc(ss.cc) {}
-			/// empty d'tor
-		~SaveState ( void ) {}
 	}; // SaveState
 
 protected:	// members
@@ -80,9 +78,6 @@ public:		// interface
 		/// assignment
 	CGLabel& operator = ( const CGLabel& copy )
 		{ scLabel = copy.scLabel; ccLabel = copy.ccLabel; return *this; }
-
-		/// empty d'tor
-	~CGLabel ( void ) {}
 
 	//----------------------------------------------
 	// Label access interface
@@ -141,7 +136,6 @@ public:		// interface
 				return getCCOffset(p);
 		// BP should appear in the label
 		fpp_unreachable();
-		return 0;
 	}
 
 	// check if node is labelled by given concept

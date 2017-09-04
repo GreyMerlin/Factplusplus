@@ -76,20 +76,18 @@ protected:	// methods
 
 public:
 		/// c'tor
-	NominalReasoner ( TBox& tbox )
+	explicit NominalReasoner ( TBox& tbox )
 		: DlSatTester(tbox)
 	{
 		initNominalVector();
 	}
-		/// empty d'tor
-	virtual ~NominalReasoner ( void ) {}
 
 		/// check whether ontology with nominals is consistent
 	bool consistentNominalCloud ( void );
 }; // NominalReasoner
 
 //-----------------------------------------------------------------------------
-//--	implemenation of nominal reasoner-related parts of TBox
+//--	implementation of nominal reasoner-related parts of TBox
 //-----------------------------------------------------------------------------
 
 inline void

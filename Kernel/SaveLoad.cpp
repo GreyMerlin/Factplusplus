@@ -199,7 +199,7 @@ ReasoningKernel :: LoadKB ( SaveLoadManager& m )
 //----------------------------------------------------------
 
 /// Save all the objects in the collection
-template<class T>
+template <typename T>
 static void
 SaveTNECollection ( const TNECollection<T>& collection, SaveLoadManager& m, const std::set<const TNamedEntry*>& excluded )
 {
@@ -235,7 +235,7 @@ SaveTNECollection ( const TNECollection<T>& collection, SaveLoadManager& m, cons
 //		(*p)->Save(o);
 }
 /// Load all the objects into the collection
-template<class T>
+template <typename T>
 static void
 LoadTNECollection ( TNECollection<T>& collection, SaveLoadManager& m )
 {
@@ -815,12 +815,12 @@ Taxonomy :: Save ( SaveLoadManager& m, const std::set<const TNamedEntry*>& exclu
 	m.saveUInt(Graph.size()/*-excluded.size()*/);
 	m.o() << "\n";
 
-	// save labels for all verteces of the taxonomy
+	// save labels for all vertices of the taxonomy
 	for ( p = p_beg; p != p_end; ++p )
 //		if ( excluded.count((*p)->getPrimer()) == 0 )
 			(*p)->SaveLabel(m);
 
-	// save the taxonomys hierarchy
+	// save the taxonomies hierarchy
 	for ( p = p_beg; p != p_end; ++p )
 //		if ( excluded.count((*p)->getPrimer()) == 0 )
 			(*p)->SaveNeighbours(m);
@@ -832,7 +832,7 @@ Taxonomy :: Load ( SaveLoadManager& m )
 	unsigned int size = m.loadUInt();
 	Graph.clear();	// both TOP and BOTTOM elements would be load;
 
-	// create all the verteces and load their labels
+	// create all the vertices and load their labels
 	for ( unsigned int j = 0; j < size; ++j )
 	{
 		ClassifiableEntry* p = static_cast<ClassifiableEntry*>(m.loadEntry());

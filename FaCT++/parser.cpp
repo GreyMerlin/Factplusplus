@@ -193,7 +193,7 @@ void DLLispParser :: parseCommand ( void )
 		{
 			TIndividualExpr* id1 = getSingleton();
 			TORoleExpr* R = getORoleExpression();
-			MustBe (ID);	// second indiv.
+			MustBe (ID);	// second individual
 			TIndividualExpr* id2 = getSingleton();
 			Kernel->relatedTo ( id1, R, id2 );
 		}
@@ -420,7 +420,7 @@ DLLispParser :: getComplexConceptExpression ( void )
 	case L_LE:
 		n = (unsigned int)scan.GetNumber();
 		NextLex ();
-		// hack: throughout
+		// fallthrough
 	case L_FORALL:
 	case L_EXISTS:
 		// first argument -- role name

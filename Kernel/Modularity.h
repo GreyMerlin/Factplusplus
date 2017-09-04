@@ -150,7 +150,7 @@ protected:	// methods
 
 public:		// interface
 		/// init c'tor
-	TModularizer ( ModuleMethod moduleMethod )
+	explicit TModularizer ( ModuleMethod moduleMethod )
 		: Checker(createLocalityChecker(moduleMethod,&sig))
 		, sigIndex(Checker)
 		, nChecks(0)
@@ -158,7 +158,7 @@ public:		// interface
 		, noAtomsProcessing(true)
 		{}
 		// d'tor
-	~TModularizer ( void ) { delete Checker; }
+	~TModularizer() { delete Checker; }
 
 		/// allow the checker to preprocess an ontology if necessary
 	void preprocessOntology ( const AxiomVec& vec )

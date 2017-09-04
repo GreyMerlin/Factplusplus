@@ -63,9 +63,7 @@ protected:	// methods
 
 public:		// interface
 		/// empty c'tor
-	dlVHashTable ( const DLDag& dag ) : host(dag) {}
-		/// empty d'tor
-	~dlVHashTable ( void ) {}
+	explicit dlVHashTable ( const DLDag& dag ) : host(dag) {}
 
 		/// add an element (given by a POSition) to hash
 	void addElement ( BipolarPointer pos );

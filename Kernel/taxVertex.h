@@ -140,14 +140,12 @@ public:
 		initFlags();
 	}
 		/// init c'tor; use it only for Top/Bot initialisations
-	TaxonomyVertex ( const ClassifiableEntry* p ) : TaxonomyVertex()
+	explicit TaxonomyVertex ( const ClassifiableEntry* p ) : TaxonomyVertex()
 		{ setSample(p); }
 		/// no copy
 	TaxonomyVertex ( const TaxonomyVertex& ) = delete;
 		/// no assignment
 	TaxonomyVertex& operator = ( const TaxonomyVertex& ) = delete;
-		/// empty d'tor
-	~TaxonomyVertex ( void ) {}
 
 		/// add P as a synonym to current vertex
 	void addSynonym ( const ClassifiableEntry* p )

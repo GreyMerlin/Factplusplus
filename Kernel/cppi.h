@@ -58,11 +58,9 @@ public:		// interface
 		: ProgressIndicatorInterface()
 		{}
 		/// init c'tor
-	CPPI ( unsigned long limit )
+	explicit CPPI ( unsigned long limit )
 		: ProgressIndicatorInterface(limit)
 		{}
-		/// empty d'tor
-	virtual ~CPPI ( void ) {}
 }; // CPPI
 
 #endif

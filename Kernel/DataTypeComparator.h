@@ -101,8 +101,6 @@ public:		// interface
 		timeValue = copy.timeValue;
 		return *this;
 	}
-		/// empty d'tor
-	~ComparableDT ( void ) {}
 
 		/// get NUMBER
 	long int getLongIntValue ( void ) const { return longIntValue; }
@@ -161,7 +159,7 @@ public:		// interface
 		case STR:	return getStringValue() == other.getStringValue();
 		case FLOAT:	return getFloatValue() == other.getFloatValue();
 		case TIME:	return getTimeValue() == other.getTimeValue();
-		default:	fpp_unreachable(); return false;
+		default:	fpp_unreachable();
 		}
 	}
 		/// check whether 2 DT entries with the same TYPE are NOT equal
@@ -177,7 +175,7 @@ public:		// interface
 		case STR:	return getStringValue() < other.getStringValue();
 		case FLOAT:	return getFloatValue() < other.getFloatValue();
 		case TIME:	return getTimeValue() < other.getTimeValue();
-		default:	fpp_unreachable(); return false;
+		default:	fpp_unreachable();
 		}
 	}
 		/// check whether 2 DT entries with the same TYPE are in '>' relation

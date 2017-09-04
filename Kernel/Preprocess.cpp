@@ -232,7 +232,7 @@ void TBox :: transformToldCycles ( void )
 			checkToldCycle(*pi);
 	clearRelevanceInfo();
 
-	// update nymber of synonyms
+	// update number of synonyms
 	nSynonyms = countSynonyms() - nSynonyms;
 	if ( nSynonyms )
 	{
@@ -367,7 +367,7 @@ TBox :: transformSingletonHierarchy ( void )
 			}
 	} while ( changed );
 
-	// update nymber of synonyms
+	// update number of synonyms
 	nSynonyms = countSynonyms() - nSynonyms;
 	if ( nSynonyms )
 		replaceAllSynonyms();
@@ -458,7 +458,6 @@ TBox :: isReferenced ( TConcept* C, DLTree* tree, ConceptSet& processed ) const
 	default:	// just for safety: all possible options were checked
 		fpp_unreachable();
 	}
-	return false;
 }
 
 /// transform C [= E with C = D into GCIs
@@ -471,7 +470,7 @@ TBox :: TransformExtraSubsumptions ( void )
 	{
 		TConcept* C = p->first;
 		DLTree* E = p->second;
-		// for every C here we have C = D in KB and C [= E in ExtraDefs
+		// for every C here we have C = D in KB and C [= E in ExtraConceptDefs
 		// if there is a cycle for C
 		if ( isCyclic(C) )
 		{
@@ -510,7 +509,7 @@ void TBox :: determineSorts ( void )
 	// simple rules needs the same treatment
 	for ( const auto& rule: SimpleRules )
 	{
-		mergableLabel& lab = DLHeap[rule->bpHead].getSort();
+		mergeableLabel& lab = DLHeap[rule->bpHead].getSort();
 		for ( const auto& atom: rule->Body )
 			DLHeap.merge ( lab, atom->pName );
 	}
