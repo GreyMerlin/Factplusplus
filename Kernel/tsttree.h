@@ -33,7 +33,7 @@ private:	// members
 
 public:		// interface
 		/// default c'tor
-	TsTTree ( const T& Init, TsTTree *l = nullptr, TsTTree *r = nullptr )
+	explicit TsTTree ( const T& Init, TsTTree *l = nullptr, TsTTree *r = nullptr )
 		: elem(Init)
 		, left(l)
 		, right(r)
@@ -43,7 +43,7 @@ public:		// interface
 		/// no assignment
 	TsTTree& operator = ( const TsTTree& ) = delete;
 		/// d'tor
-	~TsTTree ( void ) {}
+	~TsTTree() = default;
 
 	// access to members
 
@@ -68,7 +68,7 @@ public:		// interface
 }; // TsTTree
 
 /// delete the whole tree
-template <class T>
+template <typename T>
 void deleteTree ( TsTTree<T>* t )
 {
 	if ( t )

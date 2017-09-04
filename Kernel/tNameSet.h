@@ -24,14 +24,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <map>
 
 /// base class for creating Named Entries; template parameter should be derived from TNamedEntry
-template<class T>
+template <typename T>
 class TNameCreator
 {
 public:		// interface
 		/// empty c'tor
 	TNameCreator ( void ) {}
 		/// empty d'tor
-	virtual ~TNameCreator ( void ) {}
+	virtual ~TNameCreator() = default;
 
 		/// create new Named Entry
 	virtual T* makeEntry ( const std::string& name ) const { return new T(name); }
@@ -39,7 +39,7 @@ public:		// interface
 
 
 /// Implementation of NameSets by binary trees; template parameter should be derived from TNamedEntry
-template<class T>
+template <typename T>
 class TNameSet
 {
 protected:	// types
@@ -56,13 +56,13 @@ public:		// interface
 		/// c'tor (empty)
 	TNameSet ( void ) : Creator(new TNameCreator<T>) {}
 		/// c'tor (with given Name Creating class)
-	TNameSet ( TNameCreator<T>* p ) : Creator(p) {}
+	explicit TNameSet ( TNameCreator<T>* p ) : Creator(p) {}
 		/// no copy c'tor
 	TNameSet ( const TNameSet& ) = delete;
 		/// no assignment
 	TNameSet& operator = ( const TNameSet& ) = delete;
 		/// d'tor (delete all entries)
-	virtual ~TNameSet ( void ) { clear(); delete Creator; }
+	virtual ~TNameSet() { clear(); delete Creator; }
 
 		/// return pointer to existing id or NULL if no such id defined
 	T* get ( const std::string& id ) const
@@ -105,7 +105,7 @@ public:		// interface
 		Base.clear();
 	}
 		/// clear the Entry field in all entities
-	template <class U>
+	template <typename U>
 	friend void clearEntriesCache ( TNameSet<U>& ns );
 		/// get size of a name set
 	size_t size ( void ) const { return Base.size(); }
@@ -113,7 +113,7 @@ public:		// interface
 
 /// clear the Entry field in all entities
 /// work only for T derived from TNamedEntity
-template <class T>
+template <typename T>
 void clearEntriesCache ( TNameSet<T>& ns )
 {
 	for ( auto& bind: ns.Base )

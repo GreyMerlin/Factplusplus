@@ -61,7 +61,7 @@ DlSatTester :: DlSatTester ( TBox& tbox )
 	resetSessionFlags();
 }
 
-/// prerpare Nominal Reasoner to a new job
+/// prepare Nominal Reasoner to a new job
 void
 DlSatTester :: prepareReasoner ( void )
 {
@@ -326,7 +326,7 @@ DlSatTester :: doCacheNode ( DlCompletionTree* node )
 		}
 	}
 
-	// all concepts in label are mergable; now try to add input arc
+	// all concepts in label are mergeable; now try to add input arc
 	newNodeEdges.clear();
 	newNodeEdges.initRolesFromArcs(node);
 	newNodeCache.merge(&newNodeEdges);

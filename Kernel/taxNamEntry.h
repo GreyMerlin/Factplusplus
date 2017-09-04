@@ -41,7 +41,7 @@ public:		// type definitions
 protected:	// members
 		/// link to taxonomy entry for current entry
 	TaxonomyVertex* taxVertex;
-		/// links to 'told subsumers' (entryes that are direct super-entries for current)
+		/// links to 'told subsumers' (entries that are direct super-entries for current)
 	linkSet toldSubsumers;
 		/// pointer to synonym (entry which contains whole information the same as current)
 	ClassifiableEntry* pSynonym;
@@ -50,7 +50,7 @@ protected:	// members
 
 public:		// interface
 		/// C'tor
-	ClassifiableEntry ( const std::string& name )
+	explicit ClassifiableEntry ( const std::string& name )
 		: TNamedEntry ( name )
 		, taxVertex (nullptr)
 		, pSynonym (nullptr)
@@ -60,8 +60,6 @@ public:		// interface
 	ClassifiableEntry ( const ClassifiableEntry& ) = delete;
 		/// no assignment
 	ClassifiableEntry& operator = ( const ClassifiableEntry& ) = delete;
-		/// D'tor
-	virtual ~ClassifiableEntry ( void ) {}
 
 	// taxonomy entry access
 
@@ -86,14 +84,14 @@ public:		// interface
 		/// RO access to the told subsumers
 	const linkSet& told ( void ) const { return toldSubsumers; }
 
-		/// check whether entry ihas any TS
+		/// check whether the entry has any TS
 	bool hasToldSubsumers ( void ) const { return !toldSubsumers.empty(); }
 		/// add told subsumer of entry (duplications possible)
 	void addParent ( ClassifiableEntry* parent ) { toldSubsumers.push_back (parent); }
 		/// add told subsumer if doesn't already recorded
 	void addParentIfNew ( ClassifiableEntry* parent );
 		/// add all parents (with duplicates) from given container to current node
-	template<class Container>
+	template <typename Container>
 	void addParents ( const Container& parents )
 	{
 		for ( auto& parent: parents )
@@ -133,7 +131,7 @@ public:		// interface
 }; // ClassifiableEntry
 
 /// general RW resolving synonym operator
-template<class T>
+template <typename T>
 inline T*
 resolveSynonym ( T* p )
 {
@@ -141,7 +139,7 @@ resolveSynonym ( T* p )
 }
 
 /// general RO resolving synonym operator
-template<class T>
+template <typename T>
 inline const T*
 resolveSynonym ( const T* p )
 {

@@ -47,7 +47,7 @@ extern "C" {
 	catch ( const EFaCTPlusPlus& fpp )			\
 	{ Throw ( env, fpp.what() ); }				\
 	catch ( const std::exception& ex )			\
-	{ Throw ( env, ex.what() ); }  } while(0)
+	{ Throw ( env, ex.what() ); }  } while (false)
 
 #define PROCESS_QUERY(Action) ASK_START Action; ASK_END
 #define PROCESS_SIMPLE_QUERY(Action) ASK_START TJNICache* J = getJ(env,obj); Action; ASK_END
@@ -709,13 +709,9 @@ JNIEXPORT jboolean JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_ha
 	TRACE_ARG(env,obj,arg1);
 	TRACE_ARG(env,obj,arg2);
 	TRACE_ARG(env,obj,arg3);
-	Throw ( env, "FaCT++ Kernel: unsupported operation 'hasDataPropertyRelationship'" );
-	return NULL;
-#if 0
 	bool ret = false;
-	PROCESS_SIMPLE_QUERY ( ret=J->K->isRelated ( getROIndividualExpr(env,arg1), getRODRoleExpr(env,arg2), getROIndividualExpr(env,arg3) ) );
+	PROCESS_SIMPLE_QUERY ( ret=J->K->isRelated ( getROIndividualExpr(env,arg1), getRODRoleExpr(env,arg2), getRODataValueExpr(env,arg3) ) );
 	return ret;
-#endif
 }
 
 /*

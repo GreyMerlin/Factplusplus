@@ -40,11 +40,11 @@ protected:	// members
 		std::ostream& o;
 	public:
 		BR ( std::ostream& o_, const char* command ) : o(o_) { o << " (" << command; }
-		~BR () { o << ")"; }
+		~BR() { o << ")"; }
 	}; // BR
 protected:	// methods
 		/// array helper
-	template <class Argument>
+	template <typename Argument>
 	void printArray ( const TDLNAryExpression<Argument>& expr )
 	{
 		for ( typename TDLNAryExpression<Argument>::iterator p = expr.begin(), p_end = expr.end(); p != p_end; ++p )
@@ -61,7 +61,7 @@ protected:	// methods
 
 public:		// interface
 		/// init c'tor
-	TLISPExpressionPrinter ( std::ostream& o_ ) : o(o_)
+	explicit TLISPExpressionPrinter ( std::ostream& o_ ) : o(o_)
 	{
 		DTNames["http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"] = "string";
 		DTNames["http://www.w3.org/2001/XMLSchema#string"] = "string";
@@ -74,8 +74,6 @@ public:		// interface
 		DTNames["http://www.w3.org/2001/XMLSchema#double"] = "real";
 		DTNames["http://www.w3.org/2001/XMLSchema#real"] = "real";
 	}
-		/// empty d'tor
-	virtual ~TLISPExpressionPrinter ( void ) {}
 
 public:		// visitor interface
 	// concept expressions

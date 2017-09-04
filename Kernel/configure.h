@@ -63,8 +63,8 @@ protected:
 	ConfBase Base;
 
 public:
-	ConfSection ( const std::string& pc ) : Name ( pc ) {}
-	~ConfSection ( void );
+	explicit ConfSection ( const std::string& pc ) : Name ( pc ) {}
+	~ConfSection();
 
 	bool operator == ( const std::string& pc ) const { return ( Name == pc ); }
 	bool operator != ( const std::string& pc ) const { return ( Name != pc ); }
@@ -116,7 +116,7 @@ public:		// interface
 		/// no assignment
 	Configuration& operator = ( const Configuration& ) = delete;
 		/// d'tor
-	~Configuration ( void );
+	~Configuration();
 
 	// load config from file; @return true if cannot
 	bool Load ( const char* Filename );

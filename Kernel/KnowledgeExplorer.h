@@ -42,7 +42,7 @@ public:		// types
 
 protected:	// classes
 		/// class that maps named entity to a set of ENTITIES
-	template<class Entity>
+	template <typename Entity>
 	class EE2Map
 	{
 	public:		// type interface
@@ -56,8 +56,6 @@ protected:	// classes
 	public:		// interface
 			/// empty c'tor
 		EE2Map ( void ) {}
-			/// empty d'tor
-		~EE2Map ( void ) {}
 
 			/// @return true if the entry does not have correspondent entity
 		bool check ( const TNamedEntry* e ) const;
@@ -98,7 +96,7 @@ protected:	// members
 
 protected:	// methods
 		/// adds an entity as a synonym to a map MAP
-	template<class Entity>
+	template <typename Entity>
 	void addE ( EE2Map<Entity>& map, const ClassifiableEntry* entry )
 	{
 		map.add(entry,entry);
@@ -111,8 +109,6 @@ protected:	// methods
 public:		// interface
 		/// init c'tor
 	KnowledgeExplorer ( const TBox* box, TExpressionManager* pEM );
-		/// empty d'tor
-	~KnowledgeExplorer ( void ) {}
 
 		/// @return the set of data neighbours of a NODE
 	const TCGRoleSet& getDataRoles ( const TCGNode* node, bool onlyDet );

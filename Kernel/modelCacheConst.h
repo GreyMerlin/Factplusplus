@@ -38,7 +38,7 @@ protected:	// methods
 
 public:
 		/// c'tor: no nominals can be here
-	modelCacheConst ( bool top )
+	explicit modelCacheConst ( bool top )
 		: modelCacheInterface{/*flagNominals=*/false}
 		, isTop{top}
 		{}
@@ -47,15 +47,13 @@ public:
 		: modelCacheInterface{m.hasNominalNode}
 		, isTop{m.isTop}
 		{}
-		/// empty d'tor
-	virtual ~modelCacheConst ( void ) {}
 
 		/// Check if the model contains clash
 	modelCacheState getState ( void ) const override { return isTop ? csValid : csInvalid; }
 		/// get the value of the constant
 	bool getConst ( void ) const { return isTop; }
 
-	// mergable part
+	// mergeable part
 
 		/// check whether two caches can be merged; @return state of "merged" model
 	modelCacheState canMerge ( const modelCacheInterface* cache ) const override

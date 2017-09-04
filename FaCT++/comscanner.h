@@ -53,12 +53,12 @@ protected:	// methods
 
 public:		// interface
 		/// c'tor
-	CommonScanner ( std::istream* inp )
+	explicit CommonScanner ( std::istream* inp )
 		: InFile(inp)
 		, CurLine(1)
 		{}
 		/// d'tor
-	virtual ~CommonScanner ( void ) {}
+	virtual ~CommonScanner() = default;
 
 		/// get string collected in buffer
 	const char* GetName ( void ) const { return LexBuff; }

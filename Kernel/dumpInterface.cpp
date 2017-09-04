@@ -95,7 +95,7 @@ void TBox :: dumpRole ( dumpInterface* dump, const TRole* p ) const
 		}
 	}
 
-	// dump transitility
+	// dump transitivity
 	if ( p->isTransitive() )
 	{
 		dump->startAx (diTransitiveR);
@@ -189,7 +189,6 @@ void TBox :: dumpExpression ( dumpInterface* dump, BipolarPointer p ) const
 	default:
 		std::cerr << "Error dumping vertex of type " << v.getTagName() << "(" << v.Type () << ")";
 		fpp_unreachable();
-		return;	// invalid value
 	}
 }
 

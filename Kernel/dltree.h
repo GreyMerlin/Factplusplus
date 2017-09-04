@@ -192,8 +192,8 @@ class TreeDeleter
 protected:
 	DLTree* ptr;
 public:
-	TreeDeleter ( DLTree* p ) : ptr(p) {}
-	~TreeDeleter ( void ) { deleteTree(ptr); }
+	explicit TreeDeleter ( DLTree* p ) : ptr(p) {}
+	~TreeDeleter() { deleteTree(ptr); }
 	operator DLTree* ( void ) { return ptr; }
 	operator const DLTree* ( void ) const { return ptr; }
 }; // TreeDeleter

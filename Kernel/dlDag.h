@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 class RoleMaster;
 class TConcept;
 
-/** DAG of DL Verteces used in FaCT++ reasoner */
+/** DAG of DL Vertices used in FaCT++ reasoner */
 class DLDag
 {
 public:		// types
@@ -173,13 +173,13 @@ protected:	// methods
 
 public:		// interface
 		/// the only c'tor
-	DLDag ( const ifOptionSet* Options );
+	explicit DLDag ( const ifOptionSet* Options );
 		/// no copy c'tor
 	DLDag ( const DLDag& ) = delete;
 		/// no assignment
 	DLDag& operator= ( const DLDag& ) = delete;
 		/// d'tor
-	~DLDag ( void );
+	~DLDag();
 
 	// construction methods
 
@@ -274,7 +274,7 @@ public:		// interface
 
 #ifdef RKG_USE_SORTED_REASONING
 		/// merge two given DAG entries
-	void merge ( mergableLabel& ml, BipolarPointer p )
+	void merge ( mergeableLabel& ml, BipolarPointer p )
 	{
 		if ( p != bpINVALID && p != bpTOP && p != bpBOTTOM )
 			(*this)[p].merge(ml);

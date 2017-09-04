@@ -44,8 +44,6 @@ protected:	// classes
 	public:		// interface
 			/// empty c'tor
 		DepInterval ( void ) {}
-			/// empty d'tor
-		~DepInterval ( void ) {}
 
 			/// get RO access to the base data interval
 		const TDataInterval& getDataInterval ( void ) const { return Constraints; }
@@ -145,9 +143,9 @@ protected:	// methods
 
 public:		// methods
 		/// empty c'tor
-	DataTypeAppearance ( DepSet& dep ) : PType(nullptr), NType(nullptr), clashDep(dep) {}
+	explicit DataTypeAppearance ( DepSet& dep ) : PType(nullptr), NType(nullptr), clashDep(dep) {}
 		/// empty d'tor
-	~DataTypeAppearance ( void ) { delete PType; delete NType; }
+	~DataTypeAppearance() { delete PType; delete NType; }
 
 		/// clear the appearance flags
 	void clear ( void )
@@ -291,9 +289,9 @@ protected:	// methods
 
 public:		// interface
 		/// c'tor: save DAG
-	DataTypeReasoner ( const DLDag& dag ) : DLHeap(dag), posType(nullptr) {}
+	explicit DataTypeReasoner ( const DLDag& dag ) : DLHeap(dag), posType(nullptr) {}
 		/// empty d'tor
-	~DataTypeReasoner ( void )
+	~DataTypeReasoner()
 	{
 		for ( DTAVector::iterator p = Types.begin(); p < Types.end(); ++p )
 			delete *p;

@@ -61,8 +61,6 @@ public:		// interface
 		maxExcl = copy.maxExcl;
 		return *this;
 	}
-		/// empty d'tor
-	~TDataInterval ( void ) {}
 
 		/// clear an interval
 	void clear ( void ) { min = max = ComparableDT(); }
@@ -208,7 +206,7 @@ protected:	// methods
 
 public:		// interface
 		/// create data entry with given name
-	TDataEntry ( const std::string& name )
+	explicit TDataEntry ( const std::string& name )
 		: TNamedEntry(name)
 		, Type(nullptr)
 		, pName(bpINVALID)
@@ -218,8 +216,6 @@ public:		// interface
 	TDataEntry ( const TDataEntry& ) = delete;
 		/// no assignment
 	TDataEntry& operator = ( const TDataEntry& ) = delete;
-		/// empty d'tor
-	~TDataEntry ( void ) {}
 
 	// type/value part
 
@@ -254,7 +250,7 @@ public:		// interface
 
 	// BP part
 
-		/// get pointer to DAG entry correstonding to the data entry
+		/// get pointer to DAG entry corresponding to the data entry
 	BipolarPointer getBP ( void ) const { return pName; }
 		/// set DAG index of the data entry
 	void setBP ( BipolarPointer p ) { pName = p; }

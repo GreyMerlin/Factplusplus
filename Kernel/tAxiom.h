@@ -202,13 +202,13 @@ protected:	// methods
 
 public:		// interface
 		/// create an empty GCI
-	TAxiom ( const TAxiom* parent ) : origin(parent) {}
+	explicit TAxiom ( const TAxiom* parent ) : origin(parent) {}
 		/// copy c'tor
 	TAxiom ( const TAxiom& ) = delete;
 		/// assignment
 	TAxiom& operator = ( const TAxiom& ) = delete;
 		/// d'tor: delete elements if AX is not in use
-	~TAxiom ( void )
+	~TAxiom()
 	{
 		for ( auto& p: Disjuncts )
 			deleteTree(p);

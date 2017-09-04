@@ -42,7 +42,7 @@ protected:	// methods
 		/// helper for the named entity
 	void vE ( const TNamedEntity& e ) { sig.add(e.getEntity()); }
 		/// array helper
-	template <class Argument>
+	template <typename Argument>
 	void processArray ( const TDLNAryExpression<Argument>& expr )
 	{
 		for ( typename TDLNAryExpression<Argument>::iterator p = expr.begin(), p_end = expr.end(); p != p_end; ++p )
@@ -51,9 +51,7 @@ protected:	// methods
 
 public:		// interface
 		/// init c'tor
-	TExpressionSignatureUpdater ( TSignature& s ) : sig(s) {}
-		/// empty d'tor
-	virtual ~TExpressionSignatureUpdater ( void ) {}
+	explicit TExpressionSignatureUpdater ( TSignature& s ) : sig(s) {}
 
 public:		// visitor interface
 	// concept expressions
@@ -124,7 +122,7 @@ protected:	// methods
 		/// helper for the expression processing
 	void v ( const TDLExpression* E ) { E->accept(Updater); }
 		/// helper for the [begin,end) interval
-	template<class Iterator>
+	template <typename Iterator>
 	void v ( Iterator begin, Iterator end )
 	{
 		for ( ; begin != end; ++begin )
@@ -170,9 +168,7 @@ public:		// visitor interface
 
 public:		// interface
 		/// init c'tor
-	TSignatureUpdater ( TSignature& sig ) : Updater(sig) {}
-		/// empty d'tor
-	virtual ~TSignatureUpdater ( void ) {}
+	explicit TSignatureUpdater ( TSignature& sig ) : Updater(sig) {}
 }; // TSignatureUpdater
 
 #endif

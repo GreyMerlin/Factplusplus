@@ -100,9 +100,7 @@ protected:	// methods
 
 public:		// interface
 		/// empty c'tor
-	SigIndex ( LocalityChecker* checker ) : Checker(checker), nRegistered(0), nUnregistered(0) {}
-		/// empty d'tor
-	~SigIndex ( void ) {}
+	explicit SigIndex ( LocalityChecker* checker ) : Checker(checker), nRegistered(0), nUnregistered(0) {}
 
 	// work with axioms
 
@@ -130,7 +128,7 @@ public:		// interface
 
 	// get the set by the index
 
-		/// given an entity, return a set of all axioms that tontain this entity in a signature
+		/// given an entity, return a set of all axioms that contain this entity in a signature
 	const AxiomVec& getAxioms ( const TNamedEntity* entity ) { return Base[entity]; }
 		/// get the non-local axioms with top-locality value TOP
 	const AxiomVec& getNonLocal ( bool top ) const { return top ? topNonLocal : botNonLocal; }

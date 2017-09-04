@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <vector>
 
 /// queue for n-ary operations
-template<class Expression>
+template <typename Expression>
 class TNAryQueue
 {
 public:		// types
@@ -60,7 +60,7 @@ public:		// interface
 		Base.push_back(new DLExpressionArray);
 	}
 		/// d'tor
-	~TNAryQueue ( void )
+	~TNAryQueue()
 	{
 		for ( iterator q = Base.begin(), q_end = Base.end(); q < q_end; ++q )
 			delete *q;

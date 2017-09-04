@@ -45,7 +45,7 @@ extern "C" {
 	{ Throw ( J->env, fpp.what() ); }			\
 	catch ( const std::exception& ex )			\
 	{ Throw ( J->env, ex.what() ); }			\
-		return nullptr;  } while(0)
+		return nullptr;  } while (false)
 //	Throw ( env, "FaCT++ Kernel: error during " Name " processing" )
 
 /*
@@ -155,7 +155,7 @@ JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_tel
  * Signature: (Luk/ac/manchester/cs/factplusplus/ClassPointer;Luk/ac/manchester/cs/factplusplus/DataPropertyPointer;Luk/ac/manchester/cs/factplusplus/ObjectPropertyPointer;)Luk/ac/manchester/cs/factplusplus/AxiomPointer;
  */
 JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_tellHasKey
-  (JNIEnv * env, jobject, jobject, jobject, jobject)
+  (JNIEnv * env, jobject obj ATTR_UNUSED, jobject, jobject, jobject)
 {
 	TRACE_JNI("tellHasKey");
 	Throw ( env, "FaCT++ Kernel: unsupported operation 'tellHasKey'" );

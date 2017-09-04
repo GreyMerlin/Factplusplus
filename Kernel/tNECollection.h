@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 	inherited from TNamedEntry. Implemented as vector of T*,
 	with Base[i]->getId() == i.
 **/
-template<class T>
+template <typename T>
 class TNECollection
 {
 protected:	// typedefs
@@ -67,13 +67,13 @@ protected:	// methods
 
 public:		// interface
 		/// c'tor: clear 0-th element
-	TNECollection ( const std::string& name )
+	explicit TNECollection ( const std::string& name )
 		: TypeName(name)
 		, locked(false)
 		, allowFresh(false)
 		{ Base.push_back(nullptr); }
 		/// empty d'tor: all elements will be deleted in other place
-	virtual ~TNECollection ( void ) {}
+	virtual ~TNECollection() = default;
 
 	// locked interface
 

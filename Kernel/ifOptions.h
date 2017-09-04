@@ -42,7 +42,7 @@ public:		// type interface
 protected:	// members
 		/// option name
 	std::string optionName;
-		/// informal descriprion
+		/// informal description
 	std::string optionDescription;
 		/// default value (name of type)
 	std::string defaultValue;
@@ -64,8 +64,6 @@ public:		// interface
 	ifOption ( const ifOption& ) = delete;
 		/// no assignment
 	ifOption& operator = ( const ifOption& ) = delete;
-		/// empty d'tor
-	~ifOption (void ) {}
 
 	// write methods
 
@@ -75,7 +73,7 @@ public:		// interface
 	bool setValue ( int i ) { iValue = i; return (type != iotInt); }
 		/// set string value; @return false in case of error
 	bool setValue ( const std::string& t ) { tValue = t; return (type != iotText); }
-		/// set textualy given value of current type; @return false in case of error
+		/// set textually given value of current type; @return false in case of error
 	bool setAValue ( const std::string& s );
 
 	// access methods
@@ -109,7 +107,7 @@ protected:	// internal type definitions
 	typedef std::map<std::string,ifOption*> OptionSet;
 
 protected:	// members
-		/// set of all avaliable (given) options
+		/// set of all available (given) options
 	OptionSet Base;
 
 protected:	// methods
@@ -124,7 +122,7 @@ public:		// interface
 		/// empty c'tor
 	ifOptionSet ( void ) {}
 		/// d'tor (delete all registered options)
-	~ifOptionSet ( void )
+	~ifOptionSet()
 	{
 		for ( auto& p: Base )
 			delete p.second;

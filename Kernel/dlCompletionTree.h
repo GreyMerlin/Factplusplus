@@ -77,8 +77,6 @@ protected:	// internal classes
 		SaveState ( const SaveState& ) = default;
 			/// assignment
 		SaveState& operator = ( const SaveState& ) = default;
-			/// empty d'tor
-		virtual ~SaveState ( void ) {}	// used in SaveList => virtual
 
 			/// get level of a saved node
 		unsigned int level ( void ) const { return curLevel; }
@@ -93,8 +91,7 @@ protected:	// internal classes
 		DepSet dep;
 		bool pBlocked, dBlocked;
 	public:
-		UnBlock ( DlCompletionTree* q ) : p(q), Blocker(q->Blocker), dep(q->pDep), pBlocked(q->pBlocked), dBlocked(q->dBlocked) {}
-		virtual ~UnBlock ( void ) {}
+		explicit UnBlock ( DlCompletionTree* q ) : p(q), Blocker(q->Blocker), dep(q->pDep), pBlocked(q->pBlocked), dBlocked(q->dBlocked) {}
 		void restore ( void ) override { p->Blocker = Blocker; p->pDep = dep; p->pBlocked = pBlocked; p->dBlocked = dBlocked; }
 	}; // UnBlock
 
@@ -105,8 +102,7 @@ protected:	// internal classes
 		DlCompletionTree* p;
 		bool cached;
 	public:
-		CacheRestorer ( DlCompletionTree* q ) : p(q), cached(q->cached) {}
-		virtual ~CacheRestorer ( void ) {}
+		explicit CacheRestorer ( DlCompletionTree* q ) : p(q), cached(q->cached) {}
 		void restore ( void ) override { p->cached = cached; }
 	}; // CacheRestorer
 
@@ -118,8 +114,7 @@ protected:	// internal classes
 		DlCompletionTree* p;
 		size_t n;
 	public:
-		IRRestorer ( DlCompletionTree* q ) : p(q), n(q->IR.size()) {}
-		virtual ~IRRestorer ( void ) {}
+		explicit IRRestorer ( DlCompletionTree* q ) : p(q), n(q->IR.size()) {}
 		void restore ( void ) override { p->IR.resize(n); }
 	}; // IRRestorer
 #endif
@@ -321,13 +316,13 @@ public:		// methods
 		/// init newly created node with starting LEVEL
 	void init ( unsigned int level );
 		/// c'tor: create an empty node
-	DlCompletionTree ( unsigned int newId ) : id(newId) {}
+	explicit DlCompletionTree ( unsigned int newId ) : id(newId) {}
 		/// no copy c'tor
 	DlCompletionTree ( const DlCompletionTree& ) = delete;
 		/// no assignment
 	DlCompletionTree& operator = ( const DlCompletionTree& ) = delete;
 		/// d'tor: delete node
-	~DlCompletionTree ( void ) { saves.clear(); }
+	~DlCompletionTree() { saves.clear(); }
 
 		/// add given arc P as a neighbour
 	void addNeighbour ( DlCompletionTreeArc* p ) { Neighbour.push_back(p); }
@@ -589,7 +584,7 @@ public:		// methods
 		return false;
 	}
 		/// check if the current node is in IR with NODE; if so, write the clash-set to DEP
-	bool nonMergable ( const DlCompletionTree* node, DepSet& dep ) const;
+	bool nonMergeable ( const DlCompletionTree* node, DepSet& dep ) const;
 		/// update IR of the current node with IR from NODE and additional dep-set; @return restorer
 	TRestorer* updateIR ( const DlCompletionTree* node, const DepSet& toAdd );
 #endif

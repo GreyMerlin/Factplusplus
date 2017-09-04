@@ -23,13 +23,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "tJNICache.h"
 
 /// class for acting with concept taxonomy
-template<class AccessPolicy>
+template <typename AccessPolicy>
 class JTaxonomyActor: public WalkerInterface
 {
 protected:	// types
 		/// array of TNEs
 	typedef std::vector<TExpr*> SynVector;
-		/// array for a set of taxonomy verteces
+		/// array for a set of taxonomy vertices
 	typedef std::vector<SynVector> SetOfNodes;
 
 protected:	// members

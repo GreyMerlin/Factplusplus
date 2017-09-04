@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "globaldef.h"
 #include "BiPointer.h"
 #include "modelCacheInterface.h"
-#include "mergableLabel.h"	// for sort inferences
+#include "mergeableLabel.h"    // for sort inferences
 
 class DLDag;
 class TRole;
@@ -102,7 +102,7 @@ public:		// interface
 		/// empty c'tor
 	DLVertexCache ( void ) : pCache(nullptr), nCache(nullptr) {}
 		/// d'tor
-	virtual ~DLVertexCache ( void ) { delete pCache; delete nCache; }
+	virtual ~DLVertexCache() { delete pCache; delete nCache; }
 
 	// cache interface
 
@@ -144,7 +144,7 @@ public:		// interface
 		/// default c'tor
 	DLVertexStatistic ( void ) { std::memset ( stat, 0, sizeof(stat) ); }
 		/// empty d'tor
-	virtual ~DLVertexStatistic ( void ) {}
+	virtual ~DLVertexStatistic() = default;
 
 	// set methods
 
@@ -204,7 +204,7 @@ protected:	// members
 
 public:		// interface
 		/// default c'tor
-	DLVertexTagDFS ( DagTag op )
+	explicit DLVertexTagDFS ( DagTag op )
 		: Op(op)
 		, VisitedPos(false)
 		, ProcessedPos(false)
@@ -214,7 +214,7 @@ public:		// interface
 		, inCycleNeg(false)
 		{}
 		/// empty d'tor
-	virtual ~DLVertexTagDFS ( void ) {}
+	virtual ~DLVertexTagDFS() = default;
 
 	// tag access
 
@@ -251,7 +251,7 @@ public:		// interface
 	void setInCycle ( bool pos ) { if ( pos ) inCyclePos = true; else inCycleNeg = true; }
 }; // DLVertexTagDFS
 
-/// usage of the particulare vertex during reasoning
+/// usage of the particular vertex during reasoning
 class DLVertexUsage
 {
 public:		// types
@@ -259,14 +259,14 @@ public:		// types
 	typedef unsigned long UsageType;
 
 protected:	// members
-		/// usage statistic for pos- and neg occurences of a vertex
+		/// usage statistic for pos- and neg occurrences of a vertex
 	UsageType posUsage, negUsage;
 
 public:		// interface
 		/// empty c'tor
 	DLVertexUsage ( void ) : posUsage(0), negUsage(0) {}
 		/// empty d'tor
-	virtual ~DLVertexUsage ( void ) {}
+	virtual ~DLVertexUsage() = default;
 
 		/// get access to a usage wrt POS
 	UsageType getUsage ( bool pos ) const { return pos ? posUsage : negUsage; }
@@ -278,22 +278,22 @@ class DLVertexSort
 {
 protected:	// members
 		/// maximal depth, size and frequency of reference of the expression
-	mergableLabel Sort;
+	mergeableLabel Sort;
 
 public:		// interface
 		/// default c'tor
 	DLVertexSort ( void ) {}
 		/// empty d'tor
-	virtual ~DLVertexSort ( void ) {}
+	virtual ~DLVertexSort() = default;
 
 	// label access methods
 
 		/// get RW access to the label
-	mergableLabel& getSort ( void ) { return Sort; }
+	mergeableLabel& getSort ( void ) { return Sort; }
 		/// get RO access to the label
-	const mergableLabel& getSort ( void ) const { return Sort; }
+	const mergeableLabel& getSort ( void ) const { return Sort; }
 		/// merge local label to label LABEL
-	void merge ( mergableLabel& label ) { Sort.merge(label); }
+	void merge ( mergeableLabel& label ) { Sort.merge(label); }
 }; // DLVertexSort
 
 /// Class for normalised Concept Expressions
@@ -382,8 +382,6 @@ public:		// interface
 	DLVertex ( const DLVertex& ) = delete;
 		/// no assignment
 	DLVertex& operator = ( const DLVertex& ) = delete;
-		/// d'tor (empty)
-	virtual ~DLVertex ( void ) {}
 
 		/// compare 2 CEs
 	bool operator == ( const DLVertex& v ) const
@@ -397,7 +395,7 @@ public:		// interface
 	}
 		/// compare 2 CEs
 	bool operator != ( const DLVertex& v ) const { return !(*this == v); }
-		/// return C for concepts/quantifiers/NR verteces
+		/// return C for concepts/quantifiers/NR vertices
 	BipolarPointer getC ( void ) const { return C; }
 		/// return N for the (<= n R) vertex
 	unsigned int getNumberLE ( void ) const { return n; }
@@ -416,9 +414,9 @@ public:		// interface
 		/// return pointer before the first concept name of the entry; WARNING!! works for AND only
 	const_reverse_iterator rend ( void ) const { return Child.rend(); }
 
-		/// return pointer to Role for the Role-like verteces
+		/// return pointer to Role for the Role-like vertices
 	const TRole* getRole ( void ) const { return Role; }
-		/// return pointer to Projection Role for the Projection verteces
+		/// return pointer to Projection Role for the Projection vertices
 	const TRole* getProjRole ( void ) const { return ProjRole; }
 		/// get (RW) TConcept for concept-like fields
 	TNamedEntry* getConcept ( void ) { return Concept; }

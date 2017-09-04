@@ -71,7 +71,7 @@ JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_get
 	TRACE_STR(env,str);
 	TJNICache* J = getJ(env,obj);
 	JString name(env,str);
-	jobject ret = (jobject)0;
+	jobject ret = nullptr;
 	try
 	{
 		ret = J->Class(J->getCName(name()));
@@ -121,7 +121,7 @@ JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_get
 	TRACE_STR(env,str);
 	TJNICache* J = getJ(env,obj);
 	JString name(env,str);
-	jobject ret = (jobject)0;
+	jobject ret = nullptr;
 	try
 	{
 		ret = J->ObjectProperty(J->getOName(name()));
@@ -171,7 +171,7 @@ JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_get
 	TRACE_STR(env,str);
 	TJNICache* J = getJ(env,obj);
 	JString name(env,str);
-	jobject ret = (jobject)0;
+	jobject ret = nullptr;
 	try
 	{
 		ret = J->DataProperty(J->getDName(name()));
@@ -195,7 +195,7 @@ JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_get
 	TRACE_STR(env,str);
 	TJNICache* J = getJ(env,obj);
 	JString name(env,str);
-	jobject ret = (jobject)0;
+	jobject ret = nullptr;
 	try
 	{
 		ret = J->Individual(J->getIName(name()));
@@ -258,7 +258,7 @@ JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_get
 	std::stringstream err;
 	err << "Unsupported datatype '" << DTName << "'";
 	Throw ( env, err.str().c_str() );
-	return (jobject)0;
+	return nullptr;
 }
 
 /*
@@ -274,7 +274,7 @@ JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_get
 //	TJNICache* J = getJ(env,obj);
 	JString name(env,str);
 	Throw ( env, "FaCT++ Kernel: unsupported operation 'getDataSubType'" );
-	jobject ret = (jobject)0;
+	jobject ret = nullptr;
 #if 0
 	try
 	{
@@ -446,7 +446,7 @@ JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_get
  * Signature: (Luk/ac/manchester/cs/factplusplus/DataValuePointer;)Luk/ac/manchester/cs/factplusplus/DataTypeFacet;
  */
 JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_getFractionDigitsFacet
-  (JNIEnv * env, jobject, jobject)
+  (JNIEnv * env, jobject obj ATTR_UNUSED, jobject)
 {
 	TRACE_JNI("getFractionDigitsFacet");
 	Throw ( env, "FaCT++ Kernel: unsupported facet 'getFractionDigitsFacet'" );
@@ -504,7 +504,7 @@ JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_get
 	TRACE_STR(env,str);
 	TJNICache* J = getJ(env,obj);
 	JString name(env,str);
-	jobject ret = (jobject)0;
+	jobject ret = nullptr;
 	try
 	{
 		ret = J->DataValue ( J->EM->DataValue ( name(), getDataTypeExpr(env,type) ) );
@@ -743,7 +743,7 @@ JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_get
  * Signature: ()Luk/ac/manchester/cs/factplusplus/DataPropertyPointer;
  */
 JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_getDataPropertyKey
-  (JNIEnv * env, jobject)
+  (JNIEnv * env, jobject obj ATTR_UNUSED)
 {
 	TRACE_JNI("getDataPropertyKey");
 	Throw ( env, "FaCT++ Kernel: unsupported operation 'getDataPropertyKey'" );
@@ -757,7 +757,7 @@ JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_get
  * Signature: ()Luk/ac/manchester/cs/factplusplus/ObjectPropertyPointer;
  */
 JNIEXPORT jobject JNICALL Java_uk_ac_manchester_cs_factplusplus_FaCTPlusPlus_getObjectPropertyKey
-  (JNIEnv * env, jobject)
+  (JNIEnv * env, jobject obj ATTR_UNUSED)
 {
 	TRACE_JNI("getObjectPropertyKey");
 	Throw ( env, "FaCT++ Kernel: unsupported operation 'getObjectPropertyKey'" );

@@ -119,11 +119,11 @@ protected:	// methods
 
 public:		// interface
 		/// c'tor
-	TAxiomSet ( TBox& host )
+	explicit TAxiomSet ( TBox& host )
 		: Host(host)
 		{}
 		/// d'tor
-	~TAxiomSet ( void );
+	~TAxiomSet();
 
 		/// init all absorption-related flags using given set of option
 	bool initAbsorptionFlags ( const std::string& flags );
@@ -141,7 +141,7 @@ public:		// interface
 	size_t absorb ( void );
 		/// get number of (not absorbed) GCIs
 	size_t size ( void ) const { return Accum.size(); }
-		/// @return true if non-concept aborption were executed
+		/// @return true if non-concept absorption were executed
 	bool wasRoleAbsorptionApplied ( void ) const { return Stat::SAbsRApply::objects_created > 0; }
 		/// get GCI of all non-absorbed axioms
 	DLTree* getGCI ( void ) const
@@ -153,8 +153,6 @@ public:		// interface
 		return ret;
 	}
 
-		/// print (not absorbed) GCIs
-	void Print ( std::ostream& o ) const;
 		/// print absorption statistics
 	void PrintStatistics ( void ) const;
 }; // TAxiomSet

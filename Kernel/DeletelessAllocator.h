@@ -26,14 +26,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  * Class for the allocator that does not allowed 'delete'. Instead
  * it allows user to reuse all allocated memory.
  */
-template<class T>
+template <typename T>
 class DeletelessAllocator: public growingArrayP<T>
 {
 public:
 		/// c'tor: do nothing
 	DeletelessAllocator ( void ) {}
-		/// d'tor: do nothing (all done in ~gaP)
-	virtual ~DeletelessAllocator ( void ) {}
 
 		/// get a new object from the heap
 	T* get ( void )

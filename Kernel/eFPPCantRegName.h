@@ -45,8 +45,6 @@ public:		// interface
 		str += type;
 		reason = str.c_str();
 	}
-		/// empty d'tor
-	virtual ~EFPPCantRegName ( void ) noexcept {}
 
 		/// get access to the unregistered name
 	const char* getName ( void ) const { return Name.c_str(); }

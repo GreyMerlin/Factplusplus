@@ -34,7 +34,7 @@ protected:	// methods
 		const char** ret = new const char*[vec.size()+1];
 		for ( size_t i = 0; i < vec.size(); ++i )
 			ret[i] = vec[i]->getName();
-		ret[vec.size()] = NULL;
+		ret[vec.size()] = nullptr;
 		return ret;
 	}
 
@@ -60,7 +60,7 @@ public:		// interface
 		const char*** ret = new const char**[acc.size()+1];
 		for ( size_t i = 0; i < acc.size(); ++i )
 			ret[i] = buildArray(acc[i]);
-		ret[acc.size()] = NULL;
+		ret[acc.size()] = nullptr;
 		return ret;
 	}
 		/// get NULL-terminated 1D array of all required elements of the taxonomy
@@ -75,7 +75,7 @@ public:		// interface
 // type declarations
 
 #define DECLARE_STRUCT(name,type)	\
-struct name ## _st { type* p; name ## _st(type* q) : p(q) {} }
+struct name ## _st { type* p; explicit name ## _st(type* q) : p(q) {} }
 // FaCT++ kernel
 DECLARE_STRUCT(fact_reasoning_kernel,ReasoningKernel);
 // progress monitor

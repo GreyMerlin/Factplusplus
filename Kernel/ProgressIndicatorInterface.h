@@ -30,7 +30,7 @@ protected:	// members
 	unsigned long uCurrent;
 
 protected:	// methods
-		/// initial exposure method: can be overriden in derived classes
+		/// initial exposure method: can be overridden in derived classes
 	virtual void initExposure ( void ) {}
 		/// indicate current value somehow
 	virtual void expose ( void ) = 0;
@@ -50,10 +50,10 @@ public:		// interface
 		/// empty c'tor
 	ProgressIndicatorInterface ( void ) : uLimit{0}, uCurrent{0} {}
 		/// init c'tor
-	ProgressIndicatorInterface ( unsigned long limit ) : uCurrent{0}
+	explicit ProgressIndicatorInterface ( unsigned long limit ) : uCurrent{0}
 		{ setLimit (limit); }
 		/// empty d'tor
-	virtual ~ProgressIndicatorInterface ( void ) {}
+	virtual ~ProgressIndicatorInterface() = default;
 
 		/// set indicator to a given VALUE
 	void setIndicator ( unsigned long value )

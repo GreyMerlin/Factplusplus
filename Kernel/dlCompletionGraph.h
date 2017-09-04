@@ -62,8 +62,6 @@ protected:	// types
 	public:		// interface
 			/// empty c'tor
 		SaveState ( void ) : nNodes(0), sNodes(0), nEdges(0) {}
-			/// empty d'tor
-		~SaveState ( void ) {}
 	}; // SaveState
 
 private:	// constants
@@ -85,7 +83,7 @@ protected:	// members
 	unsigned int nodeId;
 		/// index of the next unallocated entry
 	size_t endUsed;
-		/// current branching level (synchronised with resoner's one)
+		/// current branching level (synchronised with reasoner's one)
 	unsigned int branchingLevel;
 		/// current IR level (should be valid BP)
 	BipolarPointer IRLevel;
@@ -280,7 +278,7 @@ public:		// interface
 		/// no assignment
 	DlCompletionGraph& operator = ( const DlCompletionGraph& ) = delete;
 		/// d'tor: delete all allocated nodes
-	~DlCompletionGraph ( void )
+	~DlCompletionGraph()
 	{
 		for ( iterator p = NodeBase.begin(); p != NodeBase.end(); ++p )
 			delete *p;
@@ -434,7 +432,7 @@ public:		// interface
 		const TRole* R,	// name of role (arc label)
 		const DepSet& dep )	// dep-set of the arc label
 	{
-		// check if GCraph already has FROM->TO edge labelled with RNAME
+		// check if CGraph already has FROM->TO edge labelled with RNAME
 		DlCompletionTreeArc* ret = from->getEdgeLabelled ( R, to );
 		if ( ret == nullptr )
 			ret = createEdge ( from, to, isPredEdge, R, dep );
@@ -477,11 +475,11 @@ public:		// interface
 	void initIR ( void );
 		/// make given NODE member of current IR set; @return true iff clash occurs
 	bool setCurIR ( DlCompletionTree* node, const DepSet& ds );
-		/// finilise current IR set
+		/// finalise current IR set
 	void finiIR ( void );
 
 		/// check if P and Q are in IR; if so, put the clash-set to DEP
-	bool nonMergable ( const DlCompletionTree* p, const DlCompletionTree* q, DepSet& dep ) const;
+	bool nonMergeable ( const DlCompletionTree* p, const DlCompletionTree* q, DepSet& dep ) const;
 
 	//----------------------------------------------
 	// save/restore
@@ -528,9 +526,9 @@ public:		// interface
 
 #if defined(RKG_IR_IN_NODE_LABEL)
 inline bool
-DlCompletionGraph :: nonMergable ( const DlCompletionTree* p, const DlCompletionTree* q, DepSet& dep ) const
+DlCompletionGraph :: nonMergeable ( const DlCompletionTree* p, const DlCompletionTree* q, DepSet& dep ) const
 {
-	return p->nonMergable ( q, dep );
+	return p->nonMergeable ( q, dep );
 }
 
 inline void

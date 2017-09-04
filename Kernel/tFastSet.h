@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <vector>
 
 /// the implementation of the set with constant-time "in" check
-template<class T>
+template <typename T>
 class TFastSet
 {
 protected:	// internal types
@@ -42,7 +42,7 @@ public:		// type interface
 protected:	// members
 		/// values to be kept in the set
 	ValArray Value;
-		/// indeces of the used values
+		/// indices of the used values
 	std::vector<indexType> Index;
 
 protected:	// methods
@@ -55,7 +55,7 @@ public:		// interface
 		/// empty c'tor
 	TFastSet ( void ) = default;
 		/// c'tor with a given max set SIZE
-	TFastSet ( size_t size ) { ensureMaxSetSize(size); }
+	explicit TFastSet ( size_t size ) { ensureMaxSetSize(size); }
 		/// copy c'tor
 	TFastSet ( const TFastSet& ) = default;
 		/// move c'tor
@@ -64,8 +64,6 @@ public:		// interface
 	TFastSet& operator = ( const TFastSet& ) = default;
 		/// move assignment
 	TFastSet& operator = ( TFastSet && ) = default;
-		/// empty d'tor
-	~TFastSet ( void ) = default;
 		/// reserve the set size to the SIZE elements
 	void reserve ( size_t size ) { Value.reserve(size); }
 

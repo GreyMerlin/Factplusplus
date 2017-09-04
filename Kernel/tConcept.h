@@ -38,7 +38,7 @@ enum CTTag
 	cttTrueCompletelyDefined,
 	/// concept w/o any told subsumers
 	cttOrphan,
-	/// concept with all parents -- LCD, TCD or Orptans
+	/// concept with all parents -- LCD, TCD or Orphans
 	cttLikeCompletelyDefined,
 	/// concept with non-primitive TS
 	cttHasNonPrimitiveTS,
@@ -117,7 +117,7 @@ protected:	// methods
 
 	// told subsumers interface
 
-		/// adds concept as a told subsumer of current one; @return value for CDC analisys
+		/// adds concept as a told subsumer of current one; @return value for CDC analysis
 	bool addToldSubsumer ( TConcept* p )
 	{
 		if ( p != this )
@@ -161,7 +161,7 @@ public:		// methods
 		/// no assignment
 	TConcept& operator = ( const TConcept& ) = delete;
 		/// d'tor
-	virtual ~TConcept ( void ) { deleteTree(Description); }
+	~TConcept() override { deleteTree(Description); }
 		/// clear all info of the concept. Use it in removeConcept()
 	void clear ( void );
 

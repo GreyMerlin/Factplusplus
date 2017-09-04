@@ -87,9 +87,7 @@ protected:	// methods
 
 public:		// interface
 		/// init c'tor
-	BotEquivalenceEvaluator ( const TSignature* s ) : SigAccessor(s), isBotEq(false) {}
-		/// empty d'tor
-	virtual ~BotEquivalenceEvaluator ( void ) {}
+	explicit BotEquivalenceEvaluator ( const TSignature* s ) : SigAccessor(s), isBotEq(false) {}
 
 	// set fields
 
@@ -270,9 +268,7 @@ protected:	// methods
 
 public:		// interface
 		/// init c'tor
-	TopEquivalenceEvaluator ( const TSignature* s ) : SigAccessor(s), isTopEq(false) {}
-		/// empty d'tor
-	virtual ~TopEquivalenceEvaluator ( void ) {}
+	explicit TopEquivalenceEvaluator ( const TSignature* s ) : SigAccessor(s), isTopEq(false) {}
 
 	// set fields
 
@@ -415,7 +411,7 @@ protected:	// methods
 
 public:		// interface
 		/// init c'tor
-	SyntacticLocalityChecker ( const TSignature* s )
+	explicit SyntacticLocalityChecker ( const TSignature* s )
 		: GeneralSyntacticLocalityChecker(s)
 		, TopEval(s)
 		, BotEval(s)
@@ -423,8 +419,6 @@ public:		// interface
 		TopEval.setBotEval(&BotEval);
 		BotEval.setTopEval(&TopEval);
 	}
-		/// empty d'tor
-	virtual ~SyntacticLocalityChecker ( void ) {}
 }; // SyntacticLocalityChecker
 
 #endif

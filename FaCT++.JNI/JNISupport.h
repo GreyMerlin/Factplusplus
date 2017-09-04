@@ -30,13 +30,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #ifdef JNI_TRACING
+#	include <iostream>
 #	define TRACE_JNI(func) std::cerr << "JNI " << env << " Kernel " << getK(env,obj) << " Call " << func << "\n"
 #	define TRACE_ARG(env,obj,arg) do {	\
 		std::cerr << " arg ";			\
 		TExpr* expr=getROExpr(env,arg);	\
 		const TNamedEntity* ne = dynamic_cast<const TNamedEntity*>(expr); \
 		if ( ne != nullptr ) std::cerr << ne->getName();	\
-		std::cerr << "\n"; } while(0)
+		std::cerr << "\n"; } while (false)
 #	define TRACE_STR(env,str) std::cerr << " string arg " << JString(env,str)() << "\n"
 #else
 #	define TRACE_JNI(func) (void)NULL
@@ -80,16 +81,17 @@ typedef const ReasoningKernel::TCGNode TCGNode;
 // class for easy dealing with Java strings
 class JString
 {
-private:	// prevent copy
-	JString ( const JString& );
-	JString& operator = ( const JString& );
-protected:
+private:
 	JNIEnv* env;
 	jstring str;
 	const char* buf;
+
 public:
-	JString ( JNIEnv* e, jstring s ) : env(e), str(s) { buf = env->GetStringUTFChars(str,0); }
-	~JString ( void ) { env->ReleaseStringUTFChars(str,buf); }
+	JString ( JNIEnv* e, jstring s ) : env(e), str(s) { buf = env->GetStringUTFChars(str, nullptr); }
+	// prevent copy
+	JString ( const JString& ) = delete;
+	JString& operator = ( const JString& ) = delete;
+	~JString() { env->ReleaseStringUTFChars(str, buf); }
 	const char* operator() ( void ) const { return buf; }
 }; // JString
 

@@ -40,7 +40,7 @@ protected:	// internal typedefs
 			/// empty c'tor
 		KnownSubsumers ( void ) {}
 			/// empty  d'tor
-		virtual ~KnownSubsumers ( void ) {}
+		virtual ~KnownSubsumers() = default;
 
 		// iterators
 
@@ -73,8 +73,6 @@ protected:	// internal typedefs
 	public:		// interface
 			/// c'tor
 		ToldSubsumers ( ss_iterator b, ss_iterator e ) : beg(b), end(e) {}
-			/// d'tor
-		virtual ~ToldSubsumers ( void ) {}
 
 		// iterators
 
@@ -169,7 +167,7 @@ protected:	// methods
 	//--	General classification methods
 	//-----------------------------------------------------------------
 
-		/// Common pre- and post-action to setup 2-phase algo
+		/// Common pre- and post-action to setup 2-phase algorithm
 	void performClassification ( void );
 		/// fills parents and children of Current using tunable general approach
 	void generalTwoPhaseClassification ( void );
@@ -245,7 +243,7 @@ protected:	// methods
 
 public:		// interface
 		/// init c'tor
-	TaxonomyCreator ( Taxonomy* tax )
+	explicit TaxonomyCreator ( Taxonomy* tax )
 		: pTax(tax)
 		, curEntry(nullptr)
 		, nEntries(0)
@@ -257,7 +255,7 @@ public:		// interface
 		/// no assignment
 	TaxonomyCreator& operator = ( const TaxonomyCreator& ) = delete;
 		/// d'tor
-	virtual ~TaxonomyCreator ( void ) {}
+	virtual ~TaxonomyCreator() = default;
 
 	//------------------------------------------------------------------------------
 	//--	classification interface

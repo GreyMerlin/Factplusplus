@@ -33,7 +33,7 @@ private:	// members
 
 public:		// interface
 		/// c'tor: create an output string
-	EFPPNonSimpleRole ( const std::string& name )
+	explicit EFPPNonSimpleRole ( const std::string& name )
 		: EFaCTPlusPlus()
 		, roleName(name)
 	{
@@ -42,8 +42,6 @@ public:		// interface
 		str += "' is used as a simple one";
 		reason = str.c_str();
 	}
-		/// empty d'tor
-	virtual ~EFPPNonSimpleRole ( void ) noexcept {}
 
 		/// access to the role
 	const char* getRoleName ( void ) const { return roleName.c_str(); }
