@@ -1,14 +1,14 @@
 Run an example::
 
-    $ LD_LIBRARY_PATH=../Kernel/obj PYTHONPATH=. python examples/imply-class.py
+    $ LD_LIBRARY_PATH=../Kernel PYTHONPATH=. python examples/imply-class.py
 
 Try to load FOAF ontology::
 
-    $ LD_LIBRARY_PATH=../Kernel/obj PYTHONPATH=. bin/factpp-load ontologies/foaf.rdf
+    $ LD_LIBRARY_PATH=../Kernel PYTHONPATH=. bin/factpp-load ontologies/foaf.rdf
 
 and print ontology report::
 
-    $ LD_LIBRARY_PATH=../Kernel/obj PYTHONPATH=. bin/factpp-load ontologies/foaf.rdf 2>&1 | bin/factpp-load-report
+    $ LD_LIBRARY_PATH=../Kernel PYTHONPATH=. bin/factpp-load ontologies/foaf.rdf 2>&1 | bin/factpp-load-report
 
       1 metadata: http://purl.org/dc/elements/1.1/description,
       1 metadata: http://purl.org/dc/elements/1.1/title,

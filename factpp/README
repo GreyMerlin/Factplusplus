@@ -9,13 +9,15 @@ Compilation::
 
     $ git clone https://bitbucket.org/wrobell/factplusplus.git
     $ git checkout factpp
-    $ make -C Kernel LTYPE=shared OS=LINUX  # or OS=MACOSX
-    $ cd factpp
-    $ CFLAGS="-I../Kernel" LDFLAGS="-L../Kernel/obj" python setup.py build_ext --inplace
+    $ cd Kernel
+    $ cmake CMakeLists.txt
+    $ make
+    $ cd ../factpp
+    $ CFLAGS="-I../Kernel" LDFLAGS="-L../Kernel" python setup.py build_ext --inplace
 
 Run unit tests::
 
-    $ LD_LIBRARY_PATH=../Kernel/obj PYTHONPATH=. py.test factpp/
+    $ LD_LIBRARY_PATH=../Kernel PYTHONPATH=. py.test factpp/
 
 The `doc/cmd.rst` shows commands to run examples and parse an ontology.
 
