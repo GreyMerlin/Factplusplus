@@ -28,9 +28,9 @@ from functools import partial
 import rdflib.store
 from rdflib.namespace import DC, RDF, RDFS, OWL, Namespace
 
-VS = Namespace('http://www.w3.org/2003/06/sw-vocab-status/ns#')
-
 import factpp
+
+VS = Namespace('http://www.w3.org/2003/06/sw-vocab-status/ns#')
 
 logger = logging.getLogger(__name__)
 
