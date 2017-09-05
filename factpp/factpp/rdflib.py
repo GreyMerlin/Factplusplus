@@ -53,7 +53,6 @@ class Store(rdflib.store.Store):
             (RDF.type, OWL.DatatypeProperty): self._parse_d_property,
             (RDF.type, OWL.FunctionalProperty): self._parse_nop,
             (RDF.type, OWL.InverseFunctionalProperty): self._parse_nop,
-            (RDF.type, OWL.AnnotationProperty): self._parse_nop,
             RDF.type: make_parser('instance_of', 'individual', 'concept'),
             RDF.first: self._parse_rdf_first,
             RDF.rest: self._parse_rdf_rest,
