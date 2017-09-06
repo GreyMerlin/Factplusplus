@@ -34,10 +34,12 @@ VS = Namespace('http://www.w3.org/2003/06/sw-vocab-status/ns#')
 
 logger = logging.getLogger(__name__)
 
+
 class Store(rdflib.store.Store):
     def __init__(self, reasoner=None):
         self._reasoner = reasoner if reasoner else factpp.Reasoner()
         self._list_cache = ListState.CACHE
+        self._properties = defaultdict(partial(PropertyParser, self._reasoner))
         self._parsers = {}
 
         self._create_parsers()
@@ -45,14 +47,18 @@ class Store(rdflib.store.Store):
     def _create_parsers(self):
         make_parser = self._make_parser
         as_meta = partial(self._parse_nop, reason='metadata')
+        property_parser = lambda f, s, o: getattr(self._properties[s], f)(o)
         self._parsers = {
             (RDF.type, OWL.Class): self._parse_class,
             (RDF.type, RDFS.Class): self._parse_class,
-            (RDF.type, RDF.Property): self._parse_nop,
+            (RDF.type, RDF.Property): self._parse_property,
             (RDF.type, OWL.ObjectProperty): self._parse_o_property,
             (RDF.type, OWL.DatatypeProperty): self._parse_d_property,
             (RDF.type, OWL.FunctionalProperty): self._parse_nop,
             (RDF.type, OWL.InverseFunctionalProperty): self._parse_nop,
+            RDFS.domain: partial(property_parser, 'set_domain'),
+            RDFS.range: partial(property_parser, 'set_range'),
+            (RDF.type, OWL.equivalentProperty): partial(property_parser, 'set_equivalent'),
             RDF.type: make_parser('instance_of', 'individual', 'concept'),
             RDF.first: self._parse_rdf_first,
             RDF.rest: self._parse_rdf_rest,
@@ -136,27 +142,41 @@ class Store(rdflib.store.Store):
         self._reasoner.concept(s)
         self._parsers[RDF.type, s] = self._parse_class
 
+    def _parse_property(self, s, o):
+        p = self._properties[s]  # defaultdict used to store, so property
+                                 # is auto created
+        assert isinstance(p, Property)
+
+        self._parsers[p] = p.parse_value
+
     def _parse_o_property(self, s, o):
-        r = self._reasoner.object_role(s)
-        parsers = self._parsers
-        make_parser = self._make_parser
-        parsers[s, RDFS.domain] = make_parser('set_o_domain', 'object_role', 'concept')
-        parsers[s, RDFS.range] = make_parser('set_o_range', 'object_role', 'concept')
-        parsers[RDFS.subPropertyOf, s] = make_parser('implies_o_roles', 'object_role', 'object_role')
-        parsers[OWL.equivalentProperty, s] = make_parser('equal_o_roles', 'object_role', 'object_role', as_list=True)
-        parsers[s, OWL.equivalentProperty] = make_parser('equal_o_roles', 'object_role', 'object_role', as_list=True)
-        parsers[s] = partial(self._parse_related, r)
+        p = self._properties[s]
+        assert p.type is None
+        p.type = 'object'
+        p.role = self._reasoner.object_role(s)
+
+       # parsers = self._parsers
+       # make_parser = self._make_parser
+       # parsers[s, RDFS.domain] = make_parser('set_o_domain', 'object_role', 'concept')
+       # parsers[s, RDFS.range] = make_parser('set_o_range', 'object_role', 'concept')
+       # parsers[RDFS.subPropertyOf, s] = make_parser('implies_o_roles', 'object_role', 'object_role')
+       # parsers[OWL.equivalentProperty, s] = make_parser('equal_o_roles', 'object_role', 'object_role', as_list=True)
+       # parsers[s, OWL.equivalentProperty] = make_parser('equal_o_roles', 'object_role', 'object_role', as_list=True)
+       # parsers[s] = partial(self._parse_related, r)
 
     def _parse_d_property(self, s, o):
-        self._reasoner.data_role(s)
+        p = self._properties[s]
+        assert p.type is None
+        p.type = 'data'
+        p.role = self._reasoner.data_role(s)
 
-        parsers = self._parsers
-        make_parser = self._make_parser
-        parsers[s, RDFS.domain] = make_parser('set_d_domain', 'data_role', 'concept')
-        parsers[s, RDFS.range] = self._parse_d_range
-        parsers[RDFS.subPropertyOf, s] = make_parser('implies_d_roles', 'data_role', 'data_role')
-        parsers[OWL.equivalentProperty, s] = make_parser('equal_d_roles', 'data_role', 'data_role', as_list=True)
-        parsers[s, OWL.equivalentProperty] = make_parser('equal_d_roles', 'data_role', 'data_role', as_list=True)
+       # parsers = self._parsers
+       # make_parser = self._make_parser
+       # parsers[s, RDFS.domain] = make_parser('set_d_domain', 'data_role', 'concept')
+       # parsers[s, RDFS.range] = self._parse_d_range
+       # parsers[RDFS.subPropertyOf, s] = make_parser('implies_d_roles', 'data_role', 'data_role')
+       # parsers[OWL.equivalentProperty, s] = make_parser('equal_d_roles', 'data_role', 'data_role', as_list=True)
+       # parsers[s, OWL.equivalentProperty] = make_parser('equal_d_roles', 'data_role', 'data_role', as_list=True)
 
     def _parse_d_range(self, s, o):
         r = self._reasoner.data_role(s)
@@ -176,6 +196,20 @@ class Store(rdflib.store.Store):
     def _parse_nop(self, s, o, reason='unsupported'):
         if __debug__:
             logger.debug('skipped: {}'.format(reason))
+
+
+class PropertyParser:
+    def __init__(self, reasoner):
+        self.type = None
+        self.is_functional = None
+        self.realised = False
+        self.role = None
+
+        self._reasoner = reasoner
+
+    def set_range(self, o):
+        ref_o = self._reasoner.concept(o)
+        self._reasoner.set_o_range(self.role, ref_o)
 
 
 class ListState:
