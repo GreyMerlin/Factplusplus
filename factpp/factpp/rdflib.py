@@ -57,7 +57,7 @@ class Store(rdflib.store.Store):
             (RDF.type, OWL.FunctionalProperty): self._parse_nop,
             (RDF.type, OWL.InverseFunctionalProperty): self._parse_nop,
             RDFS.domain: partial(property_parser, 'set_domain'),
-            RDFS.range: partial(property_parser, 'set_range'),
+            RDFS.range: partial(property_parser, 'parse_range'),
             (RDF.type, OWL.equivalentProperty): partial(property_parser, 'set_equivalent'),
             RDF.type: make_parser('instance_of', 'individual', 'concept'),
             RDF.first: self._parse_rdf_first,
@@ -151,9 +151,8 @@ class Store(rdflib.store.Store):
 
     def _parse_o_property(self, s, o):
         p = self._properties[s]
-        assert p.type is None
-        p.type = 'object'
-        p.role = self._reasoner.object_role(s)
+        role = self._reasoner.object_role(s)
+        p.set_role('object', role)
 
        # parsers = self._parsers
        # make_parser = self._make_parser
@@ -167,8 +166,8 @@ class Store(rdflib.store.Store):
     def _parse_d_property(self, s, o):
         p = self._properties[s]
         assert p.type is None
-        p.type = 'data'
-        p.role = self._reasoner.data_role(s)
+        role = self._reasoner.data_role(s)
+        p.set_role('data', role)
 
        # parsers = self._parsers
        # make_parser = self._make_parser
@@ -198,18 +197,33 @@ class Store(rdflib.store.Store):
             logger.debug('skipped: {}'.format(reason))
 
 
+PROPERTY_METHODS = [
+    'parse_range',
+]
+
 class PropertyParser:
     def __init__(self, reasoner):
-        self.type = None
         self.is_functional = None
         self.realised = False
-        self.role = None
+
+        self._role = None
+        self._type = None
 
         self._reasoner = reasoner
+        self.parse_range = None
 
-    def set_range(self, o):
+    def set_role(self, type, role):
+        self._type = type
+        self._role = role
+
+        for dest in PROPERTY_METHODS:
+            source = '_{}_{}'.format(type, dest)
+            method = getattr(self, source)
+            setattr(self, dest, method)
+
+    def _object_parse_range(self, o):
         ref_o = self._reasoner.concept(o)
-        self._reasoner.set_o_range(self.role, ref_o)
+        self._reasoner.set_o_range(self._role, ref_o)
 
 
 class ListState:
