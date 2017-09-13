@@ -25,7 +25,7 @@ from rdflib import Graph, Literal, BNode
 from rdflib.namespace import FOAF, RDF, RDFS, OWL, Namespace
 
 import factpp.rdflib
-from .._factpp import Reasoner
+from factpp._factpp import Reasoner
 
 from unittest import mock
 
