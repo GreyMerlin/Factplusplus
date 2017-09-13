@@ -30,9 +30,14 @@ from rdflib.namespace import DC, RDF, RDFS, OWL, Namespace
 
 import factpp
 
+logger = logging.getLogger(__name__)
+
+
 VS = Namespace('http://www.w3.org/2003/06/sw-vocab-status/ns#')
 
-logger = logging.getLogger(__name__)
+PROPERTY_METHODS = [
+    'parse_range',
+]
 
 
 class Store(rdflib.store.Store):
@@ -196,10 +201,6 @@ class Store(rdflib.store.Store):
         if __debug__:
             logger.debug('skipped: {}'.format(reason))
 
-
-PROPERTY_METHODS = [
-    'parse_range',
-]
 
 class PropertyParser:
     def __init__(self, reasoner):
