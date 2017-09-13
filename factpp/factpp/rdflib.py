@@ -203,15 +203,20 @@ class Store(rdflib.store.Store):
 
 
 class PropertyParser:
-    def __init__(self, reasoner):
-        self.is_functional = None
-        self.realised = False
+    """
+    Property parser.
 
+    If property has unknown type, then statements to be parsed are stored
+    in parser cache.
+
+    :var _cache: Parser cache.
+    """
+    def __init__(self, reasoner):
         self._role = None
         self._type = None
+        self._cache = set()
 
         self._reasoner = reasoner
-        self.parse_range = None
 
     def set_role(self, type, role):
         self._type = type
@@ -221,6 +226,9 @@ class PropertyParser:
             source = '_{}_{}'.format(type, dest)
             method = getattr(self, source)
             setattr(self, dest, method)
+
+    def parse_range(self, o):
+        self._cache.add(('parse_range', o))
 
     def _object_parse_range(self, o):
         ref_o = self._reasoner.concept(o)
