@@ -62,8 +62,10 @@ class Store(rdflib.store.Store):
             (RDF.type, OWL.DatatypeProperty): self._parse_d_property,
             (RDF.type, OWL.FunctionalProperty): self._parse_nop,
             (RDF.type, OWL.InverseFunctionalProperty): self._parse_nop,
-            RDFS.domain: partial(property_parser, 'set_domain'),
+
+            RDFS.domain: partial(property_parser, 'parse_domain'),
             RDFS.range: partial(property_parser, 'parse_range'),
+
             (RDF.type, OWL.equivalentProperty): partial(property_parser, 'set_equivalent'),
             RDF.type: make_parser('instance_of', 'individual', 'concept'),
             RDF.first: self._parse_rdf_first,
