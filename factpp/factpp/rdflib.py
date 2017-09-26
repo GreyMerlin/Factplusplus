@@ -230,6 +230,15 @@ class PropertyParser:
     def parse_range(self, o):
         self._cache.add(('parse_range', o))
 
+    #
+    # Methods, which names follow the pattern:
+    #
+    #   _{type}_{dest}
+    #
+    # Type is `data` or `object` for data and object properties. The `dest`
+    # is one property operations listed in `PROPERTY_METHODS`.
+    #
+
     def _object_parse_range(self, o):
         ref_o = self._reasoner.concept(o)
         self._reasoner.set_o_range(self._role, ref_o)
