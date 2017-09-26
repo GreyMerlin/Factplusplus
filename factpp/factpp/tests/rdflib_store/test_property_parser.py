@@ -28,7 +28,6 @@ from unittest import mock
 def _parser():
     return PropertyParser(mock.MagicMock())
 
-
 def test_cache_parse_range():
     """
     Test parser cache for property range.
@@ -41,6 +40,9 @@ def test_cache_parse_range():
     assert ('parse_range', o) in parser._cache
 
 def test_set_role_object_property():
+    """
+    Test property parser for an object property.
+    """
     parser = _parser()
 
     role = mock.MagicMock()
@@ -49,5 +51,18 @@ def test_set_role_object_property():
     assert parser._type == 'object'
     assert parser._role is role
     assert parser.parse_range == parser._object_parse_range
+
+def test_set_role_data_property():
+    """
+    Test property parser for a data property.
+    """
+    parser = _parser()
+
+    role = mock.MagicMock()
+    parser.set_role('data', role)
+
+    assert parser._type == 'data'
+    assert parser._role is role
+    assert parser.parse_range == parser._data_parse_range
 
 # vim: sw=4:et:ai

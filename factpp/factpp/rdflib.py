@@ -243,6 +243,10 @@ class PropertyParser:
         ref_o = self._reasoner.concept(o)
         self._reasoner.set_o_range(self._role, ref_o)
 
+    def _data_parse_range(self, o):
+        ref_o = self._reasoner.concept(o)
+        self._reasoner.set_d_range(self._role, ref_o)
+
 
 class ListState:
     """
