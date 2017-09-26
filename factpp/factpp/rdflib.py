@@ -219,6 +219,11 @@ class PropertyParser:
 
         self._reasoner = reasoner
 
+        # create methods to cache property parsing calls while a property
+        # type is unknown
+        for dest in PROPERTY_METHODS:
+            setattr(self, dest, partial(self._cache_call, dest))
+
     def set_role(self, type, role):
         self._type = type
         self._role = role
@@ -228,11 +233,8 @@ class PropertyParser:
             method = getattr(self, source)
             setattr(self, dest, method)
 
-    def parse_domain(self, o):
-        self._cache.add(('parse_domain', o))
-
-    def parse_range(self, o):
-        self._cache.add(('parse_range', o))
+    def _cache_call(self, dest, o):
+        self._cache.add((dest, o))
 
     #
     # Methods, which names follow the pattern:
