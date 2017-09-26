@@ -36,6 +36,7 @@ logger = logging.getLogger(__name__)
 VS = Namespace('http://www.w3.org/2003/06/sw-vocab-status/ns#')
 
 PROPERTY_METHODS = [
+    'parse_domain',
     'parse_range',
 ]
 
@@ -227,6 +228,9 @@ class PropertyParser:
             method = getattr(self, source)
             setattr(self, dest, method)
 
+    def parse_domain(self, o):
+        self._cache.add(('parse_domain', o))
+
     def parse_range(self, o):
         self._cache.add(('parse_range', o))
 
@@ -239,13 +243,20 @@ class PropertyParser:
     # is one property operations listed in `PROPERTY_METHODS`.
     #
 
+    def _object_parse_domain(self, o):
+        ref_o = self._reasoner.concept(o)
+        self._reasoner.set_o_domain(self._role, ref_o)
+
+    def _data_parse_domain(self, o):
+        ref_o = self._reasoner.concept(o)
+        self._reasoner.set_d_domain(self._role, ref_o)
+
     def _object_parse_range(self, o):
         ref_o = self._reasoner.concept(o)
         self._reasoner.set_o_range(self._role, ref_o)
 
     def _data_parse_range(self, o):
-        ref_o = self._reasoner.concept(o)
-        self._reasoner.set_d_range(self._role, ref_o)
+        raise NotImplementedError()
 
 
 class ListState:
