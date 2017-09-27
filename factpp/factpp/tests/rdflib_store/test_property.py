@@ -75,20 +75,6 @@ def test_new_d_property():
     g.add((NS.P, RDF.type, OWL.DatatypeProperty))
     assert NS.P in g.store._properties
 
-def test_equivalent_data_properties():
-    """
-    Test equivalent data properties.
-    """
-    g, reasoner = graph('equal_d_roles')
-
-    g.add((NS.P1, RDF.type, OWL.DatatypeProperty))
-    g.add((NS.P2, RDF.type, OWL.DatatypeProperty))
-    g.add((NS.P1, OWL.equivalentProperty, NS.P2))
-
-    r1 = reasoner.data_role(NS.P1)
-    r2 = reasoner.data_role(NS.P2)
-    reasoner.equal_d_roles.assert_called_once_with([r1, r2])
-
 def test_d_sub_property():
     """
     Test adding data sub-property.
@@ -114,7 +100,7 @@ def test_d_property_range():
     g.add((NS.P, RDF.type, OWL.DatatypeProperty))
     g.add((NS.P, RDFS.range, RDFS.Literal))
 
-    assert NS.P in parsers
+    assert NS.P in g.store._properties
 
 def test_d_property_set_str():
     """
@@ -167,5 +153,19 @@ def test_equivalent_object_properties():
     r1 = reasoner.object_role(NS.P1)
     r2 = reasoner.object_role(NS.P2)
     reasoner.equal_o_roles.assert_called_once_with([r1, r2])
+
+def test_equivalent_data_properties():
+    """
+    Test equivalent data properties.
+    """
+    g, reasoner = graph('equal_d_roles')
+
+    g.add((NS.P1, RDF.type, OWL.DatatypeProperty))
+    g.add((NS.P2, RDF.type, OWL.DatatypeProperty))
+    g.add((NS.P1, OWL.equivalentProperty, NS.P2))
+
+    r1 = reasoner.data_role(NS.P1)
+    r2 = reasoner.data_role(NS.P2)
+    reasoner.equal_d_roles.assert_called_once_with([r1, r2])
 
 # vim: sw=4:et:ai

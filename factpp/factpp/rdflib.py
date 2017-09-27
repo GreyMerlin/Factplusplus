@@ -180,11 +180,6 @@ class Store(rdflib.store.Store):
        # parsers[OWL.equivalentProperty, s] = make_parser('equal_d_roles', 'data_role', 'data_role', as_list=True)
        # parsers[s, OWL.equivalentProperty] = make_parser('equal_d_roles', 'data_role', 'data_role', as_list=True)
 
-    def _parse_d_range(self, s, o):
-        r = self._reasoner.data_role(s)
-        self._reasoner.set_d_range(r, self._reasoner.type_str)
-        self._parsers[s] = partial(self._parse_d_set_str, r)
-
     def _parse_related(self, role, s, o):
         reasoner = self._reasoner
         ref_s = reasoner.individual(s)
@@ -255,7 +250,9 @@ class PropertyParser:
         self._reasoner.set_o_range(self._role, ref_o)
 
     def _data_parse_range(self, o):
-        raise NotImplementedError()
+        # FIXME: allow different types
+        self._reasoner.set_d_range(self._role, self._reasoner.type_str)
+        #self._parsers[s] = partial(self._parse_d_set_str, r)
 
     def _object_parse_sub_property_of(self, o):
         ref_o = self._reasoner.object_role(o)
