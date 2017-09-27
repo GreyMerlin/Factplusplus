@@ -159,6 +159,8 @@ class Store(rdflib.store.Store):
 
     def _parse_o_property(self, s, o):
         p = self._properties[s]
+        assert p._type is None
+
         role = self._reasoner.object_role(s)
         p.set_role('object', role)
 
@@ -173,7 +175,8 @@ class Store(rdflib.store.Store):
 
     def _parse_d_property(self, s, o):
         p = self._properties[s]
-        assert p.type is None
+        assert p._type is None
+
         role = self._reasoner.data_role(s)
         p.set_role('data', role)
 

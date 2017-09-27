@@ -46,12 +46,9 @@ def test_new_o_property():
     Test adding new object property.
     """
     g, reasoner = graph()
-    parsers = g.store._parsers
 
     g.add((NS.P, RDF.type, OWL.ObjectProperty))
-    assert NS.P in parsers
-    assert (NS.P, RDFS.domain) in parsers
-    assert (NS.P, RDFS.range) in parsers
+    assert NS.P in g.store._properties
 
 def test_o_sub_property():
     """
@@ -76,8 +73,7 @@ def test_new_d_property():
     parsers = g.store._parsers
 
     g.add((NS.P, RDF.type, OWL.DatatypeProperty))
-    assert (NS.P, RDFS.domain) in parsers
-    assert (NS.P, RDFS.range) in parsers
+    assert NS.P in g.store._properties
 
 def test_equivalent_data_properties():
     """
