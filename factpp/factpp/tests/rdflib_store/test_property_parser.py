@@ -63,6 +63,7 @@ def test_set_role_object_property():
     assert parser._role is role
     assert parser.parse_domain == parser._object_parse_domain
     assert parser.parse_range == parser._object_parse_range
+    assert parser.parse_sub_property_of == parser._object_parse_sub_property_of
 
 def test_set_role_data_property():
     """
@@ -77,5 +78,6 @@ def test_set_role_data_property():
     assert parser._role is role
     assert parser.parse_domain == parser._data_parse_domain
     assert parser.parse_range == parser._data_parse_range
+    assert parser.parse_sub_property_of == parser._data_parse_sub_property_of
 
 # vim: sw=4:et:ai
