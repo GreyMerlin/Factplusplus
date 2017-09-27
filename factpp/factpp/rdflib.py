@@ -38,6 +38,7 @@ VS = Namespace('http://www.w3.org/2003/06/sw-vocab-status/ns#')
 PROPERTY_METHODS = [
     'parse_domain',
     'parse_range',
+    'parse_sub_property_of',
 ]
 
 
@@ -65,6 +66,7 @@ class Store(rdflib.store.Store):
 
             RDFS.domain: partial(property_parser, 'parse_domain'),
             RDFS.range: partial(property_parser, 'parse_range'),
+            RDFS.subPropertyOf: partial(property_parser, 'parse_sub_property_of'),
 
             (RDF.type, OWL.equivalentProperty): partial(property_parser, 'set_equivalent'),
             RDF.type: make_parser('instance_of', 'individual', 'concept'),
@@ -164,11 +166,6 @@ class Store(rdflib.store.Store):
         role = self._reasoner.object_role(s)
         p.set_role('object', role)
 
-       # parsers = self._parsers
-       # make_parser = self._make_parser
-       # parsers[s, RDFS.domain] = make_parser('set_o_domain', 'object_role', 'concept')
-       # parsers[s, RDFS.range] = make_parser('set_o_range', 'object_role', 'concept')
-       # parsers[RDFS.subPropertyOf, s] = make_parser('implies_o_roles', 'object_role', 'object_role')
        # parsers[OWL.equivalentProperty, s] = make_parser('equal_o_roles', 'object_role', 'object_role', as_list=True)
        # parsers[s, OWL.equivalentProperty] = make_parser('equal_o_roles', 'object_role', 'object_role', as_list=True)
        # parsers[s] = partial(self._parse_related, r)
@@ -180,11 +177,6 @@ class Store(rdflib.store.Store):
         role = self._reasoner.data_role(s)
         p.set_role('data', role)
 
-       # parsers = self._parsers
-       # make_parser = self._make_parser
-       # parsers[s, RDFS.domain] = make_parser('set_d_domain', 'data_role', 'concept')
-       # parsers[s, RDFS.range] = self._parse_d_range
-       # parsers[RDFS.subPropertyOf, s] = make_parser('implies_d_roles', 'data_role', 'data_role')
        # parsers[OWL.equivalentProperty, s] = make_parser('equal_d_roles', 'data_role', 'data_role', as_list=True)
        # parsers[s, OWL.equivalentProperty] = make_parser('equal_d_roles', 'data_role', 'data_role', as_list=True)
 
@@ -264,6 +256,14 @@ class PropertyParser:
 
     def _data_parse_range(self, o):
         raise NotImplementedError()
+
+    def _object_parse_sub_property_of(self, o):
+        ref_o = self._reasoner.object_role(o)
+        self._reasoner.implies_o_roles(self._role, ref_o)
+
+    def _data_parse_sub_property_of(self, o):
+        ref_o = self._reasoner.data_role(o)
+        self._reasoner.implies_d_roles(self._role, ref_o)
 
 
 class ListState:
