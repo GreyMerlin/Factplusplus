@@ -17,17 +17,7 @@ and print ontology report::
      72 metadata: http://www.w3.org/2000/01/rdf-schema#isDefinedBy,
      78 metadata: http://www.w3.org/2000/01/rdf-schema#label,
      75 metadata: http://www.w3.org/2003/06/sw-vocab-status/ns#term_status,
-     62 unsupported: http://www.w3.org/1999/02/22-rdf-syntax-ns#type, http://www.w3.org/1999/02/22-rdf-syntax-ns#Property
       4 unsupported: http://www.w3.org/1999/02/22-rdf-syntax-ns#type, http://www.w3.org/2002/07/owl#FunctionalProperty
      12 unsupported: http://www.w3.org/1999/02/22-rdf-syntax-ns#type, http://www.w3.org/2002/07/owl#InverseFunctionalProperty
-      1 unsupported: http://www.w3.org/2000/01/rdf-schema#domain, http://www.w3.org/2002/07/owl#Thing
-      1 unsupported: http://www.w3.org/2000/01/rdf-schema#domain, http://xmlns.com/foaf/0.1/Agent
-      1 unsupported: http://www.w3.org/2000/01/rdf-schema#range, http://www.w3.org/2000/01/rdf-schema#Literal
-      1 unsupported: http://www.w3.org/2000/01/rdf-schema#range, http://xmlns.com/foaf/0.1/Document
-      1 unsupported: http://www.w3.org/2000/01/rdf-schema#subPropertyOf, http://www.w3.org/2000/01/rdf-schema#label
-      1 unsupported: http://www.w3.org/2000/01/rdf-schema#subPropertyOf, http://xmlns.com/foaf/0.1/depiction
-      2 unsupported: http://www.w3.org/2000/01/rdf-schema#subPropertyOf, http://xmlns.com/foaf/0.1/isPrimaryTopicOf
-      4 unsupported: http://www.w3.org/2000/01/rdf-schema#subPropertyOf, http://xmlns.com/foaf/0.1/page
-      1 unsupported: http://www.w3.org/2002/07/owl#equivalentProperty,
 
 .. vim: sw=4:et:ai
