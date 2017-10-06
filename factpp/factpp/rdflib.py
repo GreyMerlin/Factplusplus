@@ -158,7 +158,7 @@ class Store(rdflib.store.Store):
     def _parse_property(self, s, o):
         p = self._properties[s]  # defaultdict used to store, so property
                                  # is auto created
-        assert isinstance(p, Property)
+        assert isinstance(p, PropertyParser)
         self._parsers[s] = p.parse_value
 
     def _parse_o_property(self, s, o):
