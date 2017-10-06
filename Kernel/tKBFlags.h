@@ -17,8 +17,8 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _TKBFLAGS_H
-#define _TKBFLAGS_H
+#ifndef TKBFLAGS_H
+#define TKBFLAGS_H
 
 #include "flags.h"
 
@@ -27,9 +27,9 @@ class TKBFlags: public Flags
 {
 public:		// interface
 		/// empty c'tor
-	TKBFlags ( void ) : Flags() {}
+	TKBFlags() = default;
 		/// copy c'tor
-	TKBFlags ( const TKBFlags& flags ) : Flags(flags) {}
+	TKBFlags ( const TKBFlags& flags ) = default;
 
 		/// register flag for GCIs
 	FPP_ADD_FLAG(GCI,0x1);

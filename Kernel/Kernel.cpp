@@ -38,26 +38,6 @@ static bool KernelFirstRun = true;
 //#define FPP_DEBUG_PRINT_RELATED_PROGRESS
 
 ReasoningKernel :: ReasoningKernel ( void )
-	: pTBox(nullptr)
-	, pET(nullptr)
-	, KE(nullptr)
-	, AD(nullptr)
-	, ModSyn(nullptr)
-	, ModSynCount(nullptr)
-	, ModSem(nullptr)
-	, JNICache(nullptr)
-	, pSLManager(nullptr)
-	, pMonitor(nullptr)
-	, OpTimeout(0)
-	, verboseOutput(false)
-	, useUndefinedNames(true)
-	, cachedQuery(nullptr)
-	, cachedQueryTree(nullptr)
-	, reasoningFailed(false)
-	, NeedTracing(false)
-	, ignoreExprCache(false)
-	, useIncrementalReasoning(false)
-	, dumpOntology(false)
 {
 	// Intro
 	if ( KernelFirstRun )
@@ -66,8 +46,6 @@ ReasoningKernel :: ReasoningKernel ( void )
 				  << Copyright << ". Version " << Version << " (" << ReleaseDate << ")\n";
 		KernelFirstRun = false;
 	}
-
-	initCacheAndFlags();
 
 	// init option set (fill with options):
 	if ( initOptions () )
@@ -401,9 +379,9 @@ ReasoningKernel :: isDisjointRoles ( void )
 	Roles.reserve(Disj.size());
 	unsigned int nTopRoles = 0;
 
-	for ( TExprVec::const_iterator p = Disj.begin(), p_end = Disj.end(); p != p_end; ++p )
+	for ( auto* arg : Disj )
 	{
-		if ( TORoleExpr* ORole = dynamic_cast<TORoleExpr*>(*p) )
+		if ( TORoleExpr* ORole = dynamic_cast<TORoleExpr*>(arg) )
 		{
 			TRole* R = getRole ( ORole, "Role expression expected in isDisjointRoles()" );
 			if ( R->isBottom() )
@@ -413,7 +391,7 @@ ReasoningKernel :: isDisjointRoles ( void )
 			else
 				Roles.push_back(R);
 		}
-		else if ( TDRoleExpr* DRole = dynamic_cast<TDRoleExpr*>(*p) )
+		else if ( TDRoleExpr* DRole = dynamic_cast<TDRoleExpr*>(arg) )
 		{
 			TRole* R = getRole ( DRole, "Role expression expected in isDisjointRoles()" );
 			if ( R->isBottom() )
@@ -630,9 +608,8 @@ ReasoningKernel :: getModule ( ModuleMethod moduleMethod, ModuleType moduleType 
 	TSignature Sig;
 	// NB: we don't care about locality type here as modularizer will change it
 	Sig.setLocality(false);
-	const std::vector<const TDLExpression*> signature = getExpressionManager()->getArgList();
-	for ( std::vector<const TDLExpression*>::const_iterator q = signature.begin(), q_end = signature.end(); q != q_end; ++q )
-		if ( const TNamedEntity* entity = dynamic_cast<const TNamedEntity*>(*q) )
+	for ( const TDLExpression* expr : getExpressionManager()->getArgList() )
+		if ( const TNamedEntity* entity = dynamic_cast<const TNamedEntity*>(expr) )
 			Sig.add(entity);
 	return getModExtractor(moduleMethod)->getModule ( Sig, moduleType );
 }
@@ -644,9 +621,8 @@ ReasoningKernel :: getNonLocal ( ModuleMethod moduleMethod, ModuleType moduleTyp
 	// init signature
 	TSignature Sig;
 	Sig.setLocality(moduleType == M_TOP);	// true for TOP, false for BOT/STAR
-	const std::vector<const TDLExpression*> signature = getExpressionManager()->getArgList();
-	for ( std::vector<const TDLExpression*>::const_iterator q = signature.begin(), q_end = signature.end(); q != q_end; ++q )
-		if ( const TNamedEntity* entity = dynamic_cast<const TNamedEntity*>(*q) )
+	for ( const TDLExpression* expr : getExpressionManager()->getArgList() )
+		if ( const TNamedEntity* entity = dynamic_cast<const TNamedEntity*>(expr) )
 			Sig.add(entity);
 
 //	TLISPOntologyPrinter lp(std::cout);
@@ -654,14 +630,14 @@ ReasoningKernel :: getNonLocal ( ModuleMethod moduleMethod, ModuleType moduleTyp
 	LocalityChecker* LC = getModExtractor(moduleMethod)->getModularizer()->getLocalityChecker();
 	LC->setSignatureValue(Sig);
 	Result.clear();
-	for ( TOntology::iterator p = getOntology().begin(), p_end = getOntology().end(); p != p_end; ++p )
+	for ( TDLAxiom* axiom : getOntology() )
 	{
 //		std::cout << "Checking locality of ";
-//		(*p)->accept(lp);
-		if ( !LC->local(*p) )
+//		axiom->accept(lp);
+		if ( !LC->local(axiom) )
 		{
 //			std::cout << "AX non-local" << std::endl;
-			Result.push_back(*p);
+			Result.push_back(axiom);
 		}
 //		else
 //			std::cout << "AX local" << std::endl;

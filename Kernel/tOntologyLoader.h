@@ -48,7 +48,7 @@ protected:	// methods
 		{
 			return resolveRole(TreeDeleter(e(r)));
 		}
-		catch ( const EFaCTPlusPlus& e ) { throw EFaCTPlusPlus(reason); }
+		catch ( const EFaCTPlusPlus& ) { throw EFaCTPlusPlus(reason); }
 	}
 		/// get an individual be the DLTree; throw exception if unable
 	TIndividual* getIndividual ( const TDLIndividualExpression* I, const char* reason )
@@ -111,8 +111,8 @@ public:		// visitor interface
 		ensureNames(axiom.getC());
 		ArgList.push_back(e(axiom.getC()));
 		DLTree* acc = createBottom();
-		for ( TDLAxiomDisjointUnion::iterator p = axiom.begin(), p_end = axiom.end(); p != p_end; ++p )
-			acc = createSNFOr ( acc, e(*p) );
+		for ( const auto* arg : axiom )
+			acc = createSNFOr ( acc, e(arg) );
 		ArgList.push_back(acc);
 		kb.processEquivalentC(ArgList.begin(),ArgList.end());
 	}

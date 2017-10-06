@@ -17,8 +17,8 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef EXTENDEDSYNLOCCHECKER_H
-#define EXTENDEDSYNLOCCHECKER_H
+#ifndef EXTENDEDSYNTACTICLOCALITYCHECKER_H
+#define EXTENDEDSYNTACTICLOCALITYCHECKER_H
 
 // uncomment the following line to debug the locality checker
 //#define FPP_DEBUG_EXTENDED_LOCALITY
@@ -48,13 +48,13 @@ protected:	// members
 	const char* name;
 #endif
 
-	UpperBoundDirectEvaluator* UBD;
-	LowerBoundDirectEvaluator* LBD;
-	UpperBoundComplementEvaluator* UBC;
-	LowerBoundComplementEvaluator* LBC;
+	UpperBoundDirectEvaluator* UBD = nullptr;
+	LowerBoundDirectEvaluator* LBD = nullptr;
+	UpperBoundComplementEvaluator* UBC = nullptr;
+	LowerBoundComplementEvaluator* LBC = nullptr;
 
 		/// keep the value here
-	int value;
+	int value = 0;
 
 protected:	// methods to
 		/// main method to use
@@ -171,7 +171,6 @@ public:		// interface
 		, lp(std::cout)
 		, name(n)
 #	endif
-		, value(0)
 		{}
 
 		/// set all other evaluators
@@ -323,8 +322,8 @@ public:		// visitor implementation
 	void visit ( const TDLObjectRoleInverse& expr ) override { value = getUpperBoundDirect(expr.getOR()); }
 	void visit ( const TDLObjectRoleChain& expr ) override
 	{
-		for ( TDLObjectRoleChain::iterator p = expr.begin(), p_end = expr.end(); p != p_end; ++p )
-			if ( isBotEquivalent(*p) )
+		for ( const auto* arg : expr )
+			if ( isBotEquivalent(arg) )
 			{
 				value = anyUpperValue();
 				return;
@@ -439,8 +438,8 @@ public:		// visitor interface
 	void visit ( const TDLObjectRoleInverse& expr ) override { value = getUpperBoundComplement(expr.getOR()); }
 	void visit ( const TDLObjectRoleChain& expr ) override
 	{
-		for ( TDLObjectRoleChain::iterator p = expr.begin(), p_end = expr.end(); p != p_end; ++p )
-			if ( !isTopEquivalent(*p) )
+		for ( const auto* arg : expr )
+			if ( !isTopEquivalent(arg) )
 			{
 				value = noUpperValue();
 				return;
@@ -610,8 +609,8 @@ public:		// visitor interface
 	void visit ( const TDLObjectRoleInverse& expr ) override { value = getLowerBoundDirect(expr.getOR()); }
 	void visit ( const TDLObjectRoleChain& expr ) override
 	{
-		for ( TDLObjectRoleChain::iterator p = expr.begin(), p_end = expr.end(); p != p_end; ++p )
-			if ( !isTopEquivalent(*p) )
+		for ( const auto* arg : expr )
+			if ( !isTopEquivalent(arg) )
 			{
 				value = noLowerValue();
 				return;
@@ -776,8 +775,8 @@ public:		// visitor implementation
 	void visit ( const TDLObjectRoleInverse& expr ) override { value = getLowerBoundComplement(expr.getOR()); }
 	void visit ( const TDLObjectRoleChain& expr ) override
 	{
-		for ( TDLObjectRoleChain::iterator p = expr.begin(), p_end = expr.end(); p != p_end; ++p )
-			if ( isBotEquivalent(*p) )
+		for ( const auto* arg : expr )
+			if ( isBotEquivalent(arg) )
 			{
 				value = anyLowerValue();
 				return;

@@ -97,7 +97,7 @@ protected:	// members
 		/// reference to the containing manager
 	TDepSetManager* Manager;
 		/// element head.NULL
-	TDepSetElement* HeadDepSet;
+	TDepSetElement* HeadDepSet = nullptr;
 		/// head element of the given cache
 	unsigned int Level;
 
@@ -119,7 +119,7 @@ public:		// interface
 		HeadDepSet = new TDepSetElement { Manager, Level, nullptr };
 	}
 		/// d'tor: delete all the cached dep-sets and the head element
-	virtual ~TDepSetCache()
+	~TDepSetCache() override
 	{
 		// don't delete tails as they are referenced outside
 		for ( auto& p: Map )
@@ -191,17 +191,17 @@ class TDepSet
 {
 protected:	// members
 		/// pointer to the appropriate dep-set element
-	TDepSetElement* dep;
+	TDepSetElement* dep = nullptr;
 
 public:		// interface
 		/// default c'tor: create empty dep-set
-	TDepSet ( void ) : dep(nullptr) {}
+	TDepSet() = default;
 		/// main c'tor
-	explicit TDepSet ( TDepSetElement* depp ) { dep = depp; }
+	explicit TDepSet ( TDepSetElement* depp ) : dep(depp) {}
 		/// copy c'tor
-	TDepSet ( const TDepSet& d ) : dep(d.dep) {}
+	TDepSet ( const TDepSet& ) = default;
 		/// assignment
-	TDepSet& operator = ( const TDepSet& d ) { dep = d.dep; return *this; }
+	TDepSet& operator = ( const TDepSet& ) = default;
 
 	// access methods
 

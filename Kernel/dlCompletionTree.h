@@ -66,18 +66,11 @@ protected:	// internal classes
 			/// saving status of the label
 		CGLabel::SaveState lab;
 			/// curLevel of the Node structure
-		unsigned int curLevel;
+		unsigned int curLevel = 0;
 			/// amount of neighbours
-		size_t nNeighbours;
+		size_t nNeighbours = 0;
 
 	public:		// interface
-			/// empty c'tor
-		SaveState ( void ) {}
-			/// copy c'tor
-		SaveState ( const SaveState& ) = default;
-			/// assignment
-		SaveState& operator = ( const SaveState& ) = default;
-
 			/// get level of a saved node
 		unsigned int level ( void ) const { return curLevel; }
 	}; // SaveState
@@ -148,35 +141,32 @@ protected:	// members
 		/// pointer to last saved node
 	TSaveList<SaveState> saves;
 		/// ID of node (used in print)
-	unsigned int id;
+	unsigned int id = 0;
 		/// concept that init the newly created node
-	BipolarPointer Init;
+	BipolarPointer Init = bpINVALID;
 
 		/// blocker of a node
-	const DlCompletionTree* Blocker;
+	const DlCompletionTree* Blocker = nullptr;
 		/// dep-set for Purge op
 	DepSet pDep;
 
 	// save state information
-	unsigned int curLevel;	// current level
+	unsigned int curLevel = 0;	// current level
+		/// level of a nominal node; 0 means blockable one
+	CTNominalLevel nominalLevel;
 
 		/// is given node a data node
-	unsigned int flagDataNode : 1;
+	bool flagDataNode : 1;
 		/// flag if node is Cached
-	unsigned int cached : 1;
+	bool cached : 1;
 		/// flag whether node is permanently/temporarily blocked
-	unsigned int pBlocked : 1;
+	bool pBlocked : 1;
 		/// flag whether node is directly/indirectly blocked
-	unsigned int dBlocked : 1;
+	bool dBlocked : 1;
 		/** Whether node is affected by change of some potential blocker.
 			This flag may be viewed as a cache for a 'blocked' status
 		*/
-	unsigned int affected : 1;
-		/// the rest
-	unsigned int unused : 27;
-
-		/// level of a nominal node; 0 means blockable one
-	CTNominalLevel nominalLevel;
+	bool affected : 1;
 
 protected:	// methods
 
@@ -239,8 +229,8 @@ protected:	// methods
 		/// check if all parent arcs are blocked
 	bool isParentArcIBlocked ( void ) const
 	{
-		for ( const_edge_iterator p = begin(); p != end(); ++p )
-			if ( (*p)->isPredEdge() && !(*p)->isIBlocked() )
+		for ( const DlCompletionTreeArc* edge : *this )
+			if ( edge->isPredEdge() && !edge->isIBlocked() )
 				return false;
 		return true;
 	}
