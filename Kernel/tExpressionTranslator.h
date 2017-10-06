@@ -28,11 +28,11 @@ class TExpressionTranslator: public DLExpressionVisitor
 {
 protected:	// members
 		/// tree corresponding to a processing expression
-	DLTree* tree;
+	DLTree* tree = nullptr;
 		/// TBox to get access to the named entities
 	TBox& KB;
 		/// signature of non-trivial entities; used in semantic locality checkers only
-	const TSignature* sig;
+	const TSignature* sig = nullptr;
 
 #define THROW_UNSUPPORTED(name) \
 	throw EFaCTPlusPlus("Unsupported expression '" name "' in transformation")
@@ -62,7 +62,7 @@ protected:	// methods
 
 public:		// interface
 		/// empty c'tor
-	explicit TExpressionTranslator ( TBox& kb ) : tree(nullptr), KB(kb), sig(nullptr) {}
+	explicit TExpressionTranslator ( TBox& kb ) : KB(kb) {}
 		/// empty d'tor
 	~TExpressionTranslator() override { deleteTree(tree); }
 
@@ -92,9 +92,9 @@ public:		// visitor interface
 	{
 		DLTree* acc = createTop();
 
-		for ( TDLConceptAnd::iterator p = expr.begin(), p_end = expr.end(); p != p_end; ++p )
+		for ( const auto* arg : expr )
 		{
-			(*p)->accept(*this);
+			arg->accept(*this);
 			acc = createSNFAnd ( acc, *this );
 		}
 
@@ -104,9 +104,9 @@ public:		// visitor interface
 	{
 		DLTree* acc = createBottom();
 
-		for ( TDLConceptOr::iterator p = expr.begin(), p_end = expr.end(); p != p_end; ++p )
+		for ( const auto* arg : expr )
 		{
-			(*p)->accept(*this);
+			arg->accept(*this);
 			acc = createSNFOr ( acc, *this );
 		}
 
@@ -116,9 +116,9 @@ public:		// visitor interface
 	{
 		DLTree* acc = createBottom();
 
-		for ( TDLConceptOneOf::iterator p = expr.begin(), p_end = expr.end(); p != p_end; ++p )
+		for ( const auto* arg : expr )
 		{
-			(*p)->accept(*this);
+			arg->accept(*this);
 			acc = createSNFOr ( acc, *this );
 		}
 
@@ -304,9 +304,9 @@ public:		// visitor interface
 	{
 		DLTree* acc = createTop();
 
-		for ( TDLDataTypeRestriction::iterator p = expr.begin(), p_end = expr.end(); p != p_end; ++p )
+		for ( const auto* arg : expr )
 		{
-			(*p)->accept(*this);
+			arg->accept(*this);
 			acc = createSNFAnd ( acc, *this );
 		}
 
@@ -324,9 +324,9 @@ public:		// visitor interface
 	{
 		DLTree* acc = createTop();
 
-		for ( TDLDataAnd::iterator p = expr.begin(), p_end = expr.end(); p != p_end; ++p )
+		for ( const auto* arg : expr )
 		{
-			(*p)->accept(*this);
+			arg->accept(*this);
 			acc = createSNFAnd ( acc, *this );
 		}
 
@@ -336,9 +336,9 @@ public:		// visitor interface
 	{
 		DLTree* acc = createBottom();
 
-		for ( TDLDataOr::iterator p = expr.begin(), p_end = expr.end(); p != p_end; ++p )
+		for ( const auto* arg : expr )
 		{
-			(*p)->accept(*this);
+			arg->accept(*this);
 			acc = createSNFOr ( acc, *this );
 		}
 
@@ -348,9 +348,9 @@ public:		// visitor interface
 	{
 		DLTree* acc = createBottom();
 
-		for ( TDLDataOneOf::iterator p = expr.begin(), p_end = expr.end(); p != p_end; ++p )
+		for ( const auto* arg : expr )
 		{
-			(*p)->accept(*this);
+			arg->accept(*this);
 			acc = createSNFOr ( acc, *this );
 		}
 

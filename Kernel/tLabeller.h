@@ -39,19 +39,9 @@ public:		// type interface
 
 protected:	// members
 		/// counter
-	LabelCounter counter;
+	LabelCounter counter{1};
 
 public:		// interface
-		/// init c'tor
-	TLabeller ( void ) : counter(1) {}
-		/// copy c'tor
-	TLabeller ( const TLabeller& copy ) : counter(copy.counter) {}
-		/// assignment
-	TLabeller& operator= ( const TLabeller& copy )
-	{
-		counter = copy.counter;
-		return *this;
-	}
 
 	// operations with Labeller
 

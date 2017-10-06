@@ -52,22 +52,22 @@ protected:	// members
 		/// set of all atoms current one depends on
 	AtomSet AllDepAtoms;
 		/// unique atom's identifier
-	size_t Id;
+	size_t Id = 0;
 
 protected:	// methods
 		/// remove all atoms in AllDepAtoms from DepAtoms
 	void filterDep ( void )
 	{
-		for ( AtomSet::iterator p = AllDepAtoms.begin(), p_end = AllDepAtoms.end(); p != p_end; ++p )
-			DepAtoms.erase(*p);
+		for ( TOntologyAtom* atom : AllDepAtoms )
+			DepAtoms.erase(atom);
 	}
 		/// build all dep atoms; filter them from DepAtoms
 	void buildAllDepAtoms ( AtomSet& checked )
 	{
 		// first gather all dep atoms from all known dep atoms
-		for ( AtomSet::iterator p = DepAtoms.begin(), p_end = DepAtoms.end(); p != p_end; ++p )
+		for ( TOntologyAtom* atom : DepAtoms )
 		{
-			const AtomSet& Dep = (*p)->getAllDepAtoms(checked);
+			const AtomSet& Dep = atom->getAllDepAtoms(checked);
 			AllDepAtoms.insert ( Dep.begin(), Dep.end() );
 		}
 		// now filter them out from known dep atoms
@@ -79,11 +79,6 @@ protected:	// methods
 	}
 
 public:		// interface
-		/// empty c'tor
-	TOntologyAtom ( void ) : Id(0) {}
-
-	// fill in the sets
-
 		/// set the module axioms
 	void setModule ( const AxiomSet& module ) { ModuleAxioms = module; }
 		/// add axiom AX to an atom

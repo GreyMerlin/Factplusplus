@@ -17,8 +17,8 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _TSAVESTACK_H
-#define _TSAVESTACK_H
+#ifndef TSAVESTACK_H
+#define TSAVESTACK_H
 
 #include "growingArrayP.h"
 #include "fpp_assert.h"
@@ -31,9 +31,6 @@ template <typename T>
 class TSaveStack: public growingArrayP<T>
 {
 public:		// interface
-		/// c'tor: do nothing
-	TSaveStack ( void ) {}
-
 	// stack operations
 
 		/// get a new object from the stack;it will be filled by caller
