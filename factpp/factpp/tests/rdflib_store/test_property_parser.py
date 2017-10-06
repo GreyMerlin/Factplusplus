@@ -61,6 +61,17 @@ def test_cache_parse_value():
 
     assert ('parse_value', o) in parser._cache
 
+def test_cache_parse_equivalent():
+    """
+    Test parser cache for equivalent properties.
+    """
+    parser = _parser()
+    o = mock.MagicMock()
+
+    parser.parse_equivalent_property(o)
+
+    assert ('parse_equivalent_property', o) in parser._cache
+
 def test_set_role_object_property():
     """
     Test property parser for an object property.
@@ -76,6 +87,7 @@ def test_set_role_object_property():
     assert parser.parse_range == parser._object_parse_range
     assert parser.parse_value == parser._object_parse_value
     assert parser.parse_sub_property_of == parser._object_parse_sub_property_of
+    assert parser.parse_equivalent_property == parser._object_parse_equivalent_property
 
 def test_set_role_data_property():
     """
@@ -92,5 +104,6 @@ def test_set_role_data_property():
     assert parser.parse_range == parser._data_parse_range
     assert parser.parse_value == parser._data_parse_value
     assert parser.parse_sub_property_of == parser._data_parse_sub_property_of
+    assert parser.parse_equivalent_property == parser._data_parse_equivalent_property
 
 # vim: sw=4:et:ai

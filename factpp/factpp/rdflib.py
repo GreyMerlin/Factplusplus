@@ -38,8 +38,9 @@ VS = Namespace('http://www.w3.org/2003/06/sw-vocab-status/ns#')
 PROPERTY_METHODS = [
     'parse_domain',
     'parse_range',
-    'parse_sub_property_of',
     'parse_value',
+    'parse_sub_property_of',
+    'parse_equivalent_property',
 ]
 
 
@@ -68,9 +69,9 @@ class Store(rdflib.store.Store):
             RDFS.domain: partial(property_parser, 'parse_domain'),
             RDFS.range: partial(property_parser, 'parse_range'),
             RDFS.subPropertyOf: partial(property_parser, 'parse_sub_property_of'),
+            OWL.equivalentProperty: partial(property_parser, 'parse_equivalent_property'),
             OWL.inverseOf: make_parser('set_inverse_roles', 'object_role', 'object_role'),
 
-            (RDF.type, OWL.equivalentProperty): partial(property_parser, 'set_equivalent'),
             RDF.type: make_parser('instance_of', 'individual', 'concept'),
             RDF.first: self._parse_rdf_first,
             RDF.rest: self._parse_rdf_rest,
@@ -167,9 +168,6 @@ class Store(rdflib.store.Store):
         p.set_role('object', role)
         self._parsers[s] = p.parse_value
 
-       # parsers[OWL.equivalentProperty, s] = make_parser('equal_o_roles', 'object_role', 'object_role', as_list=True)
-       # parsers[s, OWL.equivalentProperty] = make_parser('equal_o_roles', 'object_role', 'object_role', as_list=True)
-
     def _parse_d_property(self, s, o):
         p = self._properties[s]
         assert p._type is None
@@ -177,9 +175,6 @@ class Store(rdflib.store.Store):
         role = self._reasoner.data_role(s)
         p.set_role('data', role)
         self._parsers[s] = p.parse_value
-
-       # parsers[OWL.equivalentProperty, s] = make_parser('equal_d_roles', 'data_role', 'data_role', as_list=True)
-       # parsers[s, OWL.equivalentProperty] = make_parser('equal_d_roles', 'data_role', 'data_role', as_list=True)
 
     def _parse_nop(self, s, o, reason='unsupported'):
         if __debug__:
@@ -258,6 +253,14 @@ class PropertyParser:
     def _data_parse_value(self, s, o):  # strings supported at the moment only
         i = self._reasoner.individual(s)
         self._reasoner.value_of_str(i, self._role, str(o))
+
+    def _object_parse_equivalent_property(self, o):
+        ref_o = self._reasoner.object_role(o)
+        self._reasoner.equal_o_roles([self._role, ref_o])
+
+    def _data_parse_equivalent_property(self, o):
+        ref_o = self._reasoner.data_role(o)
+        self._reasoner.equal_d_roles([self._role, ref_o])
 
     def _object_parse_sub_property_of(self, o):
         ref_o = self._reasoner.object_role(o)
