@@ -118,11 +118,10 @@ def test_d_property_set_str():
 
 def test_inverse_role():
     """
-    Test setting OWL invverse role.
+    Test setting OWL inverse role.
     """
     g, reasoner = graph()
 
-    g, reasoner = graph()
     g.add((NS.P1, RDF.type, OWL.ObjectProperty))
     g.add((NS.P2, RDF.type, OWL.ObjectProperty))
     g.add((NS.P2, OWL.inverseOf, NS.P1))

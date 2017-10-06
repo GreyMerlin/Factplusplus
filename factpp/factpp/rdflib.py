@@ -67,6 +67,7 @@ class Store(rdflib.store.Store):
             RDFS.domain: partial(property_parser, 'parse_domain'),
             RDFS.range: partial(property_parser, 'parse_range'),
             RDFS.subPropertyOf: partial(property_parser, 'parse_sub_property_of'),
+            OWL.inverseOf: make_parser('set_inverse_roles', 'object_role', 'object_role'),
 
             (RDF.type, OWL.equivalentProperty): partial(property_parser, 'set_equivalent'),
             RDF.type: make_parser('instance_of', 'individual', 'concept'),
@@ -78,7 +79,6 @@ class Store(rdflib.store.Store):
             OWL.equivalentClass: make_parser('equal_concepts', 'concept', 'concept', as_list=True),
             OWL.disjointWith: make_parser('disjoint_concepts', 'concept', 'concept', as_list=True),
             OWL.intersectionOf: self._parse_intersection,
-            OWL.inverseOf: make_parser('set_inverse_roles', 'object_role', 'object_role'),
 
             # metadata
             DC.title: as_meta,
