@@ -116,6 +116,7 @@ cdef extern from 'tExpressionManager.h':
         TDLIndividualExpression* Individual(string)
         TDLObjectRoleExpression* ObjectRole(string)
         TDLDataExpression* DataTop()
+        TDLDataExpression* DataBottom()
         TDLDataTypeName* DataType(string)
         TDLConceptName* Concept(string)
         TDLDataRoleExpression* DataRole(string)
@@ -251,17 +252,35 @@ cdef class Reasoner:
     cdef _get(self, type T, TDLExpression *c_obj):
         return instance(self._cache, T, c_obj)
 
-    def _find_role_items(self, ObjectRoleExpr r, bool top):
-        cdef const ClassifiableEntry *obj
+    def _find_o_role_items(self, ObjectRoleExpr r, bool top):
+        # TODO: duplicate code, see _find_d_role_items
 
         cdef TDLConceptExpression *start
         cdef TaxonomyVertex *node
+        cdef const ClassifiableEntry *obj
         cdef vector[TaxonomyVertex*].iterator it
 
         start = self.c_mgr.Top() if top else self.c_mgr.Bottom()
         node = self.c_kernel.setUpCache(self.c_mgr.Exists(r.c_obj(), start))
-        it = node.begin(True)
 
+        it = node.begin(True)
+        while it != node.end(True):
+            obj = <const ClassifiableEntry*>dereference(it).getPrimer()
+            yield self.concept(obj.getName())
+            postincrement(it)
+
+    def _find_d_role_items(self, DataRoleExpr r, bool top):
+        # TODO: duplicate code, see _find_o_role_items
+
+        cdef TDLDataExpression *start
+        cdef TaxonomyVertex *node
+        cdef const ClassifiableEntry *obj
+        cdef vector[TaxonomyVertex*].iterator it
+
+        start = self.c_mgr.DataTop() if top else self.c_mgr.DataBottom()
+        node = self.c_kernel.setUpCache(self.c_mgr.Exists(r.c_obj(), start))
+
+        it = node.begin(True)
         while it != node.end(True):
             obj = <const ClassifiableEntry*>dereference(it).getPrimer()
             yield self.concept(obj.getName())
@@ -325,11 +344,11 @@ cdef class Reasoner:
         self.c_kernel.setODomain(r.c_obj(), c.c_obj())
 
     def get_o_domain(self, ObjectRoleExpr r):
-        yield from self._find_role_items(r, True)
+        yield from self._find_o_role_items(r, True)
 
     def get_o_range(self, ObjectRoleExpr r):
         rev = self._get(ObjectRoleExpr, self.c_mgr.Inverse((r.c_obj())))
-        yield from self._find_role_items(rev, True)
+        yield from self._find_o_role_items(rev, True)
 
     def set_o_range(self, ObjectRoleExpr r, ConceptExpr c):
         self.c_kernel.setORange(r.c_obj(), c.c_obj())
@@ -392,6 +411,9 @@ cdef class Reasoner:
         cdef DataExpr result = DataExpr.__new__(DataExpr)
         result.c_obj = self.c_mgr.DataTop()
         return result
+
+    def get_d_domain(self, DataRoleExpr r):
+        yield from self._find_d_role_items(r, True)
 
     def data_type(self, name):
         cdef DataType result = DataType.__new__(DataType)
