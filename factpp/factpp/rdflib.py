@@ -242,7 +242,6 @@ class PropertyParser:
     def _data_parse_range(self, o):
         # FIXME: allow different types
         self._reasoner.set_d_range(self._role, self._reasoner.type_str)
-        #self._parsers[s] = partial(self._parse_d_set_str, r)
 
     def _object_parse_value(self, s, o):
         reasoner = self._reasoner
