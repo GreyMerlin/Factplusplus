@@ -39,6 +39,7 @@ PROPERTY_METHODS = [
     'parse_domain',
     'parse_range',
     'parse_sub_property_of',
+    'parse_value',
 ]
 
 
@@ -46,7 +47,7 @@ class Store(rdflib.store.Store):
     def __init__(self, reasoner=None):
         self._reasoner = reasoner if reasoner else factpp.Reasoner()
         self._list_cache = ListState.CACHE
-        self._properties = defaultdict(partial(PropertyParser, self._reasoner))
+        self._properties = defaultdict(partial(PropertyParser, self))
         self._parsers = {}
 
         self._create_parsers()
@@ -156,8 +157,7 @@ class Store(rdflib.store.Store):
         p = self._properties[s]  # defaultdict used to store, so property
                                  # is auto created
         assert isinstance(p, Property)
-
-        self._parsers[p] = p.parse_value
+        self._parsers[s] = p.parse_value
 
     def _parse_o_property(self, s, o):
         p = self._properties[s]
@@ -165,10 +165,10 @@ class Store(rdflib.store.Store):
 
         role = self._reasoner.object_role(s)
         p.set_role('object', role)
+        self._parsers[s] = p.parse_value
 
        # parsers[OWL.equivalentProperty, s] = make_parser('equal_o_roles', 'object_role', 'object_role', as_list=True)
        # parsers[s, OWL.equivalentProperty] = make_parser('equal_o_roles', 'object_role', 'object_role', as_list=True)
-       # parsers[s] = partial(self._parse_related, r)
 
     def _parse_d_property(self, s, o):
         p = self._properties[s]
@@ -176,19 +176,10 @@ class Store(rdflib.store.Store):
 
         role = self._reasoner.data_role(s)
         p.set_role('data', role)
+        self._parsers[s] = p.parse_value
 
        # parsers[OWL.equivalentProperty, s] = make_parser('equal_d_roles', 'data_role', 'data_role', as_list=True)
        # parsers[s, OWL.equivalentProperty] = make_parser('equal_d_roles', 'data_role', 'data_role', as_list=True)
-
-    def _parse_related(self, role, s, o):
-        reasoner = self._reasoner
-        ref_s = reasoner.individual(s)
-        ref_o = reasoner.individual(o)
-        reasoner.related_to(ref_s, role, ref_o)
-
-    def _parse_d_set_str(self, r, s, o):
-        i = self._reasoner.individual(s)
-        self._reasoner.value_of_str(i, r, str(o))
 
     def _parse_nop(self, s, o, reason='unsupported'):
         if __debug__:
@@ -204,17 +195,21 @@ class PropertyParser:
 
     :var _cache: Parser cache.
     """
-    def __init__(self, reasoner):
+    def __init__(self, store):
         self._role = None
         self._type = None
         self._cache = set()
 
-        self._reasoner = reasoner
+        self._store = store
 
         # create methods to cache property parsing calls while a property
         # type is unknown
         for dest in PROPERTY_METHODS:
             setattr(self, dest, partial(self._cache_call, dest))
+
+    @property
+    def _reasoner(self):
+        return self._store._reasoner
 
     def set_role(self, type, role):
         self._type = type
@@ -253,6 +248,16 @@ class PropertyParser:
         # FIXME: allow different types
         self._reasoner.set_d_range(self._role, self._reasoner.type_str)
         #self._parsers[s] = partial(self._parse_d_set_str, r)
+
+    def _object_parse_value(self, s, o):
+        reasoner = self._reasoner
+        ref_s = reasoner.individual(s)
+        ref_o = reasoner.individual(o)
+        reasoner.related_to(ref_s, self._role, ref_o)
+
+    def _data_parse_value(self, s, o):  # strings supported at the moment only
+        i = self._reasoner.individual(s)
+        self._reasoner.value_of_str(i, self._role, str(o))
 
     def _object_parse_sub_property_of(self, o):
         ref_o = self._reasoner.object_role(o)

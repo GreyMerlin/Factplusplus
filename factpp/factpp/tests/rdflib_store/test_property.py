@@ -19,6 +19,7 @@
 
 from .util import graph, NS
 
+from rdflib import Literal
 from rdflib.namespace import FOAF, RDF, RDFS, OWL
 
 def test_property_domain():
