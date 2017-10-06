@@ -22,7 +22,7 @@ RDFLib store unit tests.
 """
 
 from rdflib import BNode
-from rdflib.namespace import FOAF, RDF, RDFS, OWL
+from rdflib.namespace import RDF, RDFS, OWL
 
 import factpp.rdflib
 
@@ -33,11 +33,11 @@ from unittest import mock
 def test_class_instance():
     g, reasoner = graph()
 
-    p = BNode()
-    cls = reasoner.concept(FOAF.Person)
-    obj = reasoner.individual(p)
+    g.add((NS.C, RDF.type, OWL.Class))
+    g.add((NS.A, RDF.type, NS.C))
 
-    g.add((p, RDF.type, FOAF.Person))
+    cls = reasoner.concept(NS.C)
+    obj = reasoner.individual(NS.A)
 
     assert reasoner.is_instance(obj, cls)
 

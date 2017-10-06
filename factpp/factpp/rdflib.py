@@ -151,8 +151,9 @@ class Store(rdflib.store.Store):
         self._list_cache[s].rest = o
 
     def _parse_class(self, s, o):
-        self._reasoner.concept(s)
-        self._parsers[RDF.type, s] = self._parse_class
+        self._parsers[RDF.type, s] = self._make_parser(
+            'instance_of', 'individual', 'concept'
+        )
 
     def _parse_property(self, s, o):
         p = self._properties[s]  # defaultdict used to store, so property
