@@ -158,6 +158,9 @@ cdef extern from 'Kernel.h':
         TDLAxiom* equalDRoles()
         TDLAxiom* setSymmetric(TDLObjectRoleExpression*)
         TDLAxiom* setTransitive(TDLObjectRoleExpression*)
+        TDLAxiom* setOFunctional(TDLObjectRoleExpression*)
+        TDLAxiom* setDFunctional(TDLDataRoleExpression*)
+        TDLAxiom* setInverseFunctional(TDLObjectRoleExpression*)
         TDLAxiom* relatedTo(TDLIndividualExpression*, TDLObjectRoleExpression*, TDLIndividualExpression*)
         TDLAxiom* instanceOf(TDLIndividualExpression*, TDLConceptExpression* C)
         bool isInstance(TDLIndividualExpression*, TDLConceptExpression* C)
@@ -371,6 +374,15 @@ cdef class Reasoner:
 
     def set_transitive(self, ObjectRoleExpr r):
         self.c_kernel.setTransitive(r.c_obj())
+
+    def set_o_functional(self, ObjectRoleExpr r):
+        self.c_kernel.setOFunctional(r.c_obj())
+
+    def set_d_functional(self, DataRoleExpr r):
+        self.c_kernel.setDFunctional(r.c_obj())
+
+    def set_inverse_functional(self, ObjectRoleExpr r):
+        self.c_kernel.setInverseFunctional(r.c_obj())
 
     def inverse(self, ObjectRoleExpr r):
         return self._get(ObjectRoleExpr, self.c_mgr.Inverse(r.c_obj()))

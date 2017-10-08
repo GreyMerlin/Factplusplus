@@ -168,4 +168,40 @@ def test_equivalent_data_properties():
     r2 = reasoner.data_role(NS.P2)
     reasoner.equal_d_roles.assert_called_once_with([r1, r2])
 
+def test_functional_object_property():
+    """
+    Test functional object property.
+    """
+    g, reasoner = graph('set_o_functional')
+
+    g.add((NS.P, RDF.type, OWL.ObjectProperty))
+    g.add((NS.P, RDF.type, OWL.FunctionalProperty))
+
+    r = reasoner.object_role(NS.P)
+    reasoner.set_o_functional.assert_called_once_with(r)
+
+def test_functional_data_property():
+    """
+    Test functional data property.
+    """
+    g, reasoner = graph('set_d_functional')
+
+    g.add((NS.P, RDF.type, OWL.DatatypeProperty))
+    g.add((NS.P, RDF.type, OWL.FunctionalProperty))
+
+    r = reasoner.data_role(NS.P)
+    reasoner.set_d_functional.assert_called_once_with(r)
+
+def test_inverse_functional_object_property():
+    """
+    Test inverse functional object property.
+    """
+    g, reasoner = graph('set_inverse_functional')
+
+    g.add((NS.P, RDF.type, OWL.ObjectProperty))
+    g.add((NS.P, RDF.type, OWL.InverseFunctionalProperty))
+
+    r = reasoner.object_role(NS.P)
+    reasoner.set_inverse_functional.assert_called_once_with(r)
+
 # vim: sw=4:et:ai

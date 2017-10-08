@@ -41,6 +41,8 @@ PROPERTY_METHODS = [
     'parse_value',
     'parse_sub_property_of',
     'parse_equivalent_property',
+    'parse_functional_property',
+    'parse_inverse_functional_property',
 ]
 
 
@@ -63,8 +65,8 @@ class Store(rdflib.store.Store):
             (RDF.type, RDF.Property): self._parse_property,
             (RDF.type, OWL.ObjectProperty): self._parse_o_property,
             (RDF.type, OWL.DatatypeProperty): self._parse_d_property,
-            (RDF.type, OWL.FunctionalProperty): self._parse_nop,
-            (RDF.type, OWL.InverseFunctionalProperty): self._parse_nop,
+            (RDF.type, OWL.FunctionalProperty): partial(property_parser, 'parse_functional_property'),
+            (RDF.type, OWL.InverseFunctionalProperty): partial(property_parser, 'parse_inverse_functional_property'),
 
             RDFS.domain: partial(property_parser, 'parse_domain'),
             RDFS.range: partial(property_parser, 'parse_range'),
@@ -269,6 +271,18 @@ class PropertyParser:
     def _data_parse_sub_property_of(self, o):
         ref_o = self._reasoner.data_role(o)
         self._reasoner.implies_d_roles(self._role, ref_o)
+
+    def _object_parse_functional_property(self, o):
+        self._reasoner.set_o_functional(self._role)
+
+    def _data_parse_functional_property(self, o):
+        self._reasoner.set_d_functional(self._role)
+
+    def _object_parse_inverse_functional_property(self, o):
+        self._reasoner.set_inverse_functional(self._role)
+
+    def _data_parse_inverse_functional_property(self, o):
+        raise TypeError('Data property cannot be inverse functional')
 
 
 class ListState:

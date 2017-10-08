@@ -72,6 +72,28 @@ def test_cache_parse_equivalent():
 
     assert ('parse_equivalent_property', o) in parser._cache
 
+def test_cache_parse_functional():
+    """
+    Test parser cache for functional property.
+    """
+    parser = _parser()
+    o = mock.MagicMock()
+
+    parser.parse_functional_property(o)
+
+    assert ('parse_functional_property', o) in parser._cache
+
+def test_cache_parse_inverse_functional():
+    """
+    Test parser cache for inverse_functional property.
+    """
+    parser = _parser()
+    o = mock.MagicMock()
+
+    parser.parse_inverse_functional_property(o)
+
+    assert ('parse_inverse_functional_property', o) in parser._cache
+
 def test_set_role_object_property():
     """
     Test property parser for an object property.
@@ -88,6 +110,8 @@ def test_set_role_object_property():
     assert parser.parse_value == parser._object_parse_value
     assert parser.parse_sub_property_of == parser._object_parse_sub_property_of
     assert parser.parse_equivalent_property == parser._object_parse_equivalent_property
+    assert parser.parse_functional_property == parser._object_parse_functional_property
+    assert parser.parse_inverse_functional_property == parser._object_parse_inverse_functional_property
 
 def test_set_role_data_property():
     """
@@ -105,5 +129,7 @@ def test_set_role_data_property():
     assert parser.parse_value == parser._data_parse_value
     assert parser.parse_sub_property_of == parser._data_parse_sub_property_of
     assert parser.parse_equivalent_property == parser._data_parse_equivalent_property
+    assert parser.parse_functional_property == parser._data_parse_functional_property
+    assert parser.parse_inverse_functional_property == parser._data_parse_inverse_functional_property
 
 # vim: sw=4:et:ai
