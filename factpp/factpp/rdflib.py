@@ -57,7 +57,7 @@ class Store(rdflib.store.Store):
 
     def _create_parsers(self):
         make_parser = self._make_parser
-        as_meta = partial(self._parse_nop, reason='metadata')
+        as_meta = partial(parse_nop, reason='metadata')
         property_parser = lambda f, s, o: getattr(self._properties[s], f)(o)
         self._parsers = {
             (RDF.type, OWL.Class): self._parse_class,
@@ -94,7 +94,7 @@ class Store(rdflib.store.Store):
             (RDF.type, OWL.AnnotationProperty): as_meta,
             VS.term_status: as_meta,
 
-            None: self._parse_nop,
+            None: parse_nop,
         }
 
     def add(self, triple, context=None, quoted=False):
@@ -178,10 +178,6 @@ class Store(rdflib.store.Store):
         role = self._reasoner.data_role(s)
         p.set_role('data', role)
         self._parsers[s] = p.parse_value
-
-    def _parse_nop(self, s, o, reason='unsupported'):
-        if __debug__:
-            logger.debug('skipped: {}'.format(reason))
 
 
 class PropertyParser:
@@ -282,7 +278,7 @@ class PropertyParser:
         self._reasoner.set_inverse_functional(self._role)
 
     def _data_parse_inverse_functional_property(self, o):
-        raise TypeError('Data property cannot be inverse functional')
+        parse_nop()
 
 
 class ListState:
@@ -337,5 +333,11 @@ class ListState:
             del ListState.CACHE[self.object]
 
 ListState.CACHE = defaultdict(ListState)
+
+
+def parse_nop(*args, reason='unsupported'):
+    if __debug__:
+        logger.debug('skipped: {}'.format(reason))
+
 
 # vim: sw=4:et:ai
