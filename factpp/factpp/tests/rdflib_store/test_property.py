@@ -91,6 +91,19 @@ def test_d_sub_property():
     r2 = reasoner.data_role(NS.P2)
     assert reasoner.is_sub_d_role(r1, r2)
 
+def test_d_property_domain():
+    """
+    Test setting data property domain.
+    """
+    g, reasoner = graph()
+
+    g.add((FOAF.name, RDF.type, OWL.DatatypeProperty))
+    g.add((FOAF.name, RDFS.domain, FOAF.Person))
+
+    r = reasoner.data_role(FOAF.name)
+    value = next(reasoner.get_d_domain(r))
+    assert value.name == str(FOAF.Person)
+
 def test_d_property_range():
     """
     Test setting data property range.
