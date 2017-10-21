@@ -1,2 +1,3 @@
-FOAF: http://xmlns.com/foaf/spec/index.rdf
-TSARS: https://github.com/blokhin/genealogical-trees/tree/master/data
+foaf.rdf: http://xmlns.com/foaf/spec/index.rdf
+tsars.rdf: https://github.com/blokhin/genealogical-trees/tree/master/data
+tbl-foaf-card.n3: https://www.w3.org/People/Berners-Lee/card
