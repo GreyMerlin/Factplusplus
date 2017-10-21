@@ -55,6 +55,11 @@ class Store(rdflib.store.Store):
 
         self._create_parsers()
 
+        # TODO: research the settings below; set all of them to true to
+        # allow loading N3 files at the moment
+        self.context_aware = True
+        self.formula_aware = True
+
     def _create_parsers(self):
         make_parser = self._make_parser
         as_meta = partial(parse_nop, reason='metadata')
@@ -127,6 +132,9 @@ class Store(rdflib.store.Store):
         objects = self._reasoner.get_role_fillers(ref_s, ref_p)
         for o in objects:
             yield ((s, p, o.name), context)
+
+    def remove(self, triple, context=None):
+        logger.warning('removal of triples not supported yet')
 
     #
     # parsers
