@@ -188,7 +188,9 @@ cdef extern from 'Kernel.h':
         TaxonomyVertex* setUpCache(TDLConceptExpression*);
 
         void realiseKB()
+        void classifyKB()
         bool isKBConsistent()
+        bool isKBPreprocessed()
 
 cdef class Expression:
     cdef const TDLExpression *_obj
@@ -481,8 +483,14 @@ cdef class Reasoner:
     def realise(self):
         self.c_kernel.realiseKB()
 
+    def classify(self):
+        self.c_kernel.classifyKB()
+
     def is_consistent(self):
         return self.c_kernel.isKBConsistent()
+
+    def is_preprocessed(self):
+        return self.c_kernel.isKBPreprocessed()
 
 cdef instance(dict cache, type T, const TDLExpression *c_obj):
     cdef Expression result
