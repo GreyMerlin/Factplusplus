@@ -58,7 +58,7 @@ for fn in args.input:
 if args.query:
     with open(args.query) as f:
         sq = f.read()
-    for s, p, o in g.query(sq):
-        print(s, p,  o)
+    for row in g.query(sq):
+        print(row)
 
 # vim: sw=4:et:ai
