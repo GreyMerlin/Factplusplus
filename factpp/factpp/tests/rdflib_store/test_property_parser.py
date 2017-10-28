@@ -156,7 +156,7 @@ def test_delayed_property_type():
     # set the property type
     g.add((NS.P, RDF.type, OWL.DatatypeProperty))
 
-    # check the if the domain of the data property got set
+    # check if the domain of the data property got set
     i = reasoner.individual(NS.O)
     r = reasoner.data_role(NS.P)
     value = next(reasoner.get_d_domain(r))
