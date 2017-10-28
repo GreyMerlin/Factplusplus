@@ -60,6 +60,22 @@ class Store(rdflib.store.Store):
         self.context_aware = True
         self.formula_aware = True
 
+        # keep track of data and object properties, see also
+        #
+        #   https://bitbucket.org/dtsarkov/factplusplus/issues/76/a-method-to-obtain-existing-object-or-data
+        #
+        # this is a hack, which would be great to remove
+        self._data_properties = set()
+        self._object_properties = set()
+
+        # we need to store the values on the side of the store as FaCT++
+        # API does not support getting values of a data property, see also
+        #
+        #     https://bitbucket.org/dtsarkov/factplusplus/issues/55/owl-api-reasoner-interface-lacks
+        #
+        # this is another hack, which would be great to remove
+        self._data_values = {}
+
     def _create_parsers(self):
         make_parser = self._make_parser
         as_meta = partial(parse_nop, reason='metadata')
@@ -119,8 +135,8 @@ class Store(rdflib.store.Store):
     def triples(self, pattern, context=None):
         s, p, o = pattern
         if s is None:
-            ref_p = self._reasoner.object_role(p)
-            c = next(self._reasoner.get_o_domain(ref_p))
+            ref_p, get_domain, _ = self._property_type(p)
+            c = next(get_domain(ref_p))
             for s in self._reasoner.get_instances(c):
                 yield from self.role_triples(s.name, p, context)
         else:
@@ -128,13 +144,30 @@ class Store(rdflib.store.Store):
 
     def role_triples(self, s, p, context):
         ref_s = self._reasoner.individual(s)
-        ref_p = self._reasoner.object_role(p)
-        objects = self._reasoner.get_role_fillers(ref_s, ref_p)
-        for o in objects:
-            yield ((s, p, o.name), context)
+        ref_p, _, fetch_values = self._property_type(p)
+        values = fetch_values(ref_s, ref_p)
+        return (((s, p, v), context) for v in values)
 
     def remove(self, triple, context=None):
         logger.warning('removal of triples not supported yet')
+
+    def _fetch_data_values(self, ref_s, ref_p):
+        v = self._data_values.get((ref_s, ref_p))
+        if v:
+            yield v
+
+    def _fetch_object_values(self, ref_s, ref_p):
+        objects = self._reasoner.get_role_fillers(ref_s, ref_p)
+        return (o.name for o in objects)
+
+    def _property_type(self, p):
+        reasoner = self._reasoner
+        if p in self._data_properties:
+            return reasoner.data_role(p), reasoner.get_d_domain, self._fetch_data_values
+        elif p in self._object_properties:
+            return reasoner.object_role(p), reasoner.get_o_domain, self._fetch_object_values
+        else:
+            return None, None, None
 
     #
     # parsers
@@ -178,6 +211,7 @@ class Store(rdflib.store.Store):
         role = self._reasoner.object_role(s)
         p.set_role('object', role)
         self._parsers[s] = p.parse_value
+        self._object_properties.add(s)
 
     def _parse_d_property(self, s, o):
         p = self._properties[s]
@@ -186,6 +220,7 @@ class Store(rdflib.store.Store):
         role = self._reasoner.data_role(s)
         p.set_role('data', role)
         self._parsers[s] = p.parse_value
+        self._data_properties.add(s)
 
 
 class PropertyParser:
@@ -208,6 +243,7 @@ class PropertyParser:
         # type is unknown
         for dest in PROPERTY_METHODS:
             setattr(self, dest, partial(self._cache_call, dest))
+
 
     @property
     def _reasoner(self):
@@ -259,6 +295,7 @@ class PropertyParser:
     def _data_parse_value(self, s, o):  # strings supported at the moment only
         i = self._reasoner.individual(s)
         self._reasoner.value_of_str(i, self._role, str(o))
+        self._store._data_values[(i, self._role)] = o
 
     def _object_parse_equivalent_property(self, o):
         ref_o = self._reasoner.object_role(o)
