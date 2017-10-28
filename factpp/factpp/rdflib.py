@@ -79,7 +79,7 @@ class Store(rdflib.store.Store):
     def _create_parsers(self):
         make_parser = self._make_parser
         as_meta = partial(parse_nop, reason='metadata')
-        property_parser = lambda f, s, o: getattr(self._properties[s], f)(o)
+        property_parser = lambda f, s, o: getattr(self._properties[s], f)(s, o)
         self._parsers = {
             (RDF.type, OWL.Class): self._parse_class,
             (RDF.type, RDFS.Class): self._parse_class,
@@ -258,8 +258,12 @@ class PropertyParser:
             method = getattr(self, source)
             setattr(self, dest, method)
 
-    def _cache_call(self, dest, o):
-        self._cache.add((dest, o))
+        for dest, s, o in self._cache:
+            method = getattr(self, dest)
+            method(s, o)
+
+    def _cache_call(self, dest, s, o):
+        self._cache.add((dest, s, o))
 
     #
     # Methods, which names follow the pattern:
@@ -270,19 +274,19 @@ class PropertyParser:
     # is one property operations listed in `PROPERTY_METHODS`.
     #
 
-    def _object_parse_domain(self, o):
+    def _object_parse_domain(self, s, o):
         ref_o = self._reasoner.concept(o)
         self._reasoner.set_o_domain(self._role, ref_o)
 
-    def _data_parse_domain(self, o):
+    def _data_parse_domain(self, s, o):
         ref_o = self._reasoner.concept(o)
         self._reasoner.set_d_domain(self._role, ref_o)
 
-    def _object_parse_range(self, o):
+    def _object_parse_range(self, s, o):
         ref_o = self._reasoner.concept(o)
         self._reasoner.set_o_range(self._role, ref_o)
 
-    def _data_parse_range(self, o):
+    def _data_parse_range(self, s, o):
         # FIXME: allow different types
         self._reasoner.set_d_range(self._role, self._reasoner.type_str)
 
@@ -297,32 +301,32 @@ class PropertyParser:
         self._reasoner.value_of_str(i, self._role, str(o))
         self._store._data_values[(i, self._role)] = o
 
-    def _object_parse_equivalent_property(self, o):
+    def _object_parse_equivalent_property(self, s, o):
         ref_o = self._reasoner.object_role(o)
         self._reasoner.equal_o_roles([self._role, ref_o])
 
-    def _data_parse_equivalent_property(self, o):
+    def _data_parse_equivalent_property(self, s, o):
         ref_o = self._reasoner.data_role(o)
         self._reasoner.equal_d_roles([self._role, ref_o])
 
-    def _object_parse_sub_property_of(self, o):
+    def _object_parse_sub_property_of(self, s, o):
         ref_o = self._reasoner.object_role(o)
         self._reasoner.implies_o_roles(self._role, ref_o)
 
-    def _data_parse_sub_property_of(self, o):
+    def _data_parse_sub_property_of(self, s, o):
         ref_o = self._reasoner.data_role(o)
         self._reasoner.implies_d_roles(self._role, ref_o)
 
-    def _object_parse_functional_property(self, o):
+    def _object_parse_functional_property(self, s, o):
         self._reasoner.set_o_functional(self._role)
 
-    def _data_parse_functional_property(self, o):
+    def _data_parse_functional_property(self, s, o):
         self._reasoner.set_d_functional(self._role)
 
-    def _object_parse_inverse_functional_property(self, o):
+    def _object_parse_inverse_functional_property(self, s, o):
         self._reasoner.set_inverse_functional(self._role)
 
-    def _data_parse_inverse_functional_property(self, o):
+    def _data_parse_inverse_functional_property(self, s, o):
         parse_nop()
 
 

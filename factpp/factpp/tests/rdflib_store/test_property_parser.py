@@ -21,8 +21,12 @@
 Unit tests for property parser used by RDFLib store.
 """
 
+from rdflib import Literal
+from rdflib.namespace import FOAF, RDF, RDFS, OWL
+
 from factpp.rdflib import PropertyParser
 
+from .util import graph, NS
 from unittest import mock
 
 def _parser():
@@ -33,66 +37,72 @@ def test_cache_parse_domain():
     Test parser cache for property domain.
     """
     parser = _parser()
+    s = mock.MagicMock()
     o = mock.MagicMock()
 
-    parser.parse_domain(o)
+    parser.parse_domain(s, o)
 
-    assert ('parse_domain', o) in parser._cache
+    assert ('parse_domain', s, o) in parser._cache
 
 def test_cache_parse_range():
     """
     Test parser cache for property range.
     """
     parser = _parser()
+    s = mock.MagicMock()
     o = mock.MagicMock()
 
-    parser.parse_range(o)
+    parser.parse_range(s, o)
 
-    assert ('parse_range', o) in parser._cache
+    assert ('parse_range', s, o) in parser._cache
 
 def test_cache_parse_value():
     """
     Test parser cache for property value.
     """
     parser = _parser()
+    s = mock.MagicMock()
     o = mock.MagicMock()
 
-    parser.parse_value(o)
+    parser.parse_value(s, o)
 
-    assert ('parse_value', o) in parser._cache
+    assert ('parse_value', s, o) in parser._cache
 
 def test_cache_parse_equivalent():
     """
     Test parser cache for equivalent properties.
     """
     parser = _parser()
+    s = mock.MagicMock()
     o = mock.MagicMock()
 
-    parser.parse_equivalent_property(o)
+    parser.parse_equivalent_property(s, o)
 
-    assert ('parse_equivalent_property', o) in parser._cache
+    assert ('parse_equivalent_property', s, o) in parser._cache
 
 def test_cache_parse_functional():
     """
     Test parser cache for functional property.
     """
     parser = _parser()
+    s = mock.MagicMock()
     o = mock.MagicMock()
 
-    parser.parse_functional_property(o)
+    parser.parse_functional_property(s, o)
 
-    assert ('parse_functional_property', o) in parser._cache
+    assert ('parse_functional_property', s, o) in parser._cache
 
 def test_cache_parse_inverse_functional():
     """
     Test parser cache for inverse_functional property.
     """
     parser = _parser()
+    s = mock.MagicMock()
     o = mock.MagicMock()
 
-    parser.parse_inverse_functional_property(o)
+    parser.parse_inverse_functional_property(s, o)
 
-    assert ('parse_inverse_functional_property', o) in parser._cache
+    assert ('parse_inverse_functional_property', s, o) in parser._cache
 
 def test_set_role_object_property():
     """
@@ -131,5 +141,22 @@ def test_set_role_data_property():
     assert parser.parse_equivalent_property == parser._data_parse_equivalent_property
     assert parser.parse_functional_property == parser._data_parse_functional_property
     assert parser.parse_inverse_functional_property == parser._data_parse_inverse_functional_property
+
+def test_setting_value_for_unknown_property():
+    g, reasoner = graph('value_of_str')
+
+    # first, we have a property of unkown type (is it data or object
+    # property?)
+    g.add((NS.P, RDF.type, RDF.Property))
+    g.add((NS.P, RDFS.range, RDFS.Literal))
+    g.add((NS.O, NS.P, Literal('a-value')))
+
+    # set the property type
+    g.add((NS.P, RDF.type, OWL.DatatypeProperty))
+
+    # check the if the value of the data property got set
+    i = reasoner.individual(NS.O)
+    r = reasoner.data_role(NS.P)
+    reasoner.value_of_str.assert_called_once_with(i, r, 'a-value')
 
 # vim: sw=4:et:ai

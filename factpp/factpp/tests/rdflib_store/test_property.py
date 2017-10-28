@@ -17,10 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from .util import graph, NS
-
 from rdflib import Literal
 from rdflib.namespace import FOAF, RDF, RDFS, OWL
+
+from .util import graph, NS
 
 def test_property_domain():
     g, reasoner = graph()
