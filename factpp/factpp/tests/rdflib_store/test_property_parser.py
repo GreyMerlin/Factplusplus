@@ -142,21 +142,24 @@ def test_set_role_data_property():
     assert parser.parse_functional_property == parser._data_parse_functional_property
     assert parser.parse_inverse_functional_property == parser._data_parse_inverse_functional_property
 
-def test_setting_value_for_unknown_property():
-    g, reasoner = graph('value_of_str')
+def test_delayed_property_type():
+    """
+    Test delayed assignment of property type.
+    """
+    g, reasoner = graph()
 
     # first, we have a property of unkown type (is it data or object
     # property?)
     g.add((NS.P, RDF.type, RDF.Property))
-    g.add((NS.P, RDFS.range, RDFS.Literal))
-    g.add((NS.O, NS.P, Literal('a-value')))
+    g.add((NS.P, RDFS.domain, FOAF.Person))
 
     # set the property type
     g.add((NS.P, RDF.type, OWL.DatatypeProperty))
 
-    # check the if the value of the data property got set
+    # check the if the domain of the data property got set
     i = reasoner.individual(NS.O)
     r = reasoner.data_role(NS.P)
-    reasoner.value_of_str.assert_called_once_with(i, r, 'a-value')
+    value = next(reasoner.get_d_domain(r))
+    assert value.name == str(FOAF.Person)
 
 # vim: sw=4:et:ai
