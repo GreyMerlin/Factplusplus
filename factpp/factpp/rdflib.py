@@ -26,6 +26,7 @@ from collections import defaultdict
 from functools import partial
 
 import rdflib.store
+from rdflib import Literal, URIRef, BNode
 from rdflib.namespace import DC, RDF, RDFS, OWL, Namespace
 
 import factpp
@@ -202,24 +203,29 @@ class Store(rdflib.store.Store):
         p = self._properties[s]  # defaultdict used to store, so property
                                  # is auto created
         assert isinstance(p, PropertyParser)
-        self._parsers[s] = p.parse_value
+
+        # unknown property type (object or data property) at this stage
+        p._name = s
+        self._parsers[s] = p._parse_value_unknown
 
     def _parse_o_property(self, s, o):
         p = self._properties[s]
-        assert p._type is None
+        assert p._type != 'data'
 
         role = self._reasoner.object_role(s)
-        p.set_role('object', role)
+        p.set_role('object', s, role)
         self._parsers[s] = p.parse_value
+
         self._object_properties.add(s)
 
     def _parse_d_property(self, s, o):
         p = self._properties[s]
-        assert p._type is None
+        assert p._type != 'object'
 
         role = self._reasoner.data_role(s)
-        p.set_role('data', role)
+        p.set_role('data', s, role)
         self._parsers[s] = p.parse_value
+
         self._data_properties.add(s)
 
 
@@ -233,6 +239,7 @@ class PropertyParser:
     :var _cache: Parser cache.
     """
     def __init__(self, store):
+        self._name = None
         self._role = None
         self._type = None
         self._cache = set()
@@ -244,14 +251,14 @@ class PropertyParser:
         for dest in PROPERTY_METHODS:
             setattr(self, dest, partial(self._cache_call, dest))
 
-
     @property
     def _reasoner(self):
         return self._store._reasoner
 
-    def set_role(self, type, role):
-        self._type = type
+    def set_role(self, type, name, role):
+        self._name = name
         self._role = role
+        self._type = type
 
         for dest in PROPERTY_METHODS:
             source = '_{}_{}'.format(type, dest)
@@ -264,6 +271,30 @@ class PropertyParser:
 
     def _cache_call(self, dest, s, o):
         self._cache.add((dest, s, o))
+
+    def _parse_value_unknown(self, s, o):
+        """
+        Parse value for a property of an unknown type.
+
+        Determine value of the property and set its type, this is data or
+        object property, depending on the type.
+
+        data property
+            `Literal`
+        object property
+            `BNode`, `URIRef`
+        """
+        if isinstance(o, Literal):
+            ref_p = self._reasoner.data_role(self._name)
+            type = 'data'
+        elif isinstance(o, (URIRef, BNode)):
+            ref_p = self._reasoner.object_role(self._name)
+            type = 'object'
+        else:
+            assert False, 'Unknown property value type: {}'.format(type(o))
+
+        self.set_role(type, self._name, ref_p)
+        self.parse_value(s, o)
 
     #
     # Methods, which names follow the pattern:

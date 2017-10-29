@@ -111,8 +111,9 @@ def test_set_role_object_property():
     parser = _parser()
 
     role = mock.MagicMock()
-    parser.set_role('object', role)
+    parser.set_role('object', 'a', role)
 
+    assert parser._name == 'a'
     assert parser._type == 'object'
     assert parser._role is role
     assert parser.parse_domain == parser._object_parse_domain
@@ -130,8 +131,9 @@ def test_set_role_data_property():
     parser = _parser()
 
     role = mock.MagicMock()
-    parser.set_role('data', role)
+    parser.set_role('data', 'a', role)
 
+    assert parser._name == 'a'
     assert parser._type == 'data'
     assert parser._role is role
     assert parser.parse_domain == parser._data_parse_domain

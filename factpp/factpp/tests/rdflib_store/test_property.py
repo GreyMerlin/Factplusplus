@@ -217,4 +217,33 @@ def test_inverse_functional_object_property():
     r = reasoner.object_role(NS.P)
     reasoner.set_inverse_functional.assert_called_once_with(r)
 
+def test_auto_property_data():
+    """
+    Test detecting of a data property based on an assigned value.
+    """
+    g, reasoner = graph('value_of_str')
+
+    g.add((NS.P, RDF.type, RDF.Property))
+    g.add((NS.O, NS.P, Literal('a-value')))
+
+    # check the if the domain of the data property got set
+    i = reasoner.individual(NS.O)
+    r = reasoner.data_role(NS.P)
+    reasoner.value_of_str.assert_called_once_with(i, r, 'a-value')
+
+def test_auto_property_object():
+    """
+    Test detecting of a object property based on an assigned value.
+    """
+    g, reasoner = graph('related_to')
+
+    g.add((NS.P, RDF.type, RDF.Property))
+    g.add((NS.O1, NS.P, NS.O2))
+
+    # check the if the domain of the object property got set
+    i1 = reasoner.individual(NS.O1)
+    i2 = reasoner.individual(NS.O2)
+    r = reasoner.object_role(NS.P)
+    reasoner.related_to.assert_called_once_with(i1, r, i2)
+
 # vim: sw=4:et:ai
