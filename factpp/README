@@ -27,6 +27,5 @@ How to add more bindings? See the following commit
 
 Todo:
 
-- implement a heuristic to detect object and data properties
+- parse zebra puzzle
 - convert all current examples to use cython based API
-- support FOAF with RDFLib store
