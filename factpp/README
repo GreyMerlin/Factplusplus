@@ -10,7 +10,7 @@ Compilation::
     $ git clone https://bitbucket.org/wrobell/factplusplus.git
     $ git checkout factpp
     $ cd Kernel
-    $ cmake CMakeLists.txt
+    $ cmake CMakeLists.txt -DBUILD_SHARED_LIBS:BOOL=ON
     $ make
     $ cd ../factpp
     $ CFLAGS="-I../Kernel" LDFLAGS="-L../Kernel" python setup.py build_ext --inplace
