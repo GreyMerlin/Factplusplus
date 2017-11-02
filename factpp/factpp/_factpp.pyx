@@ -128,6 +128,7 @@ cdef extern from 'tExpressionManager.h':
         TDLObjectRoleExpression* Inverse(const TDLObjectRoleExpression*)
 
         TDLConceptExpression* And()
+        TDLConceptExpression* OneOf()
 
         TDLConceptExpression* Cardinality(unsigned int, const TDLDataRoleExpression*, const TDLDataExpression*)
         TDLConceptExpression* MaxCardinality(unsigned int, const TDLObjectRoleExpression*, const TDLConceptExpression*)
@@ -328,6 +329,12 @@ cdef class Reasoner:
 
     def instance_of(self, IndividualExpr i, ConceptExpr c):
         self.c_kernel.instanceOf(i.c_obj(), c.c_obj())
+
+    def one_of(self, instances):
+        self.c_mgr.newArgList()
+        for i in instances:
+            self.c_mgr.addArg((<IndividualExpr>i).c_obj())
+        return self._get(ConceptExpr, self.c_mgr.OneOf())
 
     def different_individuals(self, instances):
         self.c_mgr.newArgList()
