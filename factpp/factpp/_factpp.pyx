@@ -366,6 +366,9 @@ cdef class Reasoner:
     def set_o_range(self, ObjectRoleExpr r, ConceptExpr c):
         self.c_kernel.setORange(r.c_obj(), c.c_obj())
 
+    def o_exists(self, ObjectRoleExpr r, ConceptExpr c):
+        return self._get(ConceptExpr, self.c_mgr.Exists(r.c_obj(), c.c_obj()))
+
     def max_o_cardinality(self, unsigned int n, ObjectRoleExpr r, ConceptExpr c):
         return self._get(Concept, self.c_mgr.MaxCardinality(n, r.c_obj(), c.c_obj()))
 
@@ -390,9 +393,6 @@ cdef class Reasoner:
 
     def set_o_functional(self, ObjectRoleExpr r):
         self.c_kernel.setOFunctional(r.c_obj())
-
-    def set_d_functional(self, DataRoleExpr r):
-        self.c_kernel.setDFunctional(r.c_obj())
 
     def set_inverse_functional(self, ObjectRoleExpr r):
         self.c_kernel.setInverseFunctional(r.c_obj())
@@ -466,6 +466,9 @@ cdef class Reasoner:
 
     def is_sub_d_role(self, DataRoleExpr r1, DataRoleExpr r2):
         return self.c_kernel.isSubRoles(r1.c_obj(), r2.c_obj())
+
+    def set_d_functional(self, DataRoleExpr r):
+        self.c_kernel.setDFunctional(r.c_obj())
 
 #   def data_value(self, string v, DataType t):
 #       cdef DataExpr result = DataExpr.__new__(DataExpr)
