@@ -60,11 +60,10 @@ def is_same(s1, s2):
     same = reasoner.is_same_individuals(i1, i2)
     print('{} is {}: {}'.format(s1, s2, 'yes' if same else 'no'))
 
-def is_related_to(name, property):
+def is_related_to(name, property_name, property):
     i = reasoner.individual(name)
-    p = reasoner.object_role(property)
-    values = reasoner.get_role_fillers(i, p)
-    print(name, property, [v.name for v in values])
+    values = reasoner.get_role_fillers(i, property)
+    print(name, property_name, [v.name for v in values])
 
 
 reasoner = factpp.Reasoner()
@@ -215,10 +214,12 @@ is_same('house2', 'h11')  # FIXME: we fail here at the moment
 # 4 and 6: green house
 is_same('h3', 'h2')
 
-is_related_to('house1', 'is_left_to')  # FIXME: h11 is expected
+is_related_to('house1', 'is left to', is_left_to)  # FIXME: h11 is expected
 
 print('\nsolution:')
-is_related_to('norwegian', 'drinks')  # water expected
-is_related_to('japanese', 'has_pet')  # zebra expected
+# norwegian expected
+is_related_to('water', 'is drunk by', reasoner.inverse(drinks))
+# japanese expected
+is_related_to('zebra', 'is owned by', reasoner.inverse(has_pet))
 
 # vim: sw=4:et:ai
