@@ -202,7 +202,7 @@ reasoner.related_to(h1, is_next_to, h2)
 
 assert reasoner.is_consistent()
 
-print('debug')
+print('debug:')
 
 # 8, 12 and 15: norwegian smokes kools and lives in house1
 is_same('x3', 'x7')
