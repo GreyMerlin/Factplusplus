@@ -164,7 +164,9 @@ cdef extern from 'Kernel.h':
         TDLAxiom* setDFunctional(TDLDataRoleExpression*)
         TDLAxiom* setInverseFunctional(TDLObjectRoleExpression*)
         TDLAxiom* relatedTo(TDLIndividualExpression*, TDLObjectRoleExpression*, TDLIndividualExpression*)
+        TDLAxiom* relatedToNot(TDLIndividualExpression*, TDLObjectRoleComplexExpression*, TDLIndividualExpression*)
         TDLAxiom* instanceOf(TDLIndividualExpression*, TDLConceptExpression* C)
+        bool isSameIndividuals(const TDLIndividualExpression*, const TDLIndividualExpression*)
         bool isInstance(TDLIndividualExpression*, TDLConceptExpression* C)
         TDLAxiom* valueOf(TDLIndividualExpression*, TDLDataRoleExpression*, TDLDataValue*)
         TDLAxiom* impliesORoles(TDLObjectRoleComplexExpression*, TDLObjectRoleExpression*)
@@ -304,8 +306,14 @@ cdef class Reasoner:
     def concept(self, name):
         return self._get(Concept, self.c_mgr.Concept(name.encode()))
 
-    def implies_concepts(self, ConceptExpr c1, ConceptExpr c2):
-        self.c_kernel.impliesConcepts(c1.c_obj(), c2.c_obj())
+    def implies_concepts(self, ConceptExpr subcls, ConceptExpr parent):
+        """
+        Make first class a subclass of the second.
+
+        :param subcls: Derived class (subclass).
+        :param parent: Parent class (superclass)
+        """
+        self.c_kernel.impliesConcepts(subcls.c_obj(), parent.c_obj())
 
     def is_subsumed_by(self, ConceptExpr c1, ConceptExpr c2):
         return self.c_kernel.isSubsumedBy(c1.c_obj(), c2.c_obj())
@@ -342,6 +350,9 @@ cdef class Reasoner:
         for i in instances:
             self.c_mgr.addArg((<IndividualExpr>i).c_obj())
         self.c_kernel.processDifferent()
+
+    def is_same_individuals(self, IndividualExpr i1, IndividualExpr i2):
+        return self.c_kernel.isSameIndividuals(i1.c_obj(), i2.c_obj())
 
     def is_instance(self, IndividualExpr i, ConceptExpr c):
         return self.c_kernel.isInstance(i.c_obj(), c.c_obj())
@@ -404,6 +415,9 @@ cdef class Reasoner:
         self.c_kernel.setInverseRoles(r1.c_obj(), r2.c_obj())
 
     def related_to(self, IndividualExpr i1, ObjectRoleExpr r, IndividualExpr i2):
+        self.c_kernel.relatedTo(i1.c_obj(), r.c_obj(), i2.c_obj())
+
+    def related_to_not(self, IndividualExpr i1, ObjectRoleExpr r, IndividualExpr i2):
         self.c_kernel.relatedTo(i1.c_obj(), r.c_obj(), i2.c_obj())
 
     def get_role_fillers(self, IndividualExpr i, ObjectRoleExpr r):
