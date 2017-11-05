@@ -27,5 +27,6 @@ How to add more bindings? See the following commit
 
 Todo:
 
+- make tsars ontology work
 - parse zebra puzzle
 - convert all current examples to use cython based API
