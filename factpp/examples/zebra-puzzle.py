@@ -22,7 +22,9 @@ The example is based on the ontology described at
 
     http://folk.uio.no/martige/what/20120422/zebra.html
 
-*NOTE:* It does not work yet.
+*NOTE:* It does not work yet, see
+
+    https://bitbucket.org/dtsarkov/factplusplus/issues/77/no-inference-when-using-one-of-and
 """
 
 import factpp
