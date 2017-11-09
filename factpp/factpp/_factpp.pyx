@@ -306,6 +306,12 @@ cdef class Reasoner:
     def concept(self, name):
         return self._get(Concept, self.c_mgr.Concept(name.encode()))
 
+    def concept_top(self):
+        return self._get(Concept, self.c_mgr.Bottom())
+
+    def concept_bottom(self):
+        return self._get(Concept, self.c_mgr.Bottom())
+
     def implies_concepts(self, ConceptExpr subcls, ConceptExpr parent):
         """
         Make first class a subclass of the second.
