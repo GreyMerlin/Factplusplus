@@ -18,11 +18,15 @@
 #
 
 """
+Zebra puzzle as described at
+
+    https://en.wikipedia.org/wiki/Zebra_Puzzle
+
 The example is based on the ontology described at
 
     http://folk.uio.no/martige/what/20120422/zebra.html
 
-*NOTE:* It does not work yet, see
+*NOTE:* It works with 3 additional hints. Problem reported at
 
     https://bitbucket.org/dtsarkov/factplusplus/issues/77/no-inference-when-using-one-of-and
 """
@@ -203,7 +207,17 @@ reasoner.related_to(get_i('norwegian'), lives_in, h1)
 reasoner.related_to(h2, has_color, get_i('blue'))
 reasoner.related_to(h1, is_next_to, h2)
 
+# FIXME: the following helps to solve the puzzle, but should be removed;
+# reported as FaCT++ bug at
+#
+#     https://bitbucket.org/dtsarkov/factplusplus/issues/77/no-inference-when-using-one-of-and
+#
+reasoner.different_individuals([get_i('house5'), get_i('h11')])
+reasoner.different_individuals([get_i('house5'), get_i('h4')])
+reasoner.different_individuals([get_i('house5'), get_i('h9')])
+
 assert reasoner.is_consistent()
+reasoner.realise()
 
 print('debug:')
 
@@ -212,18 +226,13 @@ is_same('x3', 'x7')
 is_same('house1', 'h10')
 
 # ... h11 is next to house1, so h11 is house2
-is_same('house2', 'h11')  # FIXME: we fail here at the moment
+is_same('house2', 'h11')
 
-# 4 and 6: green house
-is_same('h3', 'h2')
-
-is_related_to('house1', 'is left to', is_left_to)  # FIXME: h11 is expected
-
-is_related_to('yellow', 'color', reasoner.inverse(has_color))
-is_related_to('blue', 'color', reasoner.inverse(has_color))
-is_related_to('red', 'color', reasoner.inverse(has_color))
-is_related_to('ivory', 'color', reasoner.inverse(has_color))
-is_related_to('green', 'color', reasoner.inverse(has_color))
+is_related_to('yellow', 'color of', reasoner.inverse(has_color))
+is_related_to('blue', 'color of', reasoner.inverse(has_color))
+is_related_to('red', 'color of', reasoner.inverse(has_color))
+is_related_to('ivory', 'color of', reasoner.inverse(has_color))
+is_related_to('green', 'color of', reasoner.inverse(has_color))
 
 print('\nsolution:')
 # norwegian expected
