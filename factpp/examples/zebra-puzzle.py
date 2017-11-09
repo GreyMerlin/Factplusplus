@@ -31,6 +31,7 @@ The example is based on the ontology described at
     https://bitbucket.org/dtsarkov/factplusplus/issues/77/no-inference-when-using-one-of-and
 """
 
+import time
 import factpp
 
 CLASSES = ['Color', 'Drink', 'House', 'Person', 'Pet', 'Smoke']
@@ -217,7 +218,10 @@ reasoner.different_individuals([get_i('house5'), get_i('h4')])
 reasoner.different_individuals([get_i('house5'), get_i('h9')])
 
 assert reasoner.is_consistent()
+
+start = time.monotonic()
 reasoner.realise()
+duration  = time.monotonic() - start
 
 print('debug:')
 
@@ -239,5 +243,7 @@ print('\nsolution:')
 is_related_to('water', 'is drunk by', reasoner.inverse(drinks))
 # japanese expected
 is_related_to('zebra', 'is owned by', reasoner.inverse(has_pet))
+
+print('\nsolved in {:.2f}s'.format(duration))
 
 # vim: sw=4:et:ai
