@@ -18,7 +18,7 @@
 #
 
 # distutils: language = c++
-# cython: c_string_type=unicode, c_string_encoding=utf8
+# cython: c_string_type=unicode, c_string_encoding=utf8, embedsignature=True
 
 from libcpp cimport bool
 from libcpp.string cimport string
