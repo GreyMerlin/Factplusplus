@@ -346,15 +346,11 @@ cdef class Reasoner:
         self.c_kernel.instanceOf(i.c_obj(), c.c_obj())
 
     def one_of(self, instances):
-        self.c_mgr.newArgList()
-        for i in instances:
-            self.c_mgr.addArg((<IndividualExpr>i).c_obj())
+        self._arg_list(instances)
         return self._get(ConceptExpr, self.c_mgr.OneOf())
 
     def different_individuals(self, instances):
-        self.c_mgr.newArgList()
-        for i in instances:
-            self.c_mgr.addArg((<IndividualExpr>i).c_obj())
+        self._arg_list(instances)
         self.c_kernel.processDifferent()
 
     def is_same_individuals(self, IndividualExpr i1, IndividualExpr i2):
