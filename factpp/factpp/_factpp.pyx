@@ -420,7 +420,7 @@ cdef class Reasoner:
         self.c_kernel.relatedTo(i1.c_obj(), r.c_obj(), i2.c_obj())
 
     def related_to_not(self, IndividualExpr i1, ObjectRoleExpr r, IndividualExpr i2):
-        self.c_kernel.relatedTo(i1.c_obj(), r.c_obj(), i2.c_obj())
+        self.c_kernel.relatedToNot(i1.c_obj(), r.c_obj(), i2.c_obj())
 
     def get_role_fillers(self, IndividualExpr i, ObjectRoleExpr r):
         cdef CIVec data = self.c_kernel.getRoleFillers(i.c_obj(), r.c_obj())
