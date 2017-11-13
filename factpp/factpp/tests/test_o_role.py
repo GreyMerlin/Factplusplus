@@ -147,7 +147,7 @@ def test_relation():
     reasoner = Reasoner()
 
     cls = reasoner.concept('CLS')
-    r = reasoner.object_role('r')
+    r = reasoner.object_role('R')
     reasoner.set_o_functional(r)
 
     c1 = reasoner.individual('c1')
@@ -165,5 +165,42 @@ def test_relation():
     # if c1 == c3, then c2 == c4
     reasoner.same_individuals([c1, c3])
     assert reasoner.is_same_individuals(c2, c4)
+
+def test_negative_relation():
+    """
+    Test negative relation.
+    """
+    reasoner = Reasoner()
+
+    h1 = reasoner.individual('house1')
+    h2 = reasoner.individual('house2')
+    h3 = reasoner.individual('house3')
+    reasoner.different_individuals([h1, h2, h3])
+
+    house = reasoner.concept('House')
+    a_house = reasoner.one_of([h1, h2, h3])
+    reasoner.equal_concepts([house, a_house])
+
+    is_next_to = reasoner.object_role('is_next_to')
+    reasoner.set_symmetric(is_next_to)
+    reasoner.set_irreflexive(is_next_to)
+    reasoner.set_o_domain(is_next_to, house)
+    reasoner.set_o_range(is_next_to, house)
+
+    is_left_to = reasoner.object_role('is_left_to')
+    reasoner.implies_o_roles(is_left_to, is_next_to)
+
+    a_house_next = reasoner.max_o_cardinality(2, is_next_to, house)
+    reasoner.implies_concepts(house, a_house_next)
+
+    reasoner.related_to(h1, is_left_to, h2)
+    reasoner.related_to(h2, is_left_to, h3)
+    reasoner.related_to_not(h1, is_next_to, h3)
+
+    some_house = reasoner.individual('some house')
+    reasoner.related_to(some_house, is_next_to, h1)
+
+    assert reasoner.is_same_individuals(some_house, h2)
+
 
 # vim: sw=4:et:ai
