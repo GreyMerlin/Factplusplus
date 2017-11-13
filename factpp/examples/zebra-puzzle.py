@@ -26,9 +26,6 @@ The example is based on the ontology described at
 
     http://folk.uio.no/martige/what/20120422/zebra.html
 
-*NOTE:* It works with 3 additional hints. Problem reported at
-
-    https://bitbucket.org/dtsarkov/factplusplus/issues/77/no-inference-when-using-one-of-and
 """
 
 import time
@@ -207,15 +204,6 @@ h2 = get_i('h11')
 reasoner.related_to(get_i('norwegian'), lives_in, h1)
 reasoner.related_to(h2, has_color, get_i('blue'))
 reasoner.related_to(h1, is_next_to, h2)
-
-# FIXME: the following helps to solve the puzzle, but should be removed;
-# reported as FaCT++ bug at
-#
-#     https://bitbucket.org/dtsarkov/factplusplus/issues/77/no-inference-when-using-one-of-and
-#
-reasoner.different_individuals([get_i('house5'), get_i('h11')])
-reasoner.different_individuals([get_i('house5'), get_i('h4')])
-reasoner.different_individuals([get_i('house5'), get_i('h9')])
 
 assert reasoner.is_consistent()
 
