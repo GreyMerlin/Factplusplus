@@ -181,6 +181,7 @@ cdef extern from 'Kernel.h':
 
         TDLAxiom* equalConcepts()
         TDLAxiom* disjointConcepts()
+        TDLAxiom* processSame()
         TDLAxiom* processDifferent()
         TDLAxiom* impliesConcepts(TDLConceptExpression*, TDLConceptExpression*)
         bool isSubsumedBy(TDLConceptExpression*, TDLConceptExpression*)
@@ -348,6 +349,10 @@ cdef class Reasoner:
     def one_of(self, instances):
         self._arg_list(instances)
         return self._get(ConceptExpr, self.c_mgr.OneOf())
+
+    def same_individuals(self, instances):
+        self._arg_list(instances)
+        self.c_kernel.processSame()
 
     def different_individuals(self, instances):
         self._arg_list(instances)

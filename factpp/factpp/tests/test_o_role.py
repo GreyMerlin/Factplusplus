@@ -140,4 +140,30 @@ def test_set_inverse_role():
     values = reasoner.get_role_fillers(i3, r_inv)
     assert ['A1', 'A2'] == [i.name for i in values]
 
+def test_relation():
+    """
+    Test setting relation between two instances.
+    """
+    reasoner = Reasoner()
+
+    cls = reasoner.concept('CLS')
+    r = reasoner.object_role('r')
+    reasoner.set_o_functional(r)
+
+    c1 = reasoner.individual('c1')
+    c2 = reasoner.individual('c2')
+
+    a_cls = reasoner.one_of([c1, c2])
+    reasoner.equal_concepts([cls, a_cls])
+
+    reasoner.related_to(c1, r, c2)
+
+    c3 = reasoner.individual('c3')
+    c4 = reasoner.individual('c4')
+    reasoner.related_to(c3, r, c4)
+
+    # if c1 == c3, then c2 == c4
+    reasoner.same_individuals([c1, c3])
+    assert reasoner.is_same_individuals(c2, c4)
+
 # vim: sw=4:et:ai
