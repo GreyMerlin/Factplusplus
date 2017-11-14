@@ -89,6 +89,35 @@ def test_owl_intersection_eq_class():
     cls_m = reasoner.concept(NS.Mother)
     assert reasoner.is_instance(i, cls_m)
 
+def test_owl_distinct_members():
+    g, reasoner = graph('different_individuals')
+
+    p1 = NS.p1
+    p2 = NS.p2
+    p3 = NS.p3
+
+    g.add((p1, RDF.type, NS.Man))
+    g.add((p2, RDF.type, NS.Man))
+    g.add((p3, RDF.type, NS.Man))
+
+    b0 = BNode()
+    b1 = BNode()
+    b2 = BNode()
+    b3 = BNode()
+    g.add((b0, RDF.type, OWL.AllDifferent))
+    g.add((b0, OWL.distinctMembers, b1))
+    g.add((b1, RDF.first, p1))
+    g.add((b1, RDF.rest, b2))
+    g.add((b2, RDF.first, p2))
+    g.add((b2, RDF.rest, b3))
+    g.add((b3, RDF.first, p3))
+    g.add((b3, RDF.rest, RDF.nil))
+
+    i1 = reasoner.individual(NS.p1)
+    i2 = reasoner.individual(NS.p2)
+    i3 = reasoner.individual(NS.p3)
+    reasoner.different_individuals.assert_called_once_with([i1, i2, i3])
+
 def test_new_class():
     """
     Test adding new classes.

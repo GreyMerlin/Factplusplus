@@ -105,6 +105,7 @@ class Store(rdflib.store.Store):
             OWL.equivalentClass: make_parser('equal_concepts', 'concept', 'concept', as_list=True),
             OWL.disjointWith: make_parser('disjoint_concepts', 'concept', 'concept', as_list=True),
             OWL.intersectionOf: self._parse_intersection,
+            OWL.distinctMembers: self._parse_distinct_members,
 
             # metadata
             DC.title: as_meta,
@@ -184,6 +185,11 @@ class Store(rdflib.store.Store):
             return lambda s, o: f_rel(f_sub(s), f_obj(o))
 
     def _parse_intersection(self, s, o):
+        self._list_cache[o].store = self
+        self._list_cache[o].object = o
+        self._list_cache[o].subject = s
+
+    def _parse_distinct_members(self, s, o):
         self._list_cache[o].store = self
         self._list_cache[o].object = o
         self._list_cache[o].subject = s
