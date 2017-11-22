@@ -56,13 +56,17 @@ def test_owl_intersection_subclass():
     p = BNode('John')
     g.add((p, RDF.type, NS.Grandfather))
 
+    b0 = BNode()
     b1 = BNode()
     b2 = BNode()
 
-    g.add((NS.Grandfather, RDFS.subClassOf, b1))
-    g.add((b1, OWL.intersectionOf, b2))
-    g.add((b2, RDF.first, NS.Parent))
-    g.add((b2, RDF.rest, NS.Man))
+    g.add((b1, RDF.first, NS.Parent))
+    g.add((b1, RDF.rest, b2))
+    g.add((b2, RDF.first, NS.Man))
+    g.add((b2, RDF.rest, RDF.nil))
+
+    g.add((b0, OWL.intersectionOf, b1))
+    g.add((NS.Grandfather, RDFS.subClassOf, b0))
 
     i = reasoner.individual(p)
     cls_p = reasoner.concept(NS.Parent)
@@ -77,19 +81,26 @@ def test_owl_intersection_eq_class():
     g.add((p, RDF.type, NS.Parent))
     g.add((p, RDF.type, NS.Woman))
 
+    b0 = BNode()
     b1 = BNode()
     b2 = BNode()
 
-    g.add((NS.Mother, OWL.equivalentClass, b1))
-    g.add((b1, OWL.intersectionOf, b2))
-    g.add((b2, RDF.first, NS.Parent))
-    g.add((b2, RDF.rest, NS.Woman))
+    g.add((b1, RDF.first, NS.Parent))
+    g.add((b1, RDF.rest, b2))
+    g.add((b2, RDF.first, NS.Woman))
+    g.add((b2, RDF.rest, RDF.nil))
+
+    g.add((b0, OWL.intersectionOf, b1))
+    g.add((NS.Mother, OWL.equivalentClass, b0))
 
     i = reasoner.individual(p)
     cls_m = reasoner.concept(NS.Mother)
     assert reasoner.is_instance(i, cls_m)
 
 def test_owl_distinct_members():
+    """
+    Test OWL distinct members.
+    """
     g, reasoner = graph('different_individuals')
 
     p1 = NS.p1
@@ -104,14 +115,13 @@ def test_owl_distinct_members():
     b1 = BNode()
     b2 = BNode()
     b3 = BNode()
-    g.add((b0, RDF.type, OWL.AllDifferent))
-    g.add((b0, OWL.distinctMembers, b1))
     g.add((b1, RDF.first, p1))
     g.add((b1, RDF.rest, b2))
     g.add((b2, RDF.first, p2))
     g.add((b2, RDF.rest, b3))
     g.add((b3, RDF.first, p3))
     g.add((b3, RDF.rest, RDF.nil))
+    g.add((b0, OWL.distinctMembers, b1))
 
     i1 = reasoner.individual(NS.p1)
     i2 = reasoner.individual(NS.p2)
@@ -154,41 +164,27 @@ def test_disjoin_with():
     c2 = reasoner.concept(NS.P2)
     reasoner.disjoint_concepts.assert_called_once_with([c1, c2])
 
-def test_list_cache():
+def test_rdf_list():
     """
-    Test creating RDF list state.
+    Test creating RDF list.
     """
-    cache = factpp.rdflib.ListState.CACHE
-    store = mock.Mock()
+    rdf_list = factpp.rdflib.RDFList()
+    rdf_list.add('p0', 'p1')     # p0 rdf.rest p1
+    rdf_list.add('p1', 'p2')     # p1 rdf.rest p2
+    rdf_list.add('p2', 'p3')     # p2 rdf.rest p3
+    rdf_list.add('p3', RDF.nil)  # p3 rdf.rest rdf.nil
 
-    cache['O1'].store = store
-    cache['O1'].object = 'O1'
+    rdf_list.set_value('p1', 2)  # p1 rdf.first 2
+    rdf_list.set_value('p2', 4)  # p2 rdf.first 4
+    rdf_list.set_value('p3', 8)  # p3 rdf.first 8
 
-    cache['O1'].subject = 'S'
-    assert 0 == store._reasoner.concept.call_count
+    result = rdf_list.items(lambda v: v, 'p0')
+    assert [2, 4, 8] == list(result)
 
-    cache['O1'].first = 'F'
-    assert 0 == store._reasoner.concept.call_count
-
-    cache['O1'].rest = 'R'
-    assert 3 == store._reasoner.concept.call_count
-
-    assert 'O1' not in cache
-
-    # in different order
-    store.reset_mock()
-    cache['O2'].store = store
-    cache['O2'].object = 'O2'
-
-    cache['O2'].rest = 'R'
-    assert 0 == store._reasoner.concept.call_count
-
-    cache['O2'].first = 'F'
-    assert 0 == store._reasoner.concept.call_count
-
-    cache['O2'].subject = 'S'
-    assert 3 == store._reasoner.concept.call_count
-
-    assert 'O2' not in cache
+    g = rdf_list._graph
+    assert 'p0' not in g, list(g)
+    assert 'p1' not in g, list(g)
+    assert 'p2' not in g, list(g)
+    assert 'p3' not in g, list(g)
 
 # vim: sw=4:et:ai

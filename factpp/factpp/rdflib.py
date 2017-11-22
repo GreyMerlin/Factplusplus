@@ -22,8 +22,10 @@ RDFLib store.
 """
 
 import logging
+import networkx as nx
 from collections import defaultdict
 from functools import partial
+from networkx.algorithms import shortest_path
 
 import rdflib.store
 from rdflib import Literal, URIRef, BNode
@@ -50,9 +52,12 @@ PROPERTY_METHODS = [
 class Store(rdflib.store.Store):
     def __init__(self, reasoner=None):
         self._reasoner = reasoner if reasoner else factpp.Reasoner()
-        self._list_cache = ListState.CACHE
+        self._lists = RDFList()
         self._properties = defaultdict(partial(PropertyParser, self))
         self._parsers = {}
+        self._anonym = {}  # FIXME: it would be nice to have a solution to
+                           # assign an id to a concept in the reasoner
+                           # itself
 
         self._create_parsers()
 
@@ -175,9 +180,12 @@ class Store(rdflib.store.Store):
     # parsers
     #
     def _make_parser(self, rel, sub, obj, as_list=False):
+        def fetcher(f):
+            return lambda s: self._anonym[s] if s in self._anonym else f(s)
+
         f_rel = getattr(self._reasoner, rel)
-        f_sub = getattr(self._reasoner, sub)
-        f_obj = getattr(self._reasoner, obj)
+        f_sub = fetcher(getattr(self._reasoner, sub))
+        f_obj = fetcher(getattr(self._reasoner, obj))
 
         if as_list:
             return lambda s, o: f_rel([f_sub(s), f_obj(o)])
@@ -185,20 +193,26 @@ class Store(rdflib.store.Store):
             return lambda s, o: f_rel(f_sub(s), f_obj(o))
 
     def _parse_intersection(self, s, o):
-        self._list_cache[o].store = self
-        self._list_cache[o].object = o
-        self._list_cache[o].subject = s
+        # FIXME: this works assuming OWL.intersectionOf is executed once
+        # the list is constructed
+        self._lists.add(s, o)
+        items = self._lists.items(self._reasoner.concept, s)
+        c = self._reasoner.intersection(list(items))
+        self._anonym[s] = c
 
     def _parse_distinct_members(self, s, o):
-        self._list_cache[o].store = self
-        self._list_cache[o].object = o
-        self._list_cache[o].subject = s
+        # FIXME: this works assuming OWL.distinctMembers is executed once
+        # the list is constructed
+        self._lists.add(s, o)
+        items = self._lists.items(self._reasoner.individual, s)
+        c = self._reasoner.different_individuals(list(items))
+        self._anonym[s] = c
 
     def _parse_rdf_first(self, s, o):
-        self._list_cache[s].first = o
+        self._lists.set_value(s, o)
 
     def _parse_rdf_rest(self, s, o):
-        self._list_cache[s].rest = o
+        self._lists.add(s, o)
 
     def _parse_class(self, s, o):
         self._parsers[RDF.type, s] = self._make_parser(
@@ -367,58 +381,33 @@ class PropertyParser:
         parse_nop()
 
 
-class ListState:
+class RDFList:
     """
-    RDF list state.
+    Graph of RDF lists.
 
-    Used to create subclass of intersection of classes.
+    All RDF lists are stored as graph.
 
-    Store subject, first-element and rest-of-list items. Create the
-    subclass when all elements are defined.
+    Once a RDF list is complete, then shortest path between head of the
+    list and `RDF.nil` contains the list elements.
     """
     def __init__(self):
-        self.store = None
-        self.object = None
+        self._graph = nx.DiGraph()
 
-        self._subject = None
-        self._first = None
-        self._rest = None
+    def add(self, n1, n2):
+        self._graph.add_edge(n1, n2)
 
-    def _set_subject(self, cls):
-        self._subject = cls
-        self._realise()
+    def set_value(self, node, value):
+        self._graph.add_node(node, value=value)
 
-    def _set_first(self, cls):
-        self._first = cls
-        self._realise()
-
-    def _set_rest(self, cls):
-        self._rest = cls
-        self._realise()
-
-    # a list is realised only when subject, first-element and rest-of-list
-    # items are set; caller has to set `store` and `object`
-    subject = property(fset=_set_subject)
-    first = property(fset=_set_first)
-    rest = property(fset=_set_rest)
-
-    def _realise(self):
-        if all([self._subject, self._first, self._rest]):
-            assert self.object is not None
-            assert self.store is not None
-
-            reasoner = self.store._reasoner
-
-            ref_s = reasoner.concept(self._subject)
-            ref_f = reasoner.concept(self._first)
-            ref_r = reasoner.concept(self._rest)
-            cls = reasoner.intersection([ref_f, ref_r])
-            reasoner.equal_concepts([cls, ref_s])
-
-            # remove from store
-            del ListState.CACHE[self.object]
-
-ListState.CACHE = defaultdict(ListState)
+    def items(self, f, start):
+        path = shortest_path(self._graph, start, RDF.nil)
+        path = path[:-1]
+        nodes = self._graph.nodes()
+        items = (nodes[p] for p in path)
+        items = (p for p in items if p)
+        yield from (f(p['value']) for p in items)
+        self._graph.remove_node(start)
+        self._graph.remove_nodes_from(path)
 
 
 def parse_nop(*args, reason='unsupported'):
