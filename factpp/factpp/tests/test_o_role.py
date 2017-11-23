@@ -211,7 +211,7 @@ def test_role_chain():
     father = reasoner.object_role('father')
     grand_father = reasoner.object_role('grand_father')
 
-    c = reasoner.compose([father, father])
+    c = reasoner.compose(father, father)
     reasoner.implies_o_roles(c, grand_father)
 
     i1 = reasoner.individual('i1')
