@@ -202,5 +202,26 @@ def test_negative_relation():
 
     assert reasoner.is_same_individuals(some_house, h2)
 
+def test_role_chain():
+    """
+    Test role chain.
+    """
+    reasoner = Reasoner()
+
+    father = reasoner.object_role('father')
+    grand_father = reasoner.object_role('grand_father')
+
+    c = reasoner.compose([father, father])
+    reasoner.implies_o_roles(c, grand_father)
+
+    i1 = reasoner.individual('i1')
+    i2 = reasoner.individual('i2')
+    i3 = reasoner.individual('i3')
+
+    reasoner.related_to(i1, father, i2)
+    reasoner.related_to(i2, father, i3)
+
+    items = reasoner.get_role_fillers(i1, grand_father)
+    assert [i3] == list(items)
 
 # vim: sw=4:et:ai

@@ -126,6 +126,7 @@ cdef extern from 'tExpressionManager.h':
         TDLConceptExpression* Exists(const TDLObjectRoleExpression*, const TDLConceptExpression*)
         TDLConceptExpression* Exists(const TDLDataRoleExpression*, const TDLDataExpression*)
         TDLObjectRoleExpression* Inverse(const TDLObjectRoleExpression*)
+        TDLObjectRoleComplexExpression* Compose()
 
         TDLConceptExpression* And()
         TDLConceptExpression* OneOf()
@@ -417,6 +418,15 @@ cdef class Reasoner:
 
     def inverse(self, ObjectRoleExpr r):
         return self._get(ObjectRoleExpr, self.c_mgr.Inverse(r.c_obj()))
+
+    def compose(self, *roles):
+        """
+        Compose chain of roles.
+
+        :param *roles: Collection of object roles.
+        """
+        self._arg_list(roles)
+        return self._get(ObjectRoleExpr, self.c_mgr.Compose())
 
     def set_inverse_roles(self, ObjectRoleExpr r1, ObjectRoleExpr r2):
         self.c_kernel.setInverseRoles(r1.c_obj(), r2.c_obj())
