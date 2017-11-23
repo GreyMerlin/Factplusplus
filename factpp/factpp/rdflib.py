@@ -361,10 +361,14 @@ class PropertyParser:
         self._store._data_values[(i, self._role)] = o
 
     def _object_parse_equivalent_property(self, s, o):
+        if __debug__:
+            logger.debug('equivalent object properties: {}, {}'.format(s, o))
         ref_o = self._reasoner.object_role(o)
         self._reasoner.equal_o_roles([self._role, ref_o])
 
     def _data_parse_equivalent_property(self, s, o):
+        if __debug__:
+            logger.debug('equivalent data properties: {}, {}'.format(s, o))
         ref_o = self._reasoner.data_role(o)
         self._reasoner.equal_d_roles([self._role, ref_o])
 
