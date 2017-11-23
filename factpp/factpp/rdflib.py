@@ -100,6 +100,7 @@ class Store(rdflib.store.Store):
             RDFS.subPropertyOf: partial(property_parser, 'parse_sub_property_of'),
             OWL.equivalentProperty: partial(property_parser, 'parse_equivalent_property'),
             OWL.inverseOf: make_parser('set_inverse_roles', 'object_role', 'object_role'),
+            OWL.propertyChainAxiom: self._parse_property_chain,
 
             RDF.type: make_parser('instance_of', 'individual', 'concept'),
             RDF.first: self._parse_rdf_first,
@@ -207,6 +208,13 @@ class Store(rdflib.store.Store):
         items = self._lists.items(self._reasoner.individual, s)
         c = self._reasoner.different_individuals(list(items))
         self._anonym[s] = c
+
+    def _parse_property_chain(self, s, o):
+        self._lists.add(s, o)
+        items = self._lists.items(self._reasoner.object_role, s)
+        ref_s = self._reasoner.object_role(s)
+        c = self._reasoner.compose(*items)
+        self._reasoner.implies_o_roles(c, ref_s)
 
     def _parse_rdf_first(self, s, o):
         self._lists.set_value(s, o)

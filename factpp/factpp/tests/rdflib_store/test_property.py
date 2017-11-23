@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from rdflib import Literal
+from rdflib import Literal, BNode
 from rdflib.namespace import FOAF, RDF, RDFS, OWL
 
 from .util import graph, NS
@@ -245,5 +245,36 @@ def test_auto_property_object():
     i2 = reasoner.individual(NS.O2)
     r = reasoner.object_role(NS.P)
     reasoner.related_to.assert_called_once_with(i1, r, i2)
+
+
+def test_property_chain():
+    """
+    Test chain of object properties.
+    """
+    g, reasoner = graph()
+    father = NS.father
+    grand_father = NS.grand_father
+
+    g.add((father, RDF.type, OWL.ObjectProperty))
+    g.add((grand_father, RDF.type, OWL.ObjectProperty))
+
+    b1 = BNode()
+    b2 = BNode()
+    b3 = BNode()
+    g.add((b1, RDF.first, father))
+    g.add((b1, RDF.rest, b2))
+    g.add((b2, RDF.first, father))
+    g.add((b2, RDF.rest, RDF.nil))
+
+    g.add((grand_father, OWL.propertyChainAxiom, b1))
+
+    g.add((NS.p1, father, NS.p2))
+    g.add((NS.p2, father, NS.p3))
+
+    r = reasoner.object_role(grand_father)
+    i1 = reasoner.individual(NS.p1)
+    i3 = reasoner.individual(NS.p3)
+    items = reasoner.get_role_fillers(i1, r)
+    assert [i3] == list(items)
 
 # vim: sw=4:et:ai
