@@ -19,24 +19,29 @@
 
 import factpp
 
-def test_subclass():
+import pytest
+
+@pytest.fixture
+def reasoner():
+    """
+    Get instance of a reasoner.
+    """
+    return factpp.Reasoner()
+
+def test_subclass(reasoner):
     """
     Test subclasses.
     """
-    reasoner = factpp.Reasoner()
-
     cls_a = reasoner.concept('A')
     cls_b = reasoner.concept('B')
 
     reasoner.implies_concepts(cls_a, cls_b)
     assert reasoner.is_subsumed_by(cls_a, cls_b)
 
-def test_equal_concepts():
+def test_equal_concepts(reasoner):
     """
     Test equal concepts.
     """
-    reasoner = factpp.Reasoner()
-
     cls_a = reasoner.concept('A')
     cls_b = reasoner.concept('B')
 
@@ -46,5 +51,22 @@ def test_equal_concepts():
     reasoner.equal_concepts([cls_a, cls_b])
 
     assert reasoner.is_instance(a, cls_b)
+
+
+def test_union_of(reasoner):
+    """
+    Test union of concepts.
+    """
+    cls_a = reasoner.concept('A')
+    cls_b = reasoner.concept('B')
+    cls_c = reasoner.concept('C')
+
+    a = reasoner.individual('a')
+    reasoner.instance_of(a, cls_a)
+
+    reasoner.union_of(cls_c, cls_a, cls_b)
+
+    assert not reasoner.is_instance(a, cls_b)
+    assert reasoner.is_instance(a, cls_c)
 
 # vim: sw=4:et:ai

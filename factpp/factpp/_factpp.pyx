@@ -182,6 +182,7 @@ cdef extern from 'Kernel.h':
 
         TDLAxiom* equalConcepts()
         TDLAxiom* disjointConcepts()
+        TDLAxiom* disjointUnion(TDLConceptExpression*)
         TDLAxiom* processSame()
         TDLAxiom* processDifferent()
         TDLAxiom* impliesConcepts(TDLConceptExpression*, TDLConceptExpression*)
@@ -333,6 +334,16 @@ cdef class Reasoner:
     def disjoint_concepts(self, classes):
         self._arg_list(classes)
         self.c_kernel.disjointConcepts()
+
+    def union_of(self, ConceptExpr c, *classes):
+        """
+        Concept `c` is union of collection of concepts.
+
+        :param c: The union concept.
+        :param classes: Collection of concepts in the union.
+        """
+        self._arg_list(classes)
+        self.c_kernel.disjointUnion(c.c_obj())
 
     def intersection(self, classes):
         self._arg_list(classes)
