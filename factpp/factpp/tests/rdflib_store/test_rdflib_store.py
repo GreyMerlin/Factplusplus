@@ -164,6 +164,34 @@ def test_disjoin_with():
     c2 = reasoner.concept(NS.P2)
     reasoner.disjoint_concepts.assert_called_once_with([c1, c2])
 
+def test_owl_union_of():
+    """
+    Test OWL union of classes.
+    """
+    g, reasoner = graph()
+
+    c1 = NS.C1
+    c2 = NS.C2
+    c3 = NS.C3
+
+    b1 = BNode()
+    b2 = BNode()
+    g.add((b1, RDF.first, c1))
+    g.add((b1, RDF.rest, b2))
+    g.add((b2, RDF.first, c2))
+    g.add((b2, RDF.rest, RDF.nil))
+    g.add((c3, OWL.unionOf, b1))
+
+    g.add((NS.P, RDF.type, c1))
+
+    p = reasoner.individual(NS.P)
+    c1 = reasoner.concept(NS.C1)
+    c2 = reasoner.concept(NS.C2)
+    c3 = reasoner.concept(NS.C3)
+
+    assert not reasoner.is_instance(p, c2)
+    assert reasoner.is_instance(p, c3)
+
 def test_rdf_list():
     """
     Test creating RDF list.

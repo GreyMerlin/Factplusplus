@@ -52,7 +52,6 @@ def test_equal_concepts(reasoner):
 
     assert reasoner.is_instance(a, cls_b)
 
-
 def test_union_of(reasoner):
     """
     Test union of concepts.
