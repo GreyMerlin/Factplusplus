@@ -402,7 +402,7 @@ cdef class Reasoner:
     def max_o_cardinality(self, unsigned int n, ObjectRoleExpr r, ConceptExpr c):
         return self._get(Concept, self.c_mgr.MaxCardinality(n, r.c_obj(), c.c_obj()))
 
-    def equal_o_roles(self, roles):
+    def equal_o_roles(self, *roles):
         self._arg_list(roles)
         self.c_kernel.equalORoles()
 
@@ -487,7 +487,7 @@ cdef class Reasoner:
         result.c_obj = self.c_mgr.DataType(name.encode())
         return result
 
-    def equal_d_roles(self, roles):
+    def equal_d_roles(self, *roles):
         self._arg_list(roles)
         self.c_kernel.equalDRoles()
 

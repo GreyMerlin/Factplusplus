@@ -30,7 +30,7 @@ def test_equivalent_roles():
     reasoner.set_o_domain(r1, cls)
 
     r2 = reasoner.object_role('R2')
-    reasoner.equal_o_roles((r1, r2))
+    reasoner.equal_o_roles(r1, r2)
 
     # precondition
     assert r1 != r2
