@@ -154,7 +154,7 @@ def test_relation():
     c2 = reasoner.individual('c2')
 
     a_cls = reasoner.one_of([c1, c2])
-    reasoner.equal_concepts([cls, a_cls])
+    reasoner.equal_concepts(cls, a_cls)
 
     reasoner.related_to(c1, r, c2)
 
@@ -179,7 +179,7 @@ def test_negative_relation():
 
     house = reasoner.concept('House')
     a_house = reasoner.one_of([h1, h2, h3])
-    reasoner.equal_concepts([house, a_house])
+    reasoner.equal_concepts(house, a_house)
 
     is_next_to = reasoner.object_role('is_next_to')
     reasoner.set_symmetric(is_next_to)

@@ -327,11 +327,11 @@ cdef class Reasoner:
     def is_subsumed_by(self, ConceptExpr c1, ConceptExpr c2):
         return self.c_kernel.isSubsumedBy(c1.c_obj(), c2.c_obj())
 
-    def equal_concepts(self, classes):
+    def equal_concepts(self, *classes):
         self._arg_list(classes)
         self.c_kernel.equalConcepts()
 
-    def disjoint_concepts(self, classes):
+    def disjoint_concepts(self, *classes):
         self._arg_list(classes)
         self.c_kernel.disjointConcepts()
 

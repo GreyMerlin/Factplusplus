@@ -48,7 +48,7 @@ def test_equal_concepts(reasoner):
     a = reasoner.individual('a')
     reasoner.instance_of(a, cls_a)
 
-    reasoner.equal_concepts([cls_a, cls_b])
+    reasoner.equal_concepts(cls_a, cls_b)
 
     assert reasoner.is_instance(a, cls_b)
 

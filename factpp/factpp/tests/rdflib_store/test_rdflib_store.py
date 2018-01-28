@@ -150,7 +150,7 @@ def test_equivalent_classes():
 
     c1 = reasoner.concept(NS.P1)
     c2 = reasoner.concept(NS.P2)
-    reasoner.equal_concepts.assert_called_once_with([c1, c2])
+    reasoner.equal_concepts.assert_called_once_with(c1, c2)
 
 def test_disjoin_with():
     """
