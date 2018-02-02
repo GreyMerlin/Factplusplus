@@ -175,7 +175,7 @@ def test_negative_relation():
     h1 = reasoner.individual('house1')
     h2 = reasoner.individual('house2')
     h3 = reasoner.individual('house3')
-    reasoner.different_individuals([h1, h2, h3])
+    reasoner.different_individuals(h1, h2, h3)
 
     house = reasoner.concept('House')
     a_house = reasoner.one_of([h1, h2, h3])

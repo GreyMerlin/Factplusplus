@@ -36,7 +36,7 @@ def test_intersection_subclass():
     cls_m = reasoner.concept('Man')
     cls_g = reasoner.concept('Grandfather')
 
-    cls = reasoner.intersection([cls_p, cls_m])
+    cls = reasoner.intersection(cls_p, cls_m)
     reasoner.implies_concepts(cls_g, cls)
 
     i = reasoner.individual('John')
@@ -64,7 +64,7 @@ def test_intersection_eq():
     cls_w = reasoner.concept('Woman')
     cls_m = reasoner.concept('Mother')
 
-    cls = reasoner.intersection([cls_p, cls_m])
+    cls = reasoner.intersection(cls_p, cls_m)
     reasoner.equal_concepts([cls, cls_m])
 
     a = reasoner.individual('Alice')

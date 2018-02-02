@@ -44,7 +44,7 @@ print('consistent after 1st instance:', reasoner.is_consistent())
 x = reasoner.individual('X')
 reasoner.instance_of(x, cls_b)
 reasoner.related_to(c, r, x)
-reasoner.different_individuals([d, x])
+reasoner.different_individuals(d, x)
 print('consistent after 2nd instance:', reasoner.is_consistent())
 
 # vim: sw=4:et:ai

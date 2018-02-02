@@ -345,7 +345,7 @@ cdef class Reasoner:
         self._arg_list(classes)
         self.c_kernel.disjointUnion(c.c_obj())
 
-    def intersection(self, classes):
+    def intersection(self, *classes):
         self._arg_list(classes)
         return self._get(ConceptExpr, self.c_mgr.And())
 
@@ -366,7 +366,7 @@ cdef class Reasoner:
         self._arg_list(instances)
         self.c_kernel.processSame()
 
-    def different_individuals(self, instances):
+    def different_individuals(self, *instances):
         self._arg_list(instances)
         self.c_kernel.processDifferent()
 

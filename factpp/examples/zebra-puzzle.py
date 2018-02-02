@@ -42,7 +42,7 @@ PERSONS = ['norwegian', 'spaniard', 'ukrainian', 'japanese', 'englishman']
 
 def create_cls(cls_name, individuals):
     individuals = {i: reasoner.individual(i) for i in individuals}
-    reasoner.different_individuals(individuals.values())
+    reasoner.different_individuals(*individuals.values())
 
     cls = reasoner.concept(cls_name)
     an_individual = reasoner.one_of(individuals.values())
@@ -108,12 +108,12 @@ reasoner.implies_concepts(house, a_house_color)
 a_house_next = reasoner.max_o_cardinality(2, is_next_to, house)
 reasoner.implies_concepts(house, a_house_next)
 
-a_person = reasoner.intersection([
+a_person = reasoner.intersection(
     reasoner.o_exists(drinks, drink),
     reasoner.o_exists(has_pet, pet),
     reasoner.o_exists(lives_in, house),
     reasoner.o_exists(smokes, smoke),
-])
+)
 reasoner.implies_concepts(person, a_person)
 
 # 1. There are five houses.

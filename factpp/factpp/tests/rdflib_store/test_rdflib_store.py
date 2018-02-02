@@ -126,7 +126,7 @@ def test_owl_distinct_members():
     i1 = reasoner.individual(NS.p1)
     i2 = reasoner.individual(NS.p2)
     i3 = reasoner.individual(NS.p3)
-    reasoner.different_individuals.assert_called_once_with([i1, i2, i3])
+    reasoner.different_individuals.assert_called_once_with(i1, i2, i3)
 
 def test_new_class():
     """
