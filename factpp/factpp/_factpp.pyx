@@ -310,7 +310,7 @@ cdef class Reasoner:
         return self._get(Concept, self.c_mgr.Concept(name.encode()))
 
     def concept_top(self):
-        return self._get(Concept, self.c_mgr.Bottom())
+        return self._get(Concept, self.c_mgr.Top())
 
     def concept_bottom(self):
         return self._get(Concept, self.c_mgr.Bottom())
@@ -379,7 +379,6 @@ cdef class Reasoner:
     #
     # object roles
     #
-
     def object_role(self, name):
         return self._get(ObjectRoleExpr, self.c_mgr.ObjectRole(name.encode()))
 
@@ -470,7 +469,6 @@ cdef class Reasoner:
     #
     # data roles
     #
-
     def data_role(self, name):
         return self._get(DataRoleExpr, self.c_mgr.DataRole(name.encode()))
 
