@@ -433,7 +433,7 @@ cdef class Reasoner:
         """
         Compose chain of roles.
 
-        :param *roles: Collection of object roles.
+        :param roles: Collection of object roles.
         """
         self._arg_list(roles)
         return self._get(ObjectRoleExpr, self.c_mgr.Compose())
