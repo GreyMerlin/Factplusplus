@@ -17,7 +17,7 @@ Compilation::
 
 Run unit tests::
 
-    $ LD_LIBRARY_PATH=../Kernel PYTHONPATH=. py.test factpp/
+    $ LD_LIBRARY_PATH=../Kernel PYTHONPATH=. pytest factpp/
 
 The `doc/cmd.rst` shows commands to run examples and parse an ontology.
 
