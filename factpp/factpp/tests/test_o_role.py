@@ -65,6 +65,33 @@ def test_get_o_domain():
     assert 'CLS' == next(values).name
     assert next(values, None) is None
 
+def test_get_o_domain_complex():
+    """
+    Test getting object role domain.
+
+    Example from Tsars ontology.
+    """
+    reasoner = Reasoner()
+
+    cls = reasoner.concept('Person')
+    man = reasoner.concept('Man')
+    sex = reasoner.concept('Sex')
+    de = reasoner.concept('DomainEntity')
+
+    r = reasoner.object_role('hasFather')
+
+    c1 = reasoner.o_exists(r, man)
+    c2 = reasoner.o_exists(r, sex)
+    reasoner.implies_concepts(cls, c1)
+    reasoner.implies_concepts(cls, c2)
+    reasoner.implies_concepts(cls, de)
+
+    reasoner.set_o_domain(r, cls)
+
+    values = reasoner.get_o_domain(r)
+    assert 'Person' == next(values).name
+    assert [de] == list(values)
+
 def test_get_o_range():
     """
     Test getting object role range.

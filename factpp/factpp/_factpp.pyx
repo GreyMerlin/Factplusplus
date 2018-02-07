@@ -42,6 +42,7 @@ cdef extern from 'taxNamEntry.h':
     cdef cppclass ClassifiableEntry:
         ClassifiableEntry() except +
         string getName()
+        bool isSystem()
 
 cdef extern from 'tDLAxiom.h':
     cdef cppclass TDLAxiom:
@@ -274,9 +275,9 @@ cdef class Reasoner:
 
         start = self.c_mgr.Top() if top else self.c_mgr.Bottom()
         node = self.c_kernel.setUpCache(self.c_mgr.Exists(r.c_obj(), start))
-#        obj = <const ClassifiableEntry*>node.getPrimer()
-#        if obj:
-#            yield self.concept(obj.getName())
+        obj = <const ClassifiableEntry*>node.getPrimer()
+        if not obj.isSystem():
+            yield self.concept(obj.getName())
 
         it = node.begin(True)
         while it != node.end(True):
