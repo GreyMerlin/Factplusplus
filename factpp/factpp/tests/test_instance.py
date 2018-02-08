@@ -19,12 +19,19 @@
 
 from .._factpp import Reasoner
 
-def test_one_of():
+import pytest
+
+@pytest.fixture
+def reasoner():
+    """
+    Get instance of a reasoner.
+    """
+    return Reasoner()
+
+def test_one_of(reasoner):
     """
     Test `one of` axiom.
     """
-    reasoner = Reasoner()
-
     colors = [reasoner.individual(c) for c in ['blue', 'yellow']]
 
     color = reasoner.concept('Color')
