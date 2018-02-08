@@ -50,16 +50,20 @@ cdef extern from 'taxNamEntry.h':
 cdef bool skip(const ClassifiableEntry *obj):
     return obj.isSystem() or obj.isTop() or obj.isBottom()
 
-
 cdef extern from 'tDLAxiom.h':
     cdef cppclass TDLAxiom:
         TDLAxiom() except +
+
+cdef extern from 'tConcept.h':
+    cdef cppclass TConcept(ClassifiableEntry):
+        TConcept(string) except +
+        bool isSingleton()
 
 cdef extern from 'tIndividual.h':
     cdef cppclass TRelatedMap:
         TRelatedMap() except +
 
-    cdef cppclass TIndividual(ClassifiableEntry):
+    cdef cppclass TIndividual(TConcept):
         TIndividual(string) except +
 
 cdef extern from 'tRole.h':
@@ -467,17 +471,17 @@ cdef class Reasoner:
         for k in range(data.size()):
             yield self.individual(data[k].getName())
 
-    def get_instances(self, ConceptExpr c, direct=True):
-        if not direct:
-            raise ValueError('Non-direct instances query not supported yet')
-
-        cdef const ClassifiableEntry *obj
+    def get_instances(self, ConceptExpr c):
+        cdef const TConcept *obj
         cdef TaxonomyVertex *node = self.c_kernel.setUpCache(c.c_obj())
         cdef vector[TaxonomyVertex*].iterator it = node.begin(False)
 
         while it != node.end(False):
-            obj = <const ClassifiableEntry*>dereference(it).getPrimer()
-            yield self.individual(obj.getName())
+            obj = <const TConcept*>dereference(it).getPrimer()
+            if obj.isSingleton():
+                yield self.individual(obj.getName())
+            else:
+                yield from self.get_instances(self.concept(obj.getName()))
             postincrement(it)
 
     #
