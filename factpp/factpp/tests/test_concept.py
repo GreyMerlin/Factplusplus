@@ -38,6 +38,22 @@ def test_subclass(reasoner):
     reasoner.implies_concepts(cls_a, cls_b)
     assert reasoner.is_subsumed_by(cls_a, cls_b)
 
+def test_subclass_instances(reasoner):
+    """
+    Test instances of subclasses.
+    """
+    child = reasoner.concept('child')
+    person = reasoner.concept('person')
+
+    a = reasoner.individual('a')
+    reasoner.instance_of(a, child)
+
+    # test precondition
+    assert not reasoner.is_instance(a, person)
+
+    reasoner.implies_concepts(child, person)
+    assert reasoner.is_instance(a, person)
+
 def test_equal_concepts(reasoner):
     """
     Test equal concepts.
