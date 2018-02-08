@@ -65,7 +65,7 @@ def test_intersection_eq():
     cls_m = reasoner.concept('Mother')
 
     cls = reasoner.intersection(cls_p, cls_m)
-    reasoner.equal_concepts([cls, cls_m])
+    reasoner.equal_concepts(cls, cls_m)
 
     a = reasoner.individual('Alice')
     reasoner.instance_of(a, cls_m)

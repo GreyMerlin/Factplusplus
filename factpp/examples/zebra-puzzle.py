@@ -74,7 +74,7 @@ reasoner = factpp.Reasoner()
 get_i = reasoner.individual
 
 classes = [reasoner.concept(c) for c in CLASSES]
-reasoner.disjoint_concepts(classes)
+reasoner.disjoint_concepts(*classes)
 
 color = create_cls('Color', COLORS)
 drink = create_cls('Drink', DRINKS)
