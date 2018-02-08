@@ -43,6 +43,13 @@ cdef extern from 'taxNamEntry.h':
         ClassifiableEntry() except +
         string getName()
         bool isSystem()
+        bool isTop()
+        bool isBottom()
+
+
+cdef bool skip(const ClassifiableEntry *obj):
+    return obj.isSystem() or obj.isTop() or obj.isBottom()
+
 
 cdef extern from 'tDLAxiom.h':
     cdef cppclass TDLAxiom:
@@ -276,12 +283,15 @@ cdef class Reasoner:
         start = self.c_mgr.Top() if top else self.c_mgr.Bottom()
         node = self.c_kernel.setUpCache(self.c_mgr.Exists(r.c_obj(), start))
         obj = <const ClassifiableEntry*>node.getPrimer()
-        if not obj.isSystem():
+        if not skip(obj):
             yield self.concept(obj.getName())
 
         it = node.begin(True)
         while it != node.end(True):
             obj = <const ClassifiableEntry*>dereference(it).getPrimer()
+            if skip(obj):
+                postincrement(it)
+                continue
             yield self.concept(obj.getName())
             postincrement(it)
 
