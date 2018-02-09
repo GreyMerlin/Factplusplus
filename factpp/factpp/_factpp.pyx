@@ -475,6 +475,9 @@ cdef class Reasoner:
         cdef const TConcept *obj
         cdef TaxonomyVertex *node = self.c_kernel.setUpCache(c.c_obj())
         cdef vector[TaxonomyVertex*].iterator it = node.begin(False)
+        obj = <const TConcept*>dereference(it).getPrimer()
+        if obj.isBottom():
+            return
 
         while it != node.end(False):
             obj = <const TConcept*>dereference(it).getPrimer()

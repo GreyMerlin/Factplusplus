@@ -99,4 +99,30 @@ def test_instances_query_of_class_hierarchy(reasoner):
 
     assert ['c1', 'c2', 'p1', 'p2'] == [i.name for i in items]
 
+def test_instances_query_of_class_hierarchy_last_empty(reasoner):
+    """
+    Test getting instances of a class hierarchy with last class having no
+    instances.
+    """
+    person = reasoner.concept('Person')
+    child = reasoner.concept('Child')
+    baby = reasoner.concept('Baby')
+    reasoner.implies_concepts(child, person)
+    reasoner.implies_concepts(baby, child)
+
+    p1 = reasoner.individual('p1')
+    p2 = reasoner.individual('p2')
+    reasoner.instance_of(p1, person)
+    reasoner.instance_of(p2, person)
+
+    c1 = reasoner.individual('c1')
+    c2 = reasoner.individual('c2')
+    reasoner.instance_of(c1, child)
+    reasoner.instance_of(c2, child)
+
+    reasoner.realise()
+    items = reasoner.get_instances(person)
+
+    assert ['c1', 'c2', 'p1', 'p2'] == [i.name for i in items]
+
 # vim: sw=4:et:ai
