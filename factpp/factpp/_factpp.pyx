@@ -48,7 +48,7 @@ cdef extern from 'taxNamEntry.h':
 
 
 cdef bool skip(const ClassifiableEntry *obj):
-    return obj.isSystem() or obj.isTop() or obj.isBottom()
+    return obj.isSystem() or obj.isBottom()
 
 cdef extern from 'tDLAxiom.h':
     cdef cppclass TDLAxiom:

@@ -65,6 +65,20 @@ def test_get_o_domain():
     assert 'CLS' == next(values).name
     assert next(values, None) is None
 
+def test_get_o_domain_top():
+    """
+    Test getting object role domain when no domain set.
+    """
+    reasoner = Reasoner()
+    r = reasoner.object_role('R')
+    i1 = reasoner.individual('i1')
+    i2 = reasoner.individual('i2')
+    reasoner.related_to(i1, r, i2)
+
+    values = reasoner.get_o_domain(r)
+    assert 'TOP' == next(values).name
+    assert [] == list(values)
+
 def test_get_o_domain_complex():
     """
     Test getting object role domain.
