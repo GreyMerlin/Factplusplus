@@ -95,6 +95,9 @@ cdef extern from 'tDLExpression.h':
     cdef cppclass TDLObjectRoleExpression(TDLObjectRoleComplexExpression):
         pass
 
+    cdef cppclass TDLObjectRoleName(TDLObjectRoleExpression):
+        pass
+
     cdef cppclass TDLDataExpression:
         pass
 
@@ -126,7 +129,7 @@ cdef extern from 'tDLExpression.h':
 cdef extern from 'tExpressionManager.h':
     cdef cppclass TExpressionManager:
         TDLIndividualExpression* Individual(string)
-        TDLObjectRoleExpression* ObjectRole(string)
+        TDLObjectRoleName* ObjectRole(string)
         TDLDataExpression* DataTop()
         TDLDataExpression* DataBottom()
         TDLDataTypeName* DataType(string)
@@ -223,6 +226,9 @@ cdef class Individual(IndividualExpr):
     def name(self):
         return (<TDLIndividualName*>self.c_obj()).getName()
 
+    def __repr__(self):
+        return '<{} object at {}: {}>'.format(self.__class__.__name__, id(self), self.name)
+
 cdef class ConceptExpr(Expression):
     cdef TDLConceptExpression *c_obj(self):
         return <TDLConceptExpression*>self._obj
@@ -232,9 +238,20 @@ cdef class Concept(ConceptExpr):
     def name(self):
         return (<TDLConceptName*>self.c_obj()).getName()
 
+    def __repr__(self):
+        return '<{} object at {}: {}>'.format(self.__class__.__name__, id(self), self.name)
+
 cdef class ObjectRoleExpr(Expression):
     cdef TDLObjectRoleExpression *c_obj(self):
         return <TDLObjectRoleExpression*>self._obj
+
+cdef class ObjectRole(ObjectRoleExpr):
+    @property
+    def name(self):
+        return (<TDLObjectRoleName*>self.c_obj()).getName()
+
+    def __repr__(self):
+        return '<{} object at {}: {}>'.format(self.__class__.__name__, id(self), self.name)
 
 cdef class DataRoleExpr(Expression):
     cdef TDLDataRoleExpression *c_obj(self):
@@ -324,7 +341,7 @@ cdef class Reasoner:
     #
     # concepts
     #
-    def concept(self, name):
+    def concept(self, name not None):
         return self._get(Concept, self.c_mgr.Concept(name.encode()))
 
     def concept_top(self):
@@ -370,7 +387,7 @@ cdef class Reasoner:
     #
     # individuals
     #
-    def individual(self, name):
+    def individual(self, name not None):
         return self._get(Individual, self.c_mgr.Individual(name.encode()))
 
     def instance_of(self, IndividualExpr i, ConceptExpr c):
@@ -397,8 +414,8 @@ cdef class Reasoner:
     #
     # object roles
     #
-    def object_role(self, name):
-        return self._get(ObjectRoleExpr, self.c_mgr.ObjectRole(name.encode()))
+    def object_role(self, name not None):
+        return self._get(ObjectRole, self.c_mgr.ObjectRole(name.encode()))
 
     def set_o_domain(self, ObjectRoleExpr r, ConceptExpr c):
         self.c_kernel.setODomain(r.c_obj(), c.c_obj())
@@ -490,7 +507,7 @@ cdef class Reasoner:
     #
     # data roles
     #
-    def data_role(self, name):
+    def data_role(self, name not None):
         return self._get(DataRoleExpr, self.c_mgr.DataRole(name.encode()))
 
     def data_top(self):
@@ -501,7 +518,7 @@ cdef class Reasoner:
     def get_d_domain(self, DataRoleExpr r):
         yield from self._find_d_role_items(r, True)
 
-    def data_type(self, name):
+    def data_type(self, name not None):
         cdef DataType result = DataType.__new__(DataType)
         result.c_obj = self.c_mgr.DataType(name.encode())
         return result
