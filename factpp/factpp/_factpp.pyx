@@ -345,10 +345,10 @@ cdef class Reasoner:
         return self._get(Concept, self.c_mgr.Concept(name.encode()))
 
     def concept_top(self):
-        return self._get(Concept, self.c_mgr.Top())
+        return self._get(ConceptExpr, self.c_mgr.Top())
 
     def concept_bottom(self):
-        return self._get(Concept, self.c_mgr.Bottom())
+        return self._get(ConceptExpr, self.c_mgr.Bottom())
 
     def implies_concepts(self, ConceptExpr subcls, ConceptExpr parent):
         """
@@ -434,7 +434,7 @@ cdef class Reasoner:
         return self._get(ConceptExpr, self.c_mgr.Exists(r.c_obj(), c.c_obj()))
 
     def max_o_cardinality(self, unsigned int n, ObjectRoleExpr r, ConceptExpr c):
-        return self._get(Concept, self.c_mgr.MaxCardinality(n, r.c_obj(), c.c_obj()))
+        return self._get(ConceptExpr, self.c_mgr.MaxCardinality(n, r.c_obj(), c.c_obj()))
 
     def equal_o_roles(self, *roles):
         self._arg_list(roles)
@@ -534,10 +534,10 @@ cdef class Reasoner:
         self.c_kernel.setDRange(r.c_obj(), t.c_obj)
 
     def d_cardinality(self, unsigned int n, DataRoleExpr r, DataExpr d):
-        return self._get(Concept, self.c_mgr.Cardinality(n, r.c_obj(), d.c_obj))
+        return self._get(ConceptExpr, self.c_mgr.Cardinality(n, r.c_obj(), d.c_obj))
 
     def max_d_cardinality(self, unsigned int n, DataRoleExpr r, DataExpr d):
-        return self._get(Concept, self.c_mgr.MaxCardinality(n, r.c_obj(), d.c_obj))
+        return self._get(ConceptExpr, self.c_mgr.MaxCardinality(n, r.c_obj(), d.c_obj))
 
     def implies_d_roles(self, DataRoleExpr r1, DataRoleExpr r2):
         self.c_kernel.impliesDRoles(r1.c_obj(), r2.c_obj())
