@@ -45,7 +45,7 @@ def create_cls(cls_name, individuals):
     reasoner.different_individuals(*individuals.values())
 
     cls = reasoner.concept(cls_name)
-    an_individual = reasoner.one_of(individuals.values())
+    an_individual = reasoner.one_of(*individuals.values())
     reasoner.equal_concepts(cls, an_individual)
 
     return cls

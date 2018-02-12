@@ -35,7 +35,7 @@ def test_one_of(reasoner):
     colors = [reasoner.individual(c) for c in ['blue', 'yellow']]
 
     color = reasoner.concept('Color')
-    a_color = reasoner.one_of(colors)
+    a_color = reasoner.one_of(*colors)
     reasoner.equal_concepts(color, a_color)
 
     blue = reasoner.individual('blue')

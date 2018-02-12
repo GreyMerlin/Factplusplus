@@ -393,7 +393,7 @@ cdef class Reasoner:
     def instance_of(self, IndividualExpr i, ConceptExpr c):
         self.c_kernel.instanceOf(i.c_obj(), c.c_obj())
 
-    def one_of(self, instances):
+    def one_of(self, *instances):
         self._arg_list(instances)
         return self._get(ConceptExpr, self.c_mgr.OneOf())
 
