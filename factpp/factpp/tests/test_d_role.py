@@ -79,12 +79,12 @@ def test_get_d_domain_top():
     Test getting data role domain when no domain set.
     """
     reasoner = Reasoner()
+    top = reasoner.concept_top()
     r = reasoner.data_role('R')
     i = reasoner.individual('i')
     reasoner.value_of_int(i, r, 1)
 
     values = reasoner.get_d_domain(r)
-    assert 'TOP' == next(values).name
-    assert [] == list(values)
+    assert [top] == list(values)
 
 # vim: sw=4:et:ai

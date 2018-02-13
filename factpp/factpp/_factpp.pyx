@@ -304,6 +304,12 @@ cdef class Reasoner:
     cdef _get(self, type T, TDLExpression *c_obj):
         return instance(self._cache, T, c_obj)
 
+    cdef _to_cls_expr(self, const ClassifiableEntry *obj):
+        if obj.isTop():
+            return self.concept_top()
+        else:
+            return self.concept(obj.getName())
+
     def _find_o_role_items(self, ObjectRoleExpr r, bool top):
         # TODO: duplicate code, see _find_d_role_items
 
@@ -316,7 +322,7 @@ cdef class Reasoner:
         node = self.c_kernel.setUpCache(self.c_mgr.Exists(r.c_obj(), start))
         obj = <const ClassifiableEntry*>node.getPrimer()
         if not skip(obj):
-            yield self.concept(obj.getName())
+            yield self._to_cls_expr(obj)
 
         it = node.begin(True)
         while it != node.end(True):
@@ -324,7 +330,7 @@ cdef class Reasoner:
             if skip(obj):
                 postincrement(it)
                 continue
-            yield self.concept(obj.getName())
+            yield self._to_cls_expr(obj)
             postincrement(it)
 
     def _find_d_role_items(self, DataRoleExpr r, bool top):
@@ -341,7 +347,7 @@ cdef class Reasoner:
         it = node.begin(True)
         while it != node.end(True):
             obj = <const ClassifiableEntry*>dereference(it).getPrimer()
-            yield self.concept(obj.getName())
+            yield self._to_cls_expr(obj)
             postincrement(it)
 
     def _arg_list(self, items):
