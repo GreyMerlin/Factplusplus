@@ -51,4 +51,31 @@ def test_sub_property():
     reasoner.implies_d_roles(sub_r, r)
     assert reasoner.is_sub_d_role(sub_r, r)
 
+def test_get_d_domain():
+    """
+    Test getting data role domain.
+    """
+    reasoner = Reasoner()
+
+    cls = reasoner.concept('CLS')
+    r = reasoner.data_role('R')
+    reasoner.set_d_domain(r, cls)
+
+    values = reasoner.get_d_domain(r)
+    assert 'CLS' == next(values).name
+    assert next(values, None) is None
+
+def test_get_d_domain_top():
+    """
+    Test getting data role domain when no domain set.
+    """
+    reasoner = Reasoner()
+    r = reasoner.data_role('R')
+    i = reasoner.individual('i')
+    reasoner.value_of_int(i, r, 1)
+
+    values = reasoner.get_d_domain(r)
+    assert 'TOP' == next(values).name
+    assert [] == list(values)
+
 # vim: sw=4:et:ai
