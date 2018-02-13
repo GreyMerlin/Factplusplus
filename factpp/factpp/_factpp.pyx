@@ -126,15 +126,18 @@ cdef extern from 'tDLExpression.h':
     cdef cppclass TDLDataRoleExpression(TDLExpression):
         pass
 
+    cdef cppclass TDLDataRoleName(TDLDataRoleExpression):
+        string getName()
+
 cdef extern from 'tExpressionManager.h':
     cdef cppclass TExpressionManager:
+        TDLConceptName* Concept(string)
         TDLIndividualExpression* Individual(string)
+        TDLDataRoleName* DataRole(string)
         TDLObjectRoleName* ObjectRole(string)
         TDLDataExpression* DataTop()
         TDLDataExpression* DataBottom()
         TDLDataTypeName* DataType(string)
-        TDLConceptName* Concept(string)
-        TDLDataRoleExpression* DataRole(string)
 
         TDLConceptExpression* Top()
         TDLConceptExpression* Bottom()
@@ -256,6 +259,14 @@ cdef class ObjectRole(ObjectRoleExpr):
 cdef class DataRoleExpr(Expression):
     cdef TDLDataRoleExpression *c_obj(self):
         return <TDLDataRoleExpression*>self._obj
+
+cdef class DataRole(DataRoleExpr):
+    @property
+    def name(self):
+        return (<TDLDataRoleName*>self.c_obj()).getName()
+
+    def __repr__(self):
+        return '<{} object at {}: {}>'.format(self.__class__.__name__, id(self), self.name)
 
 cdef class DataExpr:
     cdef const TDLDataExpression *c_obj
@@ -508,7 +519,7 @@ cdef class Reasoner:
     # data roles
     #
     def data_role(self, name not None):
-        return self._get(DataRoleExpr, self.c_mgr.DataRole(name.encode()))
+        return self._get(DataRole, self.c_mgr.DataRole(name.encode()))
 
     def data_top(self):
         cdef DataExpr result = DataExpr.__new__(DataExpr)

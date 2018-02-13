@@ -479,9 +479,11 @@ TBox :: classifyQueryConcept ( void )
 	// setup taxonomy behaviour flags
 	fpp_assert ( pTax != nullptr );
 	pTaxCreator->setCompletelyDefined(false);	// non-primitive concept
+//    printf("qz 3\n");
 
 	// classify the concept
 	pTaxCreator->classifyEntry(pQuery);
+   // printf("qz 4\n");
 }
 
 /// knowledge exploration: build a model and return a link to the root

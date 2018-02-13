@@ -19,6 +19,15 @@
 
 from .._factpp import Reasoner
 
+def test_create_data_role():
+    """
+    Test creating data role.
+    """
+    reasoner = Reasoner()
+
+    r = reasoner.data_role('R')
+    assert 'R' == r.name
+
 def test_equivalent_roles():
     """
     Test creating equivalent data roles.
