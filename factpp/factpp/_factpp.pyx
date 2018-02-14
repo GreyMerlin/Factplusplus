@@ -37,7 +37,6 @@ cdef extern from "<vector>" namespace "std":
         iterator begin()
         iterator end()
 
-
 cdef extern from 'taxNamEntry.h':
     cdef cppclass ClassifiableEntry:
         ClassifiableEntry() except +
@@ -45,7 +44,7 @@ cdef extern from 'taxNamEntry.h':
         bool isSystem()
         bool isTop()
         bool isBottom()
-
+        TNamedEntity *getEntity()
 
 cdef bool skip(const ClassifiableEntry *obj):
     return obj.isSystem() or obj.isBottom()
@@ -79,6 +78,9 @@ cdef extern from 'tIndividual.h' namespace 'TRelatedMap':
 #         string getName()
 
 cdef extern from 'tDLExpression.h':
+    cdef cppclass TNamedEntity:
+        string getName()
+
     cdef cppclass TDLObjectRoleName:
         TDLObjectRoleName(string) except +
         string getName()
@@ -305,6 +307,7 @@ cdef class Reasoner:
         return instance(self._cache, T, c_obj)
 
     cdef _to_cls_expr(self, const ClassifiableEntry *obj):
+        # FIXME: or use obj.getEntity()?
         if obj.isTop():
             return self.concept_top()
         else:
