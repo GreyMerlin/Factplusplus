@@ -37,6 +37,20 @@ cdef extern from "<vector>" namespace "std":
         iterator begin()
         iterator end()
 
+cdef extern from "<iostream>" namespace "std":
+    cdef cppclass ostream:
+        ostream& write(const char*, int) except +
+
+cdef extern from "<iostream>" namespace "std::ios_base":
+    cdef cppclass open_mode:
+        pass
+    cdef open_mode binary
+
+cdef extern from "<fstream>" namespace "std":
+    cdef cppclass ofstream(ostream):
+        ofstream(const char*) except +
+        ofstream(const char*, open_mode) except +
+
 cdef extern from 'taxNamEntry.h':
     cdef cppclass ClassifiableEntry:
         ClassifiableEntry() except +
@@ -152,6 +166,8 @@ cdef extern from 'tExpressionManager.h':
         TDLConceptExpression* OneOf()
 
         TDLConceptExpression* Cardinality(unsigned int, const TDLDataRoleExpression*, const TDLDataExpression*)
+        TDLConceptExpression* MinCardinality(unsigned int, const TDLObjectRoleExpression*, const TDLConceptExpression*)
+        TDLConceptExpression* MinCardinality(unsigned int, const TDLDataRoleExpression*, const TDLDataExpression*)
         TDLConceptExpression* MaxCardinality(unsigned int, const TDLObjectRoleExpression*, const TDLConceptExpression*)
         TDLConceptExpression* MaxCardinality(unsigned int, const TDLDataRoleExpression*, const TDLDataExpression*)
 
@@ -218,6 +234,8 @@ cdef extern from 'Kernel.h':
         void classifyKB()
         bool isKBConsistent()
         bool isKBPreprocessed()
+
+        void dumpLISP(ostream)
 
 cdef class Expression:
     cdef const TDLExpression *_obj
@@ -453,6 +471,9 @@ cdef class Reasoner:
     def o_exists(self, ObjectRoleExpr r, ConceptExpr c):
         return self._get(ConceptExpr, self.c_mgr.Exists(r.c_obj(), c.c_obj()))
 
+    def min_o_cardinality(self, unsigned int n, ObjectRoleExpr r, ConceptExpr c):
+        return self._get(ConceptExpr, self.c_mgr.MinCardinality(n, r.c_obj(), c.c_obj()))
+
     def max_o_cardinality(self, unsigned int n, ObjectRoleExpr r, ConceptExpr c):
         return self._get(ConceptExpr, self.c_mgr.MaxCardinality(n, r.c_obj(), c.c_obj()))
 
@@ -603,6 +624,13 @@ cdef class Reasoner:
 
     def is_preprocessed(self):
         return self.c_kernel.isKBPreprocessed()
+
+    def dump(self, str fn):
+        cdef ofstream *out = new ofstream(fn.encode(), binary)
+        try:
+            self.c_kernel.dumpLISP(out[0])
+        finally:
+            del out
 
 cdef instance(dict cache, type T, const TDLExpression *c_obj):
     cdef Expression result
