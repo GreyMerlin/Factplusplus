@@ -644,6 +644,9 @@ public:		// interface
 		/// choose whether the loaded ontology should be dumped as a LISP one
 	void setDumpOntology ( bool value ) { dumpOntology = value; }
 
+		/// dump ontology as a LISP one
+	void dumpLISP ( std::ostream& );
+
 	//----------------------------------------------
 	//-- Tracing support
 	//----------------------------------------------
