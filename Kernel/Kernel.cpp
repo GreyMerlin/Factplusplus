@@ -117,22 +117,24 @@ ReasoningKernel :: forceReload ( void )
 	OntologyLoader.visitOntology(Ontology);
 
 	if ( dumpOntology )
-	{
-		TLISPOntologyPrinter OntologyPrinter(std::cout);
-		// First print all the declaration (as datarole declarations should be before usages)
-		OntologyPrinter.setPrintFlags(/*declarations=*/true, /*axioms=*/false);
-		Ontology.visitOntology(OntologyPrinter);
-		// Then print logical axioms
-		OntologyPrinter.setPrintFlags(/*declarations=*/false, /*axioms=*/true);
-		Ontology.visitOntology(OntologyPrinter);
-	}
-
+		dumpLISP(std::cout);
 	if ( useIncrementalReasoning )
 		initIncremental();
 
 	// after loading ontology became processed completely
 	Ontology.setProcessed();
 }
+
+void ReasoningKernel :: dumpLISP ( std::ostream& o_ ) {
+	TLISPOntologyPrinter OntologyPrinter(o_);
+	// First print all the declaration (as datarole declarations should be before usages)
+	OntologyPrinter.setPrintFlags(/*declarations=*/true, /*axioms=*/false);
+	Ontology.visitOntology(OntologyPrinter);
+	// Then print logical axioms
+	OntologyPrinter.setPrintFlags(/*declarations=*/false, /*axioms=*/true);
+	Ontology.visitOntology(OntologyPrinter);
+}
+
 
 //-------------------------------------------------
 // Prepare reasoning/query
