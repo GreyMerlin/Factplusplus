@@ -13,7 +13,7 @@ Compilation::
     $ cmake CMakeLists.txt -DBUILD_SHARED_LIBS:BOOL=ON
     $ make
     $ cd ../factpp
-    $ CFLAGS="-I../Kernel" LDFLAGS="-L../Kernel" python setup.py build_ext --inplace
+    $ CFLAGS="-I../Kernel -std=c++11" LDFLAGS="-L../Kernel" python setup.py build_ext --inplace
 
 Run unit tests::
 
